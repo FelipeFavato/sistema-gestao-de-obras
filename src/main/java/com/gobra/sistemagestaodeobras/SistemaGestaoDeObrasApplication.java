@@ -1,3 +1,4 @@
+// Arquivo de start da aplicação
 package com.gobra.sistemagestaodeobras;
 
 // import java.util.Collection;
@@ -13,10 +14,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // import jakarta.persistence.GeneratedValue;
 // import jakarta.persistence.Id;
 
+
+// Essa notação indica que essa classe é o começo de tudo
 @SpringBootApplication
 public class SistemaGestaoDeObrasApplication {
 
+	// metodo main = ponto de start da aplicação
 	public static void main(String[] args) {
+		// Chama a SpringApplication e da um run na aplicação
 		SpringApplication.run(SistemaGestaoDeObrasApplication.class, args);
 	}
 
