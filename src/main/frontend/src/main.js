@@ -6,6 +6,7 @@ import App from './App.vue'
 createApp(App).mount('#app')
 
 
+// Exemplo
 // function cadastrar() {
 //   fetch('http://localhost:8080/cadastrar',
 //     {
