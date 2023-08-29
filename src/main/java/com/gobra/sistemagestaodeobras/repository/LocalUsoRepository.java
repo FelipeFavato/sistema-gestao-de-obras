@@ -1,3 +1,8 @@
+// A classe Repository é uma classe de interface que oferece um conjunto de métodos
+// abstratros para manipular/gerenciar os dados e persistir esses dados.
+// Esses métodos abstratos vão definir as operações CRUD
+
+
 package com.gobra.sistemagestaodeobras.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
