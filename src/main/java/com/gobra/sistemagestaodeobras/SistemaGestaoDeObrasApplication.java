@@ -1,18 +1,8 @@
 // Arquivo de start da aplicação
 package com.gobra.sistemagestaodeobras;
 
-// import java.util.Collection;
-
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.stereotype.Component;
-
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.Id;
 
 
 // Essa notação indica que essa classe é o começo de tudo
