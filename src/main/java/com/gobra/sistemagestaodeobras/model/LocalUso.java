@@ -25,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor // Lombok declara um constructor que nao recebe nenhum argumento
 @AllArgsConstructor // Lombok declara um constructor que recebe todos os argumentos
 @EqualsAndHashCode(of = "codigoLocalUsoObra") // O Id é a representação unica
-public class LocalUsoModel {
+public class LocalUso {
   // @Id => PrimaryKey || AUTO => Gera automaticamente ordenadamente
   @Id
   // @GeneratedValue(strategy = GenerationType.AUTO) // Toda vez que reinicio a aplicação, adiciona 50 na geração (AllocationSize)
@@ -35,7 +35,7 @@ public class LocalUsoModel {
 
   private String nomeLocalUsoObra;
 
-  public LocalUsoModel(LocalUsoRequestDTO data) {
+  public LocalUso(LocalUsoRequestDTO data) {
     this.nomeLocalUsoObra = data.nomeLocalUsoObra();
   }
 }

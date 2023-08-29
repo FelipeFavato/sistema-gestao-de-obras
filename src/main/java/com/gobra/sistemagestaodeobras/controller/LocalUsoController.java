@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
+// import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gobra.sistemagestaodeobras.dto.LocalUsoRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.LocalUsoResponseDTO;
-import com.gobra.sistemagestaodeobras.model.LocalUsoModel;
+import com.gobra.sistemagestaodeobras.model.LocalUso;
 import com.gobra.sistemagestaodeobras.repository.LocalUsoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -36,18 +36,18 @@ public class LocalUsoController {
 
   
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  // @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @PostMapping  // Crud - Create
   public void saveLocalUso(@RequestBody LocalUsoRequestDTO data) {
     // O parametro desse metodo é o body que veio da request do cliente
-    LocalUsoModel localUsoData = new LocalUsoModel(data);
+    LocalUso localUsoData = new LocalUso(data);
     repository.save(localUsoData);
     return;
   }
 
 
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  // @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @GetMapping  // cRud - Read
   public List<LocalUsoResponseDTO> getAll() {
     // Como transformar a entidade criada em um DTO?
@@ -61,14 +61,14 @@ public class LocalUsoController {
 
   @PutMapping  // crUd - Update
   @Transactional  // Método só deve ser executado se todas as transações tiverem sucesso
-  public ResponseEntity<LocalUsoModel> updateLocalUso(@RequestBody LocalUsoRequestDTO data){
+  public ResponseEntity<LocalUso> updateLocalUso(@RequestBody LocalUsoRequestDTO data){
     // ResponseEntity => Representa a resposta HTTP como um todo (status code, headers e body)
     // Optional permite tenha um valor presente ou não, pois estou procurando pelo ID e pode não ter o id procurado
-    Optional<LocalUsoModel> optionalLocalUso = repository.findById(data.codigoLocalUsoObra());
+    Optional<LocalUso> optionalLocalUso = repository.findById(data.codigoLocalUsoObra());
     // .isPresent() => Caso exista algum valor em optionalLocalUso {...faça isso...}
     if (optionalLocalUso.isPresent()) {
       // .get() => Retorna o valor
-      LocalUsoModel localUso = optionalLocalUso.get();
+      LocalUso localUso = optionalLocalUso.get();
       // Seta o nomeLocalUsoObra por meio do setter definido na Model
       localUso.setNomeLocalUsoObra(data.nomeLocalUsoObra());
       // Retorna a resposta em fora de ResponseEntity
@@ -82,9 +82,9 @@ public class LocalUsoController {
 
   // Deleta um localUso, passando codigoLocalUsoObra e nomeLocalUsoObra
   @DeleteMapping  // cruD - Delete
-  public void deletaLocalUso(@RequestBody LocalUsoModel localUso) {
-    // Não tem retorno usa as informações do corpo da requisição, espera receber um LocalUsoModel
-    // Deleta o localUsoModel recebido por parametro
+  public void deletaLocalUso(@RequestBody LocalUso localUso) {
+    // Não tem retorno. Usa as informações do corpo da requisição, espera receber um LocalUso
+    // Deleta o localUso recebido por parametro
     repository.delete(localUso);
   }
 
