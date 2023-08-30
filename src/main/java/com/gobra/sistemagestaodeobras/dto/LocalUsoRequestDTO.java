@@ -9,6 +9,7 @@ package com.gobra.sistemagestaodeobras.dto;
 public record LocalUsoRequestDTO(
 
   Integer codigoLocalUsoObra,
+
   // @NotBlank  // => Validacao do requestBody
   // @NotNull  // => Validacao do requestBody
   String nomeLocalUsoObra

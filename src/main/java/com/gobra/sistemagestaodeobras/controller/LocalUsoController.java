@@ -63,7 +63,7 @@ public class LocalUsoController {
   @Transactional  // Método só deve ser executado se todas as transações tiverem sucesso
   public ResponseEntity<LocalUso> updateLocalUso(@RequestBody LocalUsoRequestDTO data){
     // ResponseEntity => Representa a resposta HTTP como um todo (status code, headers e body)
-    // Optional permite tenha um valor presente ou não, pois estou procurando pelo ID e pode não ter o id procurado
+    // Optional permite ter um valor presente ou não, pois estou procurando pelo ID e pode não ter o id procurado
     Optional<LocalUso> optionalLocalUso = repository.findById(data.codigoLocalUsoObra());
     // .isPresent() => Caso exista algum valor em optionalLocalUso {...faça isso...}
     if (optionalLocalUso.isPresent()) {
