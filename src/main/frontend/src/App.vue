@@ -1,20 +1,21 @@
+<!-- Criar aqui uma tela basica do bootstrap contendo um menu principal
+que ira redirecionar para as outras paginas -->
 <!-- Tag script com atributo setup -->
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
+import Exemplo from './components/estudo/Exemplo.vue'
+import OptionsAPI from './components/estudo/OptionsAPI.vue'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <p>Teste</p>
   </header>
 
   <main>
-    <TheWelcome />
+    <p>Teste</p>
+    <button type="button" class="btn btn-primary">Botão com Bootstrap</button>
   </main>
 </template>
 

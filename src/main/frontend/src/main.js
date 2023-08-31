@@ -1,3 +1,5 @@
+// src/main/frontend => npm run dev
+
 import './assets/main.css'
 
 import { createApp } from 'vue'
@@ -5,6 +7,9 @@ import App from './App.vue'
 
 createApp(App).mount('#app')
 
+
+// Baseado em componentes
+// Construído em cima de HTML, CSS e JS
 
 // Exemplo
 // function cadastrar() {
