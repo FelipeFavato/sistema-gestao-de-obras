@@ -1,30 +1,21 @@
-<!-- Criar aqui uma tela basica do bootstrap contendo um menu principal
-que ira redirecionar para as outras paginas -->
-<!-- Tag script com atributo setup -->
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-import Exemplo from './components/estudo/Exemplo.vue'
-import OptionsAPI from './components/estudo/OptionsAPI.vue'
+
+import Menu from './components/Menu.vue';
+
 </script>
 
 <template>
   <header>
-    <p>Teste</p>
+    <Menu />
   </header>
 
   <main>
-    <p>Teste</p>
-    <button type="button" class="btn btn-primary">Botão com Bootstrap</button>
+    
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
+/*.logo {
   display: block;
   margin: 0 auto 2rem;
 }
@@ -45,5 +36,5 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
-}
+} */
 </style>

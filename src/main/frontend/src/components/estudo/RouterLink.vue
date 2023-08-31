@@ -1,18 +1,22 @@
-<!-- <script src="https://unpkg.com/vue@3"></script> -->
-<!-- <script src="https://unpkg.com/vue-router@4"></script> -->
+<script setup>
+
+import {RouterLink, RouterView, useRouter} from 'vue-router';
+
+const router = useRouter()
+
+const redirect = (path) => {
+  router.push(path)
+}
+
+</script>
 
 <template>
-  <div id="app">
-    <h1>Hello App!</h1>
-    <p>
-      <!-- Componente router-link => Navegação -->
-      <!-- Especifica o "/link" passando para a prop 'to' -->
-      <!-- `<router-link>` renderiza uma tag `<a>` com o atributo `href` correto -->
-      <router-link to="/">Go to Home</router-link>
-      <router-link to="/about">Go to About</router-link>
-    </p>
-    <!-- route outlet -->
-    <!-- component matched by the route will render here -->
-    <router-view></router-view>
-  </div>
+  <!-- <router-link to="/">Home</router-link>
+  <router-link to="/about">About</router-link> -->
+  <!-- <router-view /> -->
+
+  <!-- <RouterLink to="/"></RouterLink> -->
+  <!-- <RouterLink to="/about">About</RouterLink> -->
+  <!-- <RouterLink :to="{name: 'product', params: {id: 12}}">Product</RouterLink> -->
+  <RouterView />
 </template>
