@@ -12,7 +12,7 @@ const redirect = (path) => {
 
 <template>
 
-  <main>
+  <main class="menuNav-main">
 
     <div class="menu-options">
       <img
@@ -79,8 +79,8 @@ const redirect = (path) => {
 </template>
 
 <style scoped>
-main {
-  margin: 25px 5px 40px 5px;
+.menuNav-main {
+  margin: 0px 5px 10px 5px;
   display: flex;
   align-content: space-around;
   justify-content: space-between;
@@ -117,12 +117,12 @@ main {
   border: none;
   height: 40px;
   width: 100px;
-  margin-top: 15px;
+  margin-top: 18px;
 }
 
 .perfil-configuracoes button img {
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 }
 
 .logo {

@@ -6,7 +6,7 @@ import MenuNav from './components/MenuNav.vue';
 </script>
 
 <template>
-  <header>
+  <header class="App-header">
     <MenuNav />
   </header>
 
@@ -16,7 +16,9 @@ import MenuNav from './components/MenuNav.vue';
 </template>
 
 <style scoped>
-header {
+
+
+.App-header {
   background-color: #363A57;
   /* background-color: #00008B; */
 }
