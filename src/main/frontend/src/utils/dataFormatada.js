@@ -1,9 +1,7 @@
 const correctData = (data) => {
-  if (data.length === 1) {
-    data = `0${data}`
-  }
-  return data
-}
+  data.length === 1 ? data = `0${data}` : data;
+  return data;
+};
 
 export const generateCorrectData = () => {
   let dataAtual = new Date();
@@ -14,12 +12,12 @@ export const generateCorrectData = () => {
   let minutos = String(dataAtual.getMinutes());
   let segundos = String(dataAtual.getSeconds());
 
-  dia = correctData(dia)
-  mes = correctData(mes)
-  horas = correctData(horas)
-  minutos = correctData(minutos)
-  segundos = correctData(segundos)
+  dia = correctData(dia);
+  mes = correctData(mes);
+  horas = correctData(horas);
+  minutos = correctData(minutos);
+  segundos = correctData(segundos);
 
   let dataFormatada = `${dia}/${mes}/${ano} (${horas}:${minutos}:${segundos})`;
   return dataFormatada;
-}
+};

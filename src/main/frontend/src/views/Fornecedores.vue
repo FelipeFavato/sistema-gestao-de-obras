@@ -14,7 +14,7 @@ export default {
     showForm () {
       this.formularioVisivel = !this.formularioVisivel;
     },
-    cancel(e) {
+    cancel() {
       this.nome = '';
       this.showForm();
     },
@@ -34,7 +34,7 @@ export default {
   },
 
   // mounted() {
-  //   console.log('Pagina montada')
+  //   console.log('Pagina montada - Montar tabela')
   // }
 }
 
