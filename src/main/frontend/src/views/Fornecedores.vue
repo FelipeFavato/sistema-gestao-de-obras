@@ -22,11 +22,19 @@ export default {
       // e.preventDefault();
       this.info.push({nome: this.nome, dataCadastro: generateCorrectData()});
       this.cancel();
+    },
+    removeSupplier(nomeParaRemover) {
+      const indiceParaRemover = this.info.findIndex(fornecedor => fornecedor.nome === nomeParaRemover)
+      this.info.splice(indiceParaRemover, 1);
+      // this.$forceUpdate();
+    },
+    editSupplier() {
+
     }
   },
 
   // mounted() {
-  //   console.log(this.nome)
+  //   console.log('Pagina montada')
   // }
 }
 
@@ -61,23 +69,27 @@ export default {
   <form v-if="formularioVisivel" class="formulario">
     <label for="nome">Nome:</label>
     <input type="text" id="nome" name="nome" v-model="nome"><br><br>
-
-    <button
-      type="submit"
-      @click="addInfo"
-    >Enviar</button>
-    <button
-      type="submit"
-      @click="cancel"
-    >Cancelar</button>
+  
+    <div class="botoes-formulario">
+      <button
+        type="submit"
+        @click="addInfo"
+        class="btn btn-success"
+      >Enviar</button>
+      <button
+        type="submit"
+        class="btn btn-danger"
+        @click="cancel"
+      >Cancelar</button>
+    </div>
   </form>
 
   <main class="main-fornecedores">
     <table class="tabela-fornecedores">
       <thead>
         <tr>
-        <th>Id</th>
-        <th>Nome</th>
+          <th>Id</th>
+          <th>Nome</th>
         <th>Data Cadastro</th>
         <th></th>
         <th></th>
@@ -88,7 +100,7 @@ export default {
         <th></th>
         </tr>
       </thead>
-
+      
       <tbody>
         <tr v-for="(fornecedor, index) in info" :key="index">
           <td>{{ fornecedor.id }}</td>
@@ -101,8 +113,19 @@ export default {
           <td></td>
           <td></td>
           <td>
-            <button type="button" class="btn btn-light">📝</button>
-            <button type="button" class="btn btn-light">🗑️</button>
+            <button
+              type="button"
+              class="btn btn-light"
+              title="Editar"
+              @click="editSupplier"
+            >📝</button>
+
+            <button
+              type="button"
+              class="btn btn-light"
+              title="Excluir"
+              @click="removeSupplier(fornecedor.nome)"
+            >🗑️</button>
           </td>
         </tr>
       </tbody>
@@ -148,7 +171,21 @@ th, tr {
 }
 
 .formulario {
-  width: 500px;
+  width: 400px;
+  border: solid #363A57 5px;
+  border-radius: 10px;
+  padding: 10px;
+  margin-left: 90px;
+}
+
+.formulario input, label {
+  margin: 10px 5px 5px 10px;
+  padding-left: 0px;
+}
+
+.botoes-formulario {
+  display: flex;
+  justify-content: space-around;
 }
 
 </style>

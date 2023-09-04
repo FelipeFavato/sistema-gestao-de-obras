@@ -1,19 +1,24 @@
+const correctData = (data) => {
+  if (data.length === 1) {
+    data = `0${data}`
+  }
+  return data
+}
+
 export const generateCorrectData = () => {
   let dataAtual = new Date();
   let dia = String(dataAtual.getDate());
   let mes = String(dataAtual.getMonth() + 1);
   let ano = dataAtual.getFullYear();
-  let horas = dataAtual.getHours();
-  let minutos = dataAtual.getMinutes();
-  let segundos = dataAtual.getSeconds();
+  let horas = String(dataAtual.getHours());
+  let minutos = String(dataAtual.getMinutes());
+  let segundos = String(dataAtual.getSeconds());
 
-  if (dia.length === 1) {
-    dia = `0${dia}`
-  }
-
-  if (mes.length === 1) {
-    mes = `0${mes}`
-  }
+  dia = correctData(dia)
+  mes = correctData(mes)
+  horas = correctData(horas)
+  minutos = correctData(minutos)
+  segundos = correctData(segundos)
 
   let dataFormatada = `${dia}/${mes}/${ano} (${horas}:${minutos}:${segundos})`;
   return dataFormatada;
