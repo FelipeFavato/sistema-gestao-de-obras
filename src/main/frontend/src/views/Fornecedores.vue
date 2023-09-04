@@ -1,20 +1,36 @@
-<script setup>
-const info = [
-  {
-    id: 5,
-    nome: 'Pedras CIA',
-    dataCadastro: '04/09/2023'
+<script>
+import { generateCorrectData } from '../utils/dataFormatada.js'
+
+export default {
+  data () {
+    return {
+      info: [],
+      formularioVisivel: false,
+      nome: ''
+    };
   },
-  {
-    id: 8,
-    nome: 'Tijolo CIA',
-    dataCadastro: '04/09/2023'
-  }
-]
 
-const addInfo = () => {
+  methods: {
+    showForm () {
+      this.formularioVisivel = !this.formularioVisivel;
+    },
+    cancel(e) {
+      this.nome = '';
+      this.showForm();
+    },
+    addInfo(e) {
+      // e.preventDefault();
+      this.info.push({nome: this.nome, dataCadastro: generateCorrectData()});
+      this.cancel();
+    }
+  },
 
+  // mounted() {
+  //   console.log(this.nome)
+  // }
 }
+
+
 </script>
 
 <template>
@@ -23,6 +39,7 @@ const addInfo = () => {
     <button
       type="button"
       class="btn btn-success"
+      @click="showForm"
     >+ Novo Fornecedor</button>
     
     <div class="titulo-fornecedores">
@@ -41,10 +58,24 @@ const addInfo = () => {
       </select>
   </header>
 
+  <form v-if="formularioVisivel" class="formulario">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" v-model="nome"><br><br>
+
+    <button
+      type="submit"
+      @click="addInfo"
+    >Enviar</button>
+    <button
+      type="submit"
+      @click="cancel"
+    >Cancelar</button>
+  </form>
+
   <main class="main-fornecedores">
     <table class="tabela-fornecedores">
-
-      <tr>
+      <thead>
+        <tr>
         <th>Id</th>
         <th>Nome</th>
         <th>Data Cadastro</th>
@@ -55,56 +86,26 @@ const addInfo = () => {
         <th></th>
         <th></th>
         <th></th>
-      </tr>
+        </tr>
+      </thead>
 
-      <tr>
-        <td>1</td>
-        <td>Exemplo</td>
-        <td>04/09/2023</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-          <button type="button" class="btn btn-light">📝</button>
-          <button type="button" class="btn btn-light">🗑️</button>
-        </td>
-      </tr>
-
-      <tr>
-        <td>2</td>
-        <td>Exemplo 2</td>
-        <td>04/09/2023</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-          <button type="button" class="btn btn-light">📝</button>
-          <button type="button" class="btn btn-light">🗑️</button>
-        </td>
-      </tr>
-
-      <!-- <tr v-for="(fornecedor, index) in info" :key="index">
-        <td>{{ fornecedor.id }}</td>
-        <td>{{ fornecedor.nome }}</td>
-        <td>{{ fornecedor.dataCadastro }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-          <button type="button" class="btn btn-light">📝</button>
-          <button type="button" class="btn btn-light">🗑️</button>
-        </td>
-      </tr> -->
-
+      <tbody>
+        <tr v-for="(fornecedor, index) in info" :key="index">
+          <td>{{ fornecedor.id }}</td>
+          <td>{{ fornecedor.nome }}</td>
+          <td>{{ fornecedor.dataCadastro }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+            <button type="button" class="btn btn-light">📝</button>
+            <button type="button" class="btn btn-light">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </main>
   
@@ -132,12 +133,6 @@ const addInfo = () => {
   margin: 10px 100px 10px 100px;
 }
 
-.tabela-fornecedores {
-  display: flex;
-  /* border: solid black 1px; */
-  justify-content: space-between;
-}
-
 th, tr {
   padding: 5px 50px 5px 0px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -150,6 +145,10 @@ th, tr {
   background-color: #FFA500;
   border: lightblue;
   border-radius: 5px;
+}
+
+.formulario {
+  width: 500px;
 }
 
 </style>
