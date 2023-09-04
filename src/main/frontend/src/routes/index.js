@@ -10,6 +10,7 @@ const routes = [
   { path: '/fornecedor', component: () => import('../views/Fornecedores.vue') },
   { path: '/produtoservico', component: () => import('../views/ProdutoServico.vue') },
   { path: '/perfil', component: () => import('../views/Perfil.vue') },
+  { path: '/configuracoes', component: () => import('../views/Configuracoes.vue') },
 ]
 
 const router = createRouter({

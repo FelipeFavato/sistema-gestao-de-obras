@@ -1,6 +1,6 @@
 <script setup>
 
-import { RouterView, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
@@ -13,15 +13,20 @@ const redirect = (path) => {
 <template>
 
   <main>
-    <div class="botao-inicio">
-      <button
-        type="button"
-        class="btn btn-dark"
-        @click="redirect('/')"
-      >Início</button>
-    </div>
 
     <div class="menu-options">
+      <img
+        class="logo"
+        src="../assets/construction-logo.webp"
+        alt="Logo"
+      >
+
+      <button
+        type="button"
+        class="btn btn-ligth"
+        @click="redirect('/')"
+      >Início</button>
+
       <button
         type="button"
         class="btn btn-ligth"
@@ -53,17 +58,23 @@ const redirect = (path) => {
       >ProdutoServico</button>
     </div>
 
-    <div class="botao-perfil">
+    <div class="perfil-configuracoes">
       <button
         type="button"
-        class="btn btn-dark"
+        class="btn btn-light"
         @click="redirect('/perfil')"
-      >👤</button>
+        ><img src="../assets/perfil.png" alt="Engrenagem">
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-light"
+        @click="redirect('/configuracoes')"
+        ><img src="../assets/engrenagem.png" alt="Engrenagem">
+      </button>
     </div>
 
   </main>
-
-  <RouterView />
 
 </template>
 
@@ -80,12 +91,44 @@ main {
 
 .menu-options {
   display: flex;
-  width: 900px;
+  width: 500px;
   justify-content: space-between;
 }
 
-/* .botao-perfil {
-} */
+.menu-options button {
+  display: flex;
+  background-color: transparent;
+  color:#C0C0C0;
+  border: none;
+  height: 30px;
+  margin-top: 15px;
+}
+
+.perfil-configuracoes{
+  display: flex;
+  justify-content: flex-end;
+  width: 80px;
+}
+
+.perfil-configuracoes button {
+  display: flex;
+  background-color: transparent;
+  color:white;
+  border: none;
+  height: 40px;
+  width: 100px;
+  margin-top: 15px;
+}
+
+.perfil-configuracoes button img {
+  height: 25px;
+  width: 25px;
+}
+
+.logo {
+  height: 70px;
+  width: 70px;
+}
 
 
 </style>
