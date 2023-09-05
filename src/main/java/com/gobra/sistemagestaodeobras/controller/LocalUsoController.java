@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-// import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +47,7 @@ public class LocalUsoController {
 
 
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  // @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @GetMapping  // cRud - Read
   public List<LocalUsoResponseDTO> getAll() {
     // Como transformar a entidade criada em um DTO?

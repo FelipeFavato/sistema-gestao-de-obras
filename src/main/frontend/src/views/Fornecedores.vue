@@ -5,35 +5,46 @@ export default {
   data () {
     return {
       info: [],
-      formularioVisivel: false,
-      nome: ''
+      openModal: false,
+      name: '',
+      category: '',
+      telephone: '',
+      address: ''
     };
   },
 
   methods: {
     showForm () {
-      this.formularioVisivel = !this.formularioVisivel;
+      this.openModal = !this.openModal;
     },
     cancel() {
-      this.nome = '';
+      this.name = '';
+      this.category = '';
+      this.telephone = '';
+      this.address = '';
       this.showForm();
     },
     addInfo(e) {
       // e.preventDefault();
-      this.info.push({nome: this.nome, dataCadastro: generateCorrectData()});
+      this.info.push({
+        name: this.name,
+        category: this.category,
+        telephone: this.telephone,
+        address: this.address,
+        registrationDate: generateCorrectData()});
       this.cancel();
     },
-    removeSupplier(nomeParaRemover) {
-      const indiceParaRemover = this.info.findIndex(fornecedor => fornecedor.nome === nomeParaRemover)
-      this.info.splice(indiceParaRemover, 1);
+    removeSupplier(nameToRemove) {
+      const indexToRemove = this.info.findIndex(supplier => supplier.name === nameToRemove)
+      this.info.splice(indexToRemove, 1);
       // this.$forceUpdate();
     },
     editSupplier() {
 
-    }
+    },
   },
 
-  // mounted() {
+  // onMounted() {
   //   console.log('Pagina montada - Montar tabela')
   // }
 }
@@ -60,57 +71,67 @@ export default {
         name="filtro"
         class="filtro-fornecedores"
       >
-        <option value="id">ID</option>
-        <option value="nome">Nome</option>
-        <option value="recente">Recente</option>
+        <option value="id">Código</option>
+        <option value="name">Nome</option>
+        <option value="category">Categoria</option>
+        <option value="recent">Recente</option>
       </select>
   </header>
 
-  <form v-if="formularioVisivel" class="formulario">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" v-model="nome"><br><br>
-  
-    <div class="botoes-formulario">
-      <button
-        type="submit"
-        @click="addInfo"
-        class="btn btn-success"
-      >Enviar</button>
-      <button
-        type="submit"
-        class="btn btn-danger"
-        @click="cancel"
-      >Cancelar</button>
+  <div v-if="openModal" class="modal">
+    <div>
+      <form action="" class="formulario">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" v-model="name"><br><br>
+
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" name="categoria" v-model="category"><br><br>
+
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" name="telefone" v-model="telephone"><br><br>
+
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" name="endereco" v-model="address"><br><br>
+      
+        <div class="botoes-formulario">
+          <button
+            type="submit"
+            @click="addInfo"
+            class="btn btn-success"
+          >Enviar</button>
+          <button
+            type="submit"
+            class="btn btn-secondary"
+            @click="cancel"
+          >Cancelar</button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 
   <main class="main-fornecedores">
     <table class="tabela-fornecedores">
       <thead>
         <tr>
-          <th>Id</th>
+          <th>Código</th>
           <th>Nome</th>
-        <th>Data Cadastro</th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
+          <th>Categoria</th>
+          <th>Telefone</th>
+          <th>Endereço</th>
+          <th>Data Cadastro</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       
       <tbody>
-        <tr v-for="(fornecedor, index) in info" :key="index">
-          <td>{{ fornecedor.id }}</td>
-          <td>{{ fornecedor.nome }}</td>
-          <td>{{ fornecedor.dataCadastro }}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+        <tr v-for="(supplier, index) in info" :key="index">
+          <td>{{ supplier.id }}</td>
+          <td>{{ supplier.name }}</td>
+          <td>{{ supplier.category }}</td>
+          <td>{{ supplier.telephone }}</td>
+          <td>{{ supplier.address }}</td>
+          <td>{{ supplier.registrationDate }}</td>
           <td></td>
           <td>
             <button
@@ -124,7 +145,7 @@ export default {
               type="button"
               class="btn btn-light"
               title="Excluir"
-              @click="removeSupplier(fornecedor.nome)"
+              @click="removeSupplier(supplier.name)"
             >🗑️</button>
           </td>
         </tr>
@@ -170,22 +191,40 @@ th, tr {
   border-radius: 5px;
 }
 
-.formulario {
+/* .formulario {
   width: 400px;
   border: solid #363A57 5px;
   border-radius: 10px;
   padding: 10px;
   margin-left: 90px;
-}
+} */
 
-.formulario input, label {
+/* .formulario input, label {
   margin: 10px 5px 5px 10px;
   padding-left: 0px;
-}
+} */
 
-.botoes-formulario {
+/* .botoes-formulario {
   display: flex;
   justify-content: space-around;
+} */
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal > div {
+  background-color: #fff;
+  padding: 200px;
+  border-radius: 10px;
 }
 
 </style>
