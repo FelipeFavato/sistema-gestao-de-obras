@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// @column => Especifica o nome da coluna na tabela
+
 
 @Table(name = "localuso")  // Essa notação indica que essa classe é uma tabela
 @Entity(name = "localuso")  // Essa notação da um nome à entidade
@@ -26,6 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor // Lombok declara um constructor que recebe todos os argumentos
 @EqualsAndHashCode(of = "codigoLocalUsoObra") // O Id é a representação unica
 public class LocalUso {
+  // @column(name = "nome_da_coluna", size/len)
   // @Id => PrimaryKey || AUTO => Gera automaticamente ordenadamente
   @Id
   // @GeneratedValue(strategy = GenerationType.AUTO) // Toda vez que reinicio a aplicação, adiciona 50 na geração (AllocationSize)

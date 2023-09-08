@@ -12,12 +12,12 @@ const redirect = (path) => {
 
 <template>
 
-  <main class="menuNav-main">
+  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
 
     <div class="menu-options">
       <img
         class="logo"
-        src="../assets/construction-logo.webp"
+        src="../assets/capacete.png"
         alt="Logo"
       >
 
@@ -55,7 +55,7 @@ const redirect = (path) => {
         type="button"
         class="btn btn-ligth"
         @click="redirect('/produtoservico')"
-      >ProdutoServico</button>
+      >ProdutoServiço</button>
     </div>
 
     <div class="perfil-configuracoes">
@@ -63,72 +63,77 @@ const redirect = (path) => {
         type="button"
         class="btn btn-light"
         @click="redirect('/perfil')"
-        ><img src="../assets/perfil.png" alt="Engrenagem">
+        title="Perfil"
+        ><img src="../assets/perfil.png" alt="Perfil" class="">
       </button>
 
       <button
         type="button"
         class="btn btn-light"
         @click="redirect('/configuracoes')"
+        title="Configurações"
+
         ><img src="../assets/engrenagem.png" alt="Engrenagem">
       </button>
-    </div>
 
-  </main>
+      <button
+        type="button"
+        class="btn btn-light"
+        title="Sair"
+        ><img src="../assets/logout.png" alt="Sair">
+      </button>
+    </div>
+    
+  </nav>
 
 </template>
 
 <style scoped>
-.menuNav-main {
-  margin: 0px 5px 10px 5px;
-  display: flex;
-  align-content: space-around;
-  justify-content: space-between;
+nav {
+  height: 58px;
 }
 
-/* .botao-inicio {
-} */
+.logo {
+  height: 50px;
+  width: 50px;
+}
 
 .menu-options {
   display: flex;
-  width: 500px;
+  width: 700px;
   justify-content: space-between;
+  margin: -17px 0px 0px 5px;
 }
 
 .menu-options button {
-  display: flex;
   background-color: transparent;
-  color:#C0C0C0;
   border: none;
-  height: 30px;
-  margin-top: 15px;
+  margin-top: 10px;
+}
+.menu-options button:hover {
+  color: white;
+  font-size: 1.005em;
 }
 
-.perfil-configuracoes{
+.perfil-configuracoes {
   display: flex;
   justify-content: flex-end;
   width: 80px;
+  margin-bottom: 10px;
 }
 
 .perfil-configuracoes button {
   display: flex;
   background-color: transparent;
-  color:white;
   border: none;
   height: 40px;
   width: 100px;
-  margin-top: 18px;
+  margin-top: 10px;
+  margin-right: 5px;
 }
 
 .perfil-configuracoes button img {
   height: 20px;
   width: 20px;
 }
-
-.logo {
-  height: 70px;
-  width: 70px;
-}
-
-
 </style>

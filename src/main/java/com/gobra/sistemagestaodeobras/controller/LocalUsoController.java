@@ -31,7 +31,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class LocalUsoController {
 
   // Essa notação indica para o spring que é ele quem vai fazer a injeção
-  @Autowired  // dessa dependencia na minha classe LocalUsoController
+  @Autowired  // dessa dependencia na minha classe LocalUsoController (abstrai a comunicação com o BD)
   private LocalUsoRepository repository;  // Instancia de LocalUsoRepository criada
 
   

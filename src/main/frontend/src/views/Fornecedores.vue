@@ -14,15 +14,15 @@ export default {
   },
 
   methods: {
-    showForm () {
-      this.openModal = !this.openModal;
-    },
+    // showForm () {
+    //   this.openModal = !this.openModal;
+    // },
     cancel() {
       this.name = '';
       this.category = '';
       this.telephone = '';
       this.address = '';
-      this.showForm();
+      // this.showForm();
     },
     addInfo(e) {
       // e.preventDefault();
@@ -57,15 +57,16 @@ export default {
 
     <button
       type="button"
-      class="btn btn-success"
-      @click="showForm"
+      class="btn btn-success light-green"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
     >+ Novo Fornecedor</button>
     
-    <div class="titulo-fornecedores">
+    <!-- <div class="titulo-fornecedores">
       <h5>Fornecedores</h5>
-    </div>
+    </div> -->
 
-      <label for="filtro"></label>
+      <!-- <label for="filtro"></label>
       <select
         id="filtro"
         name="filtro"
@@ -75,78 +76,119 @@ export default {
         <option value="name">Nome</option>
         <option value="category">Categoria</option>
         <option value="recent">Recente</option>
-      </select>
+      </select> -->
   </header>
 
-  <div v-if="openModal" class="modal">
-    <div>
-      <form action="" class="formulario">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" v-model="name"><br><br>
-
-        <label for="categoria">Categoria:</label>
-        <input type="text" id="categoria" name="categoria" v-model="category"><br><br>
-
-        <label for="telefone">Telefone:</label>
-        <input type="text" id="telefone" name="telefone" v-model="telephone"><br><br>
-
-        <label for="endereco">Endereço:</label>
-        <input type="text" id="endereco" name="endereco" v-model="address"><br><br>
-      
-        <div class="botoes-formulario">
-          <button
-            type="submit"
-            @click="addInfo"
-            class="btn btn-success"
-          >Enviar</button>
-          <button
-            type="submit"
-            class="btn btn-secondary"
-            @click="cancel"
-          >Cancelar</button>
+  <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Novo Fornecedor</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </form>
+        <div class="modal-body">
+
+          <form action="POST">
+
+            <div class="mb-3">
+              <label for="name-input" class="form-label bold">Nome:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name-input"
+                placeholder="Digite aqui"
+                v-model="name">
+            </div>
+
+            <div class="mb-3">
+              <label for="telephone-input" class="form-label bold">Telefone:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="telephone-input"
+                placeholder="(xx) xxxx-xxxx"
+                v-model="telephone"
+                >
+            </div>
+
+            <div class="mb-3">
+              <label for="address-input" class="form-label bold">Endereço:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="address-input"
+                placeholder="Avenida Exemplo, 000"
+                v-model="address">
+            </div>
+
+            <div class="mb-3">
+              <label for="category-select" class="bold">Categoria:</label>
+              <select
+                class="form-select"
+                id="category-select"
+                v-model="category">
+                <option value="M">Material</option>
+                <option value="S">Serviço</option>
+                <option value="M/S">Material/Serviço</option>
+              </select>
+            </div>
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancel"
+          >Fechar</button>
+          <button
+            type="button"
+            class="btn btn-success  light-green"
+            data-bs-dismiss="modal"
+            @click="addInfo"
+          >Salvar</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <main class="main-fornecedores">
-    <table class="tabela-fornecedores">
+    <table class="table table-hover">
       <thead>
         <tr>
-          <th>Código</th>
-          <th>Nome</th>
-          <th>Categoria</th>
-          <th>Telefone</th>
-          <th>Endereço</th>
-          <th>Data Cadastro</th>
+          <th scope="col">Código</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Telefone</th>
+          <th scope="col">Endereço</th>
+          <th scope="col">Data Cadastro</th>
           <th></th>
           <th></th>
         </tr>
       </thead>
-      
       <tbody>
         <tr v-for="(supplier, index) in info" :key="index">
-          <td>{{ supplier.id }}</td>
+          <th scope="row">{{ supplier.id }}</th>
           <td>{{ supplier.name }}</td>
           <td>{{ supplier.category }}</td>
           <td>{{ supplier.telephone }}</td>
           <td>{{ supplier.address }}</td>
           <td>{{ supplier.registrationDate }}</td>
           <td></td>
-          <td>
+          <td class="editar-excluir">
             <button
               type="button"
-              class="btn btn-light"
+              class="btn btn-light btn-sm small"
               title="Editar"
               @click="editSupplier"
-            >📝</button>
-
+            ><img src="../assets/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
-              class="btn btn-light"
+              class="btn btn-light btn-sm small"
               title="Excluir"
               @click="removeSupplier(supplier.name)"
-            >🗑️</button>
+            ><img src="../assets/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
       </tbody>
@@ -159,72 +201,37 @@ export default {
 
 .header-fornecedores {
   display: flex;
-  /* border: solid black 1px; */
   justify-content: space-between;
-  margin: 10px 90px 10px 90px;
+  margin: 10px 30px 10px 30px;
   padding-bottom: 5px;
-  border-bottom: solid #363A57 5px;
+  border-bottom: solid #212529 2px;
 }
 
-.titulo-fornecedores {
-  /* border: solid black 1px; */
-  padding: 10px 5px 0px 5px;
-  color: #363A57;
+.light-green {
+  /* background-color: #006400; */
+  /* background-color: #003300; */
+  background-color: #3D8B37;
+}
+
+.dark-grey {
+  background-color: #333333;
+}
+
+.editar-excluir {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.small img {
+  height: 15px;
+  width: 15px;
 }
 
 .main-fornecedores {
-  /* border: solid black 1px; */
-  margin: 10px 100px 10px 100px;
+  margin: 10px 30px 10px 30px;
 }
 
-th, tr {
-  padding: 5px 50px 5px 0px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  width: 1000px;
+.bold {
+  font-weight: bold;
 }
-
-.filtro-fornecedores {
-  /* border: solid black 1px; */
-  width: 80px;
-  background-color: #FFA500;
-  border: lightblue;
-  border-radius: 5px;
-}
-
-/* .formulario {
-  width: 400px;
-  border: solid #363A57 5px;
-  border-radius: 10px;
-  padding: 10px;
-  margin-left: 90px;
-} */
-
-/* .formulario input, label {
-  margin: 10px 5px 5px 10px;
-  padding-left: 0px;
-} */
-
-/* .botoes-formulario {
-  display: flex;
-  justify-content: space-around;
-} */
-
-.modal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.2);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal > div {
-  background-color: #fff;
-  padding: 200px;
-  border-radius: 10px;
-}
-
 </style>
