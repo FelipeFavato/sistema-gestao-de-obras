@@ -5,7 +5,6 @@ export default {
   data () {
     return {
       info: [],
-      openModal: false,
       name: '',
       category: '',
       telephone: '',
@@ -14,18 +13,13 @@ export default {
   },
 
   methods: {
-    // showForm () {
-    //   this.openModal = !this.openModal;
-    // },
     cancel() {
       this.name = '';
       this.category = '';
       this.telephone = '';
       this.address = '';
-      // this.showForm();
     },
-    addInfo(e) {
-      // e.preventDefault();
+    addInfo() {
       this.info.push({
         name: this.name,
         category: this.category,
@@ -37,7 +31,6 @@ export default {
     removeSupplier(nameToRemove) {
       const indexToRemove = this.info.findIndex(supplier => supplier.name === nameToRemove)
       this.info.splice(indexToRemove, 1);
-      // this.$forceUpdate();
     },
     editSupplier() {
 
