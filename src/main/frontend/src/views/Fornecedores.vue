@@ -28,11 +28,11 @@ export default {
         registrationDate: generateCorrectData()});
       this.cancel();
     },
-    removeSupplier(nameToRemove) {
+    remove(nameToRemove) {
       const indexToRemove = this.info.findIndex(supplier => supplier.name === nameToRemove)
       this.info.splice(indexToRemove, 1);
     },
-    editSupplier() {
+    edit() {
 
     },
   },
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-  <header class="header-fornecedores">
+  <header class="header middle-margin">
 
     <button
       type="button"
@@ -146,7 +146,7 @@ export default {
     </div>
   </div>
 
-  <main class="main-fornecedores">
+  <main class="middle-margin">
     <table class="table table-hover">
       <thead>
         <tr>
@@ -174,13 +174,13 @@ export default {
               type="button"
               class="btn btn-light btn-sm small"
               title="Editar"
-              @click="editSupplier"
+              @click="edit"
             ><img src="../assets/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Excluir"
-              @click="removeSupplier(supplier.name)"
+              @click="remove(supplier.name)"
             ><img src="../assets/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
@@ -192,10 +192,9 @@ export default {
 
 <style scope>
 
-.header-fornecedores {
+.header {
   display: flex;
   justify-content: space-between;
-  margin: 10px 30px 10px 30px;
   padding-bottom: 5px;
   border-bottom: solid #212529 2px;
 }
@@ -220,7 +219,7 @@ export default {
   width: 15px;
 }
 
-.main-fornecedores {
+.middle-margin {
   margin: 10px 30px 10px 30px;
 }
 

@@ -36,7 +36,7 @@ public class LocalUsoController {
 
   
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  // @CrossOrigin(origins = "*", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @PostMapping  // Crud - Create
   public void saveLocalUso(@RequestBody LocalUsoRequestDTO data) {
     // O parametro desse metodo é o body que veio da request do cliente
@@ -59,6 +59,7 @@ public class LocalUsoController {
   }
 
 
+  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
   @PutMapping  // crUd - Update
   @Transactional  // Método só deve ser executado se todas as transações tiverem sucesso
   public ResponseEntity<LocalUso> updateLocalUso(@RequestBody LocalUsoRequestDTO data){
@@ -81,6 +82,7 @@ public class LocalUsoController {
 
 
   // Deleta um localUso, passando codigoLocalUsoObra e nomeLocalUsoObra
+  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
   @DeleteMapping  // cruD - Delete
   public void deletaLocalUso(@RequestBody LocalUso localUso) {
     // Não tem retorno. Usa as informações do corpo da requisição, espera receber um LocalUso
