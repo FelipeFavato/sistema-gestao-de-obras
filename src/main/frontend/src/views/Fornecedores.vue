@@ -162,13 +162,13 @@ export default {
               class="btn btn-light btn-sm small"
               title="Editar"
               @click="edit"
-            ><img src="../assets/editar.png" alt="lata de lixo"></button>
+            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Excluir"
               @click="remove(supplier.name)"
-            ><img src="../assets/lata-de-lixo.png" alt="lata de lixo"></button>
+            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
       </tbody>

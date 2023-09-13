@@ -15,3 +15,12 @@
 
 //   herooku -> dino => Maquina que vai hospedar o projeto
 //   exclusão lógica => Desativa, não exclui de fato
+
+HEROKU - PAAS => Platform As A Service (Plataforma como serviço)
+
+alternativas gratuitas:
+  - Netlify
+  - CapRover (Open Source)
+  - Hostinger
+  - Catalyst.zoho
+  - Railway

@@ -79,7 +79,7 @@ export default {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <div class="modal-body">
+        <!-- <div class="modal-body">
           <div class="mb-3">
               <label for="id-input" class="form-label bold">Código:</label>
               <input
@@ -100,7 +100,7 @@ export default {
                 disabled
                 v-model="nomeLocalUsoObra">
             </div>
-        </div>
+        </div> -->
 
         <div class="modal-footer header">
           <button
