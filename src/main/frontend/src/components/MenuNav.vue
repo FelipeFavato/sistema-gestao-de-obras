@@ -27,7 +27,7 @@ const redirect = (path) => {
       </a>
 
 
-      <!-- Ativa Menu navegação => Celular -->
+      <!-- Ativa => Menu navegação Celular -->
       <button
         class="navbar-toggler"
         type="button"

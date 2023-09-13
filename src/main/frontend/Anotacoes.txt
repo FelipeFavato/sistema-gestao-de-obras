@@ -1,2 +1,17 @@
   BOOTSTRAP
 - Framework CSS responsivo
+
+// Proximos passos:
+//   model de custo
+//   relacionamento entre essas duas tabelas
+//   custo -> produto manyToOne()
+
+//   input type date | datetime--local => Controle padrao de data
+
+//   java.util.date -> ou date ou timestamp(data/hora)
+
+//   class='col -sm4'
+//   class='col -sm4'
+
+//   herooku -> dino => Maquina que vai hospedar o projeto
+//   exclusão lógica => Desativa, não exclui de fato

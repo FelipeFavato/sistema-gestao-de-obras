@@ -1,36 +1,5 @@
-<!-- Proximos passos:
-  model de custo
-  relacionamento entre essas duas tabelas
-  custo -> produto manyToOne()
-
-  input type date | datetime--local => Controle padrao de data
-
-  java.util.date -> ou date ou timestamp(data/hora)
-
-  class='col -sm4'
-  class='col -sm4'
-
-  herooku -> dino => Maquina que vai hospedar o projeto
-  exclusão lógica => Desativa, não exclui de fato
-  3 - Aprender como faz os métodos DELETE, PATCH -->
 <script>
-// import { defineComponent, onMounted, ref } from 'vue';
-// import API from '../utils/API.js'
 import axios from 'axios';
-
-// export default defineComponent({
-//   setup() {
-//     const infoDB = ref([]);
-
-//     const fetchInfoDB = () => {
-//       API.get("/localuso").then((response) => infoDB.value = response.data)
-//     };
-
-//     onMounted(fetchInfoDB);
-
-//     return { infoDB }
-//   },
-// })
 
 export default {
   data () {
@@ -91,8 +60,8 @@ export default {
 
 <template>
 
+  <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
-
     <button
       type="button"
       class="btn btn-success light-green"
@@ -242,7 +211,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin">
+  <main class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

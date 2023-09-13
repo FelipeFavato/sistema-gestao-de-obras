@@ -46,32 +46,18 @@ export default {
 </script>
 
 <template>
-  <header class="header middle-margin">
 
+  <!-- Header com o botão de +Novo -->
+  <header class="header middle-margin">
     <button
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
     >+ Novo Fornecedor</button>
-    
-    <!-- <div class="titulo-fornecedores">
-      <h5>Fornecedores</h5>
-    </div> -->
-
-      <!-- <label for="filtro"></label>
-      <select
-        id="filtro"
-        name="filtro"
-        class="filtro-fornecedores"
-      >
-        <option value="id">Código</option>
-        <option value="name">Nome</option>
-        <option value="category">Categoria</option>
-        <option value="recent">Recente</option>
-      </select> -->
   </header>
 
+  <!-- InsertModal -->
   <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
@@ -146,7 +132,8 @@ export default {
     </div>
   </div>
 
-  <main class="middle-margin">
+  <!-- Tabela -->
+  <main class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
@@ -196,7 +183,7 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  border-bottom: solid #212529 2px;
+  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
@@ -220,7 +207,7 @@ export default {
 }
 
 .middle-margin {
-  margin: 10px 30px 10px 30px;
+  margin: 10px 15px 10px 15px;
 }
 
 .bold {
