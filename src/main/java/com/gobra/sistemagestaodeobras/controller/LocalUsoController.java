@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 
 @RestController  // Essa notação indica que essa classe é um controller
-@RequestMapping("/localuso")  // Essa notação indica qual endpoint essa classe controla
+@RequestMapping("/api/localuso")  // Essa notação indica qual endpoint essa classe controla
 public class LocalUsoController {
 
   // Essa notação indica para o spring que é ele quem vai fazer a injeção
@@ -36,7 +35,7 @@ public class LocalUsoController {
 
   
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  // @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @PostMapping  // Crud - Create
   public void saveLocalUso(@RequestBody LocalUsoRequestDTO data) {
     // O parametro desse metodo é o body que veio da request do cliente
@@ -47,7 +46,7 @@ public class LocalUsoController {
 
 
   // Ajuda na conexão com o Front. "*" = permite a conexão de todas as origens
-  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
+  // @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")  // trocar origins = "http://localhost/8080" (mais seguro)
   @GetMapping  // cRud - Read
   public List<LocalUsoResponseDTO> getAll() {
     // Como transformar a entidade criada em um DTO?
@@ -59,7 +58,7 @@ public class LocalUsoController {
   }
 
 
-  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
+  // @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
   @PutMapping  // crUd - Update
   @Transactional  // Método só deve ser executado se todas as transações tiverem sucesso
   public ResponseEntity<LocalUso> updateLocalUso(@RequestBody LocalUsoRequestDTO data){
@@ -82,7 +81,7 @@ public class LocalUsoController {
 
 
   // Deleta um localUso, passando codigoLocalUsoObra e nomeLocalUsoObra
-  @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
+  // CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
   @DeleteMapping  // cruD - Delete
   public void deletaLocalUso(@RequestBody LocalUso localUso) {
     // Não tem retorno. Usa as informações do corpo da requisição, espera receber um LocalUso

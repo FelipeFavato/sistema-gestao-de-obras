@@ -1,4 +1,19 @@
 <!-- Proximos passos:
+  model de custo
+  relacionamento entre essas duas tabelas
+  custo -> produto manyToOne()
+
+  funcao confirm do JS
+
+  input type date | datetime--local => Controle padrao de data
+
+  java.util.date -> ou date ou timestamp(data/hora)
+
+  class='col -sm4'
+  class='col -sm4'
+
+  herooku -> dino => Maquina que vai hospedar o projeto
+  exclusão lógica => Desativa, não exclui de fato
   3 - Aprender como faz os métodos DELETE, PATCH
   4 - Usar o CrossOrigins no BACKEND para todos os Métodos -->
 <script>
@@ -26,6 +41,7 @@ export default {
       info: [],
       codigoLocalUsoObra: '',
       nomeLocalUsoObra: '',
+      deleteAlert: false,
     };
   },
 
@@ -35,11 +51,11 @@ export default {
       this.nomeLocalUsoObra = '';
     },
     fetchInfoDB () {
-      axios.get("http://localhost:8080/localuso").then(
+      axios.get("/api/localuso").then(
         (res) => this.info = res.data.sort((s1, s2) => s1.codigoLocalUsoObra - s2.codigoLocalUsoObra))
     },
     createInfoDB () {
-      axios.post("http://localhost:8080/localuso", 
+      axios.post("/api/localuso", 
       {
         nomeLocalUsoObra: this.nomeLocalUsoObra
       }).then(() => this.fetchInfoDB());
@@ -50,7 +66,7 @@ export default {
       this.nomeLocalUsoObra = nome;
     },
     updateInfoDB (codigo, nome) {
-      axios.put("http://localhost:8080/localuso",
+      axios.put("/api/localuso",
         {
           codigoLocalUsoObra: Number(codigo),
           nomeLocalUsoObra: nome
@@ -58,15 +74,19 @@ export default {
       this.cancel();
     },
     removeFromDB(codigo) {
-      axios.delete("http://localhost:8080/localuso", {
+      axios.delete("/api/localuso", {
         headers: {
           Authorization: ''
         },
         data: {
-          codigoLocalUsoObra: codigo
+          codigoLocalUsoObra: Number(codigo)
         }
       }).then(() => this.fetchInfoDB())
+      this.cancel();
     },
+    openDeleteAlert () {
+      this.deleteAlert = true;
+    }
   },
 
   mounted () {
@@ -77,6 +97,7 @@ export default {
 </script>
 
 <template>
+
   <header class="header middle-margin">
 
     <button
@@ -86,6 +107,8 @@ export default {
       data-bs-target="#insertModal"
     >+ Novo Local de Uso</button>
   </header>
+
+  <!-- DeleteModal -->
 
   <!-- InsertModal -->
   <div class="modal" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
@@ -176,6 +199,7 @@ export default {
     </div>
   </div>
 
+  <!-- Tabela -->
   <main class="middle-margin">
     <table class="table table-hover">
       <thead>
@@ -207,18 +231,19 @@ export default {
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
               @click="fillUpdateModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
-            ><img src="../assets/editar.png" alt="lata de lixo"></button>
+            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Excluir"
               @click="removeFromDB(localUso.codigoLocalUsoObra)"
-            ><img src="../assets/lata-de-lixo.png" alt="lata de lixo"></button>
+            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
       </tbody>
     </table>
   </main>
+
 </template>
 
 <style scope>

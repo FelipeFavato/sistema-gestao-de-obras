@@ -120,7 +120,7 @@ export default {
                 class="form-select"
                 id="category-select"
                 v-model="category">
-                <option value="M">Material</option>
+                <option value="Material">Material</option>
                 <option value="S">Serviço</option>
                 <option value="M/S">Material/Serviço</option>
               </select>

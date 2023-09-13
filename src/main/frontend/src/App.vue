@@ -16,10 +16,4 @@ import MenuNav from './components/MenuNav.vue';
 </template>
 
 <style scoped>
-
-
-.App-header {
-  background-color: #363A57;
-  /* background-color: #00008B; */
-}
 </style>

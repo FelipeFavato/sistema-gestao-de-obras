@@ -11,86 +11,77 @@ const redirect = (path) => {
 </script>
 
 <template>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container-fluid">
 
-  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-
-    <div class="menu-options">
-      <img
-        class="logo"
-        src="../assets/capacete.png"
-        alt="Logo"
+      <!-- Logo => link clicável para Home -->
+      <a
+        class="navbar-brand"
+        href="#"
       >
+        <img
+          class="logo"
+          src="../assets/imagens/capacete.png"
+          alt="Logo"
+        >
+      </a>
 
-      <button
-        type="button"
-        class="btn btn-ligth"
-        @click="redirect('/')"
-      >Início</button>
 
+      <!-- Ativa Menu navegação => Celular -->
       <button
+        class="navbar-toggler"
         type="button"
-        class="btn btn-ligth"
-        @click="redirect('/obra')"
-      >Obra</button>
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      ><span class="navbar-toggler-icon"></span>
+      </button>
 
-      <button
-        type="button"
-        class="btn btn-ligth"
-        @click="redirect('/obracusto')"
-      >ObraCusto</button>
+      <!-- Menu navegação - Rotas -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-      <button
-        type="button"
-        class="btn btn-ligth"
-        @click="redirect('/localuso')"
-      >LocalUso</button>
+          <li class="nav-item">
+            <a class="nav-link" href="#obra">Obra</a>
+          </li>
 
-      <button
-        type="button"
-        class="btn btn-ligth"
-        @click="redirect('/fornecedor')"
-      >Fornecedores</button>
+          <li class="nav-item">
+            <a class="nav-link" href="#obracusto">ObraCusto</a>
+          </li>
 
-      <button
-        type="button"
-        class="btn btn-ligth"
-        @click="redirect('/produtoservico')"
-      >ProdutoServiço</button>
+          <li class="nav-item">
+            <a class="nav-link" href="#localuso">Local de uso</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#fornecedor">Fornecedores</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#produtoservico">Produto/Serviço</a>
+          </li>
+
+        </ul>
+        <div class="d-flex separate">
+
+          <a class="nav-link small" href="#perfil" title="Perfil"><img src="../assets/imagens/perfil.png" alt="Perfil"></a>
+
+          <a class="nav-link small" href="#configuracoes" title="Configurações"><img src="../assets/imagens/engrenagem.png" alt="Engrenagem"></a>
+
+          <a class="nav-link small" href="#perfil" title="Sair"><img src="../assets/imagens/logout.png" alt="Sair"></a>
+        </div>
+      </div>
     </div>
 
-    <div class="perfil-configuracoes">
-      <button
-        type="button"
-        class="btn btn-light"
-        @click="redirect('/perfil')"
-        title="Perfil"
-        ><img src="../assets/perfil.png" alt="Perfil" class="">
-      </button>
-
-      <button
-        type="button"
-        class="btn btn-light"
-        @click="redirect('/configuracoes')"
-        title="Configurações"
-
-        ><img src="../assets/engrenagem.png" alt="Engrenagem">
-      </button>
-
-      <button
-        type="button"
-        class="btn btn-light"
-        title="Sair"
-        ><img src="../assets/logout.png" alt="Sair">
-      </button>
-    </div>
-    
   </nav>
-
 </template>
 
 <style scoped>
-nav {
-  height: 58px;
+.small img {
+  height: 25px;
+  width: 25px;
 }
 
 .logo {
@@ -98,42 +89,9 @@ nav {
   width: 50px;
 }
 
-.menu-options {
+.separate {
   display: flex;
-  width: 700px;
-  justify-content: space-between;
-  margin: -17px 0px 0px 5px;
-}
-
-.menu-options button {
-  background-color: transparent;
-  border: none;
-  margin-top: 10px;
-}
-.menu-options button:hover {
-  color: white;
-  font-size: 1.005em;
-}
-
-.perfil-configuracoes {
-  display: flex;
-  justify-content: flex-end;
-  width: 80px;
-  margin-bottom: 10px;
-}
-
-.perfil-configuracoes button {
-  display: flex;
-  background-color: transparent;
-  border: none;
-  height: 40px;
-  width: 100px;
-  margin-top: 10px;
-  margin-right: 5px;
-}
-
-.perfil-configuracoes button img {
-  height: 20px;
-  width: 20px;
+  justify-content: space-around;
+  width: 150px;
 }
 </style>
