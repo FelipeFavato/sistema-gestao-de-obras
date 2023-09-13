@@ -3,8 +3,6 @@
   relacionamento entre essas duas tabelas
   custo -> produto manyToOne()
 
-  funcao confirm do JS
-
   input type date | datetime--local => Controle padrao de data
 
   java.util.date -> ou date ou timestamp(data/hora)
@@ -14,8 +12,7 @@
 
   herooku -> dino => Maquina que vai hospedar o projeto
   exclusão lógica => Desativa, não exclui de fato
-  3 - Aprender como faz os métodos DELETE, PATCH
-  4 - Usar o CrossOrigins no BACKEND para todos os Métodos -->
+  3 - Aprender como faz os métodos DELETE, PATCH -->
 <script>
 // import { defineComponent, onMounted, ref } from 'vue';
 // import API from '../utils/API.js'
@@ -41,7 +38,6 @@ export default {
       info: [],
       codigoLocalUsoObra: '',
       nomeLocalUsoObra: '',
-      deleteAlert: false,
     };
   },
 
@@ -61,7 +57,7 @@ export default {
       }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    fillUpdateModal (codigo, nome) {
+    fillUpdateDeleteModal (codigo, nome) {
       this.codigoLocalUsoObra = codigo;
       this.nomeLocalUsoObra = nome;
     },
@@ -84,9 +80,6 @@ export default {
       }).then(() => this.fetchInfoDB())
       this.cancel();
     },
-    openDeleteAlert () {
-      this.deleteAlert = true;
-    }
   },
 
   mounted () {
@@ -109,6 +102,55 @@ export default {
   </header>
 
   <!-- DeleteModal -->
+  <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                placeholder=""
+                disabled
+                v-model="codigoLocalUsoObra">
+            </div>
+            <div class="mb-3">
+              <label for="category-input" class="form-label bold">Categoria:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="category-input"
+                placeholder=""
+                disabled
+                v-model="nomeLocalUsoObra">
+            </div>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancel"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeFromDB(this.codigoLocalUsoObra)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- InsertModal -->
   <div class="modal" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
@@ -230,13 +272,15 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
+              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Excluir"
-              @click="removeFromDB(localUso.codigoLocalUsoObra)"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
@@ -252,7 +296,7 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  border-bottom: solid #212529 2px;
+  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
@@ -276,7 +320,7 @@ export default {
 }
 
 .middle-margin {
-  margin: 10px 30px 10px 30px;
+  margin: 10px 15px 10px 15px;
 }
 
 .bold {
