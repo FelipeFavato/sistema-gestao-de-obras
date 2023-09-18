@@ -1,5 +1,5 @@
 <script>
-import { generateCorrectData } from '../utils/dataFormatada.js'
+// import { generateCorrectData } from '../utils/dataFormatada.js'
 
 export default {
   data () {
@@ -25,7 +25,7 @@ export default {
         category: this.category,
         telephone: this.telephone,
         address: this.address,
-        registrationDate: generateCorrectData()});
+        registrationDate: ''});
       this.cancel();
     },
     remove(nameToRemove) {
