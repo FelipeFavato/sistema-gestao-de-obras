@@ -1,5 +1,5 @@
 <script>
-// import { generateCorrectData } from '../utils/dataFormatada.js'
+// import { generateCorrectData } from '../utils/dataFormatada.js '
 
 export default {
   data () {
