@@ -3,13 +3,17 @@
 
 package com.gobra.sistemagestaodeobras.dto;
 
+import java.util.Date;
+
 import com.gobra.sistemagestaodeobras.model.LocalUso;
 
 public record LocalUsoResponseDTO(
 
   Integer codigoLocalUsoObra,
   
-  String nomeLocalUsoObra
+  String nomeLocalUsoObra,
+
+  Date dataDesativacao
 
   ) {
 
@@ -17,7 +21,8 @@ public record LocalUsoResponseDTO(
     // O Lombok gerou os getters e setters dos atributos
     this(
       localUsoModel.getCodigoLocalUsoObra(),
-      localUsoModel.getNomeLocalUsoObra()
+      localUsoModel.getNomeLocalUsoObra(),
+      localUsoModel.getDataDesativacao()
     );
   }
 }

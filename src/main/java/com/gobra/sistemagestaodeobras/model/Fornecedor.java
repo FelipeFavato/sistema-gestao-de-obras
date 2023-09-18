@@ -32,13 +32,13 @@ public class Fornecedor {
   @SequenceGenerator(name = "seq_generator_fornecedor", sequenceName = "SEQUENCIA_FORNECEDOR", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
-  @Column(name = "nome", length = 30)
+  @Column(name = "nome", length = 30, unique = true)
   private String nome;
 
-  @Column(name = "telefone", length = 20) 
+  @Column(name = "telefone", length = 20, unique = true) 
   private String telefone;
 
-  @Column(name = "endereço", length = 100)
+  @Column(name = "endereço", length = 100, unique = true)
   private String endereco;
 
   @Column(name = "tipo_fornecedor", length = 1)

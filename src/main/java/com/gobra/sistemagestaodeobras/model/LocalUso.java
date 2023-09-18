@@ -3,6 +3,8 @@
 
 package com.gobra.sistemagestaodeobras.model;
 
+import java.util.Date;
+
 import com.gobra.sistemagestaodeobras.dto.LocalUsoRequestDTO;
 
 import jakarta.persistence.Column;
@@ -12,6 +14,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,10 +43,15 @@ public class LocalUso {
   private Integer codigoLocalUsoObra;
 
   // @column => Especifica o nome da coluna na tabela
-  @Column(name = "nome_local_uso_obra", length = 30)
+  @Column(name = "nome_local_uso_obra", length = 30, unique = true)
   private String nomeLocalUsoObra;
+
+  @Column(name = "data_desativacao", length = 30)
+  @Temporal(TemporalType.DATE) // TemporalType.DATE armazena apenas a data, sem informações de HORA
+  private Date dataDesativacao;
 
   public LocalUso(LocalUsoRequestDTO data) {
     this.nomeLocalUsoObra = data.nomeLocalUsoObra();
+    this.dataDesativacao = data.dataDesativacao();
   }
 }

@@ -71,6 +71,7 @@ public class LocalUsoController {
       LocalUso localUso = optionalLocalUso.get();
       // Seta o nomeLocalUsoObra por meio do setter definido na Model
       localUso.setNomeLocalUsoObra(data.nomeLocalUsoObra());
+      localUso.setDataDesativacao(data.dataDesativacao());
       // Retorna a resposta em fora de ResponseEntity
       return ResponseEntity.ok(localUso);
     } else {

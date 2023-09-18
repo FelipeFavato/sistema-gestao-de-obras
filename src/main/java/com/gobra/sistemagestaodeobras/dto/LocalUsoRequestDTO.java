@@ -4,6 +4,7 @@ package com.gobra.sistemagestaodeobras.dto;
 // import jakarta.validation.constraints.NotBlank;
 // import jakarta.validation.constraints.NotNull;
 
+import java.util.Date;
 
 // Por ser um record, o Java ja faz automaticamente os metodos de GET
 public record LocalUsoRequestDTO (
@@ -12,5 +13,8 @@ public record LocalUsoRequestDTO (
 
   // @NotBlank  // => Validacao do requestBody
   // @NotNull  // => Validacao do requestBody
-  String nomeLocalUsoObra
+  String nomeLocalUsoObra,
+
+  Date dataDesativacao
+
 ) { }

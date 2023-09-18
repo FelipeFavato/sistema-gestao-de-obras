@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import transformDate from '../utils/transformDate'
 
 export default {
   data () {
@@ -7,6 +8,7 @@ export default {
       info: [],
       codigoLocalUsoObra: '',
       nomeLocalUsoObra: '',
+      dataDesativacao: null,
     };
   },
 
@@ -22,23 +24,26 @@ export default {
     createInfoDB () {
       axios.post("/api/localuso", 
       {
-        nomeLocalUsoObra: this.nomeLocalUsoObra
+        nomeLocalUsoObra: this.nomeLocalUsoObra,
+        dataDesativacao: null
       }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome) {
+    fillUpdateDeleteModal (codigo, nome, data) {
       this.codigoLocalUsoObra = codigo;
       this.nomeLocalUsoObra = nome;
+      this.dataDesativacao = data;
     },
-    updateInfoDB (codigo, nome) {
+    updateInfoDB (codigo, nome, data) {
       axios.put("/api/localuso",
         {
           codigoLocalUsoObra: Number(codigo),
-          nomeLocalUsoObra: nome
+          nomeLocalUsoObra: nome,
+          dataDesativacao: transformDate(data)
         }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    removeFromDB(codigo) {
+    removeFromDB (codigo) {
       axios.delete("/api/localuso", {
         headers: {
           Authorization: ''
@@ -49,6 +54,19 @@ export default {
       }).then(() => this.fetchInfoDB())
       this.cancel();
     },
+    brazilDate (data) {
+      if (data === null) {
+        return null
+      }
+
+      let partes = data.split("-");
+
+      if (partes.length === 3) {
+          return `${partes[2]}-${partes[1]}-${partes[0]}`;
+      } else {
+          return null;
+      }
+    }
   },
 
   mounted () {
@@ -138,7 +156,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="category-input"
-                placeholder="Alvenaria, Ferragens, etc..."
+                placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra">
             </div>
           </form>
@@ -194,6 +212,16 @@ export default {
                 v-model="nomeLocalUsoObra">
             </div>
 
+            <div class="mb-3">
+              <label for="dataDesativacao-input" class="form-label bold">Data de Desativação:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dataDesativacao-input"
+                placeholder="Ativo"
+                v-model="dataDesativacao">
+            </div>
+
           </form>
         </div>
 
@@ -203,7 +231,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigoLocalUsoObra, this.nomeLocalUsoObra)"
+            @click="updateInfoDB(this.codigoLocalUsoObra, this.nomeLocalUsoObra, this.dataDesativacao)"
           >Salvar</button>
         </div>
       </div>
@@ -217,7 +245,7 @@ export default {
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Categoria</th>
-          <th></th>
+          <th scope="col">Data de desativação</th>
           <th></th>
           <th></th>
           <th></th>
@@ -229,7 +257,7 @@ export default {
         <tr v-for="(localUso, i) in info" :key="i">
           <th scope="row">{{ localUso.codigoLocalUsoObra }}</th>
           <td>{{ localUso.nomeLocalUsoObra }}</td>
-          <td></td>
+          <td>{{ this.brazilDate(localUso.dataDesativacao) }}</td>
           <td></td>
           <td></td>
           <td></td>
@@ -241,7 +269,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
+              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra, localUso.dataDesativacao)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
