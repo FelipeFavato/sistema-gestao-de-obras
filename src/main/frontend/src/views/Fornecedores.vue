@@ -62,6 +62,19 @@ export default {
       }).then(() => this.fetchInfoDB())
       this.cancel();
     },
+    fixTelNumber(numero) {
+      // Remove todos os caracteres não numéricos do número de telefone
+      const numeroLimpo = numero.replace(/\D/g, '');
+
+      // Verifica se o número tem 11 dígitos
+      if (numeroLimpo.length === 11) {
+          // Formata o número de telefone
+          return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7)}`;
+      }
+      if (numeroLimpo.length === 10) {
+        return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`
+      }
+    }
   },
 
   mounted () {
@@ -311,7 +324,7 @@ export default {
           <th scope="row">{{ fornecedor.codigo }}</th>
           <td>{{ fornecedor.nome }}</td>
           <td>{{ fornecedor.tipoFornecedor }}</td>
-          <td>{{ fornecedor.telefone }}</td>
+          <td>{{ this.fixTelNumber(fornecedor.telefone) }}</td>
           <td>{{ fornecedor.endereco }}</td>
           <td></td>
           <td></td>
