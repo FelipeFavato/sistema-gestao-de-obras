@@ -29,7 +29,7 @@ const redirect = (path) => {
         class="navbar-brand"
         href="#"
       >HUB 
-        <p class="constr">Constr.</p>
+        <p class="constr">Construções</p>
         
       </a>
 

@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios';
-import transformDate from '../utils/transformDate'
+// import transformDate from '../utils/transformDate'
 
 export default {
   data () {
@@ -39,7 +39,7 @@ export default {
         {
           codigoLocalUsoObra: Number(codigo),
           nomeLocalUsoObra: nome,
-          dataDesativacao: transformDate(data)
+          dataDesativacao: data
         }).then(() => this.fetchInfoDB());
       this.cancel();
     },
@@ -67,9 +67,6 @@ export default {
           return null;
       }
     },
-    fixTimeZone () {
-
-    }
   },
 
   mounted () {

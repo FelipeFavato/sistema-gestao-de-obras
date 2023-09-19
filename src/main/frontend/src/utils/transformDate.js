@@ -12,4 +12,16 @@ const transformDate = (data) => {
   }
 }
 
+// const fixTimeZone = (data) => {
+//   let date = data
+//   const currentHour = new Date().getHours();
+//   if (currentHour >= 12) {
+//     return date
+//   }
+//   if (currentHour < 12) {
+//     date = transformDate(data)
+//     return date
+//   }
+// }
+
 export default transformDate;
