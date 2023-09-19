@@ -11,10 +11,10 @@ const redirect = (path) => {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary margin-bottom" data-bs-theme="dark">
     <div class="container-fluid">
 
-      <!-- Logo => link clicável para Home -->
+      <!-- Logo/Nome => link clicável para Home -->
       <a
         class="navbar-brand"
         href="#"
@@ -24,6 +24,13 @@ const redirect = (path) => {
           src="../assets/imagens/capacete.png"
           alt="Logo"
         >
+      </a>
+      <a
+        class="navbar-brand"
+        href="#"
+      >HUB 
+        <p class="constr">Constr.</p>
+        
       </a>
 
 
@@ -44,23 +51,23 @@ const redirect = (path) => {
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
           <li class="nav-item">
-            <a class="nav-link" href="#obra">Obra</a>
+            <a class="nav-link" href="#obra">Obras</a>
           </li>
 
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#obracusto">ObraCusto</a>
-          </li>
+          </li> -->
 
-          <li class="nav-item">
-            <a class="nav-link" href="#localuso">Local de uso</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#fornecedor">Fornecedores</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#produtoservico">Produto/Serviço</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Apoio
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#fornecedor">Fornecedores</a></li>
+              <li><a class="dropdown-item" href="#localuso">Local de uso</a></li>
+              <!-- <li><hr class="dropdown-divider"></li> -->
+              <li><a class="dropdown-item" href="#produtoservico">Produto/Serviço</a></li>
+            </ul>
           </li>
 
         </ul>
@@ -79,6 +86,7 @@ const redirect = (path) => {
 </template>
 
 <style scoped>
+
 .small img {
   height: 25px;
   width: 25px;
@@ -93,5 +101,10 @@ const redirect = (path) => {
   display: flex;
   justify-content: space-around;
   width: 150px;
+}
+
+.constr {
+  font-size: small;
+  margin-bottom: 0.1px;
 }
 </style>

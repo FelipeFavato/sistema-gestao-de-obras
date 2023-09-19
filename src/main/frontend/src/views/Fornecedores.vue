@@ -1,45 +1,72 @@
 <script>
-// import { generateCorrectData } from '../utils/dataFormatada.js '
+import axios from 'axios';
 
 export default {
   data () {
     return {
       info: [],
-      name: '',
-      category: '',
-      telephone: '',
-      address: ''
+      nome: '',
+      tipoFornecedor: '',
+      telefone: '',
+      endereco: ''
     };
   },
 
   methods: {
     cancel() {
-      this.name = '';
-      this.category = '';
-      this.telephone = '';
-      this.address = '';
+      this.nome = '';
+      this.telefone = '';
+      this.endereco = '';
+      this.tipoFornecedor = '';
     },
-    addInfo() {
-      this.info.push({
-        name: this.name,
-        category: this.category,
-        telephone: this.telephone,
-        address: this.address,
-        registrationDate: ''});
+    fetchInfoDB () {
+      axios.get("/api/fornecedor").then(
+        (res) => this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+    },
+    createInfoDB () {
+      axios.post("api/fornecedor",
+      {
+        nome: this.nome,
+        tipoFornecedor: this.tipoFornecedor,
+        telefone: this.telefone,
+        endereco: this.endereco
+      }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    remove(nameToRemove) {
-      const indexToRemove = this.info.findIndex(supplier => supplier.name === nameToRemove)
-      this.info.splice(indexToRemove, 1);
+    fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco) {
+      this.codigo = codigo;
+      this.nome = nome;
+      this.tipoFornecedor = tipoFornecedor;
+      this.telefone = telefone,
+      this.endereco = endereco;
     },
-    edit() {
-
+    updateInfoDB (codigo, nome, tipo, telefone, endereco) {
+      axios.put("/api/fornecedor",
+        {
+          codigo: Number(codigo),
+          nome: nome,
+          tipoFornecedor: tipo,
+          telefone: telefone,
+          endereco: endereco
+        }).then(() => this.fetchInfoDB());
+      this.cancel();
+    },
+    removeFromDB (codigo) {
+      axios.delete("/api/fornecedor", {
+        headers: {
+          Authorization: ''
+        },
+        data: {
+          codigo: Number(codigo)
+        }
+      }).then(() => this.fetchInfoDB())
+      this.cancel();
     },
   },
 
-  // onMounted() {
-  //   console.log('Pagina montada - Montar tabela')
-  // }
+  mounted () {
+    this.fetchInfoDB()
+  }
 }
 
 
@@ -53,18 +80,70 @@ export default {
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
+      data-bs-target="#insertModal"
     >+ Novo Fornecedor</button>
   </header>
 
+  <!-- DeleteModal -->
+  <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- <div class="modal-body">
+          <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                placeholder=""
+                disabled
+                v-model="codigoLocalUsoObra">
+            </div>
+            <div class="mb-3">
+              <label for="category-input" class="form-label bold">Categoria:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="category-input"
+                placeholder=""
+                disabled
+                v-model="nomeLocalUsoObra">
+            </div>
+        </div> -->
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancel"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeFromDB(this.codigo)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- InsertModal -->
-  <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Novo Fornecedor</h1>
+          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Fornecedor</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
 
           <form action="POST">
@@ -75,19 +154,30 @@ export default {
                 type="text"
                 class="form-control"
                 id="name-input"
-                placeholder="Digite aqui"
-                v-model="name">
+                placeholder="Nome do Fornecedor"
+                v-model="nome">
             </div>
 
             <div class="mb-3">
-              <label for="telephone-input" class="form-label bold">Telefone:</label>
+              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <select
+                class="form-select"
+                id="tipoFornecedor-select"
+                v-model="tipoFornecedor">
+                <option value="M">Material</option>
+                <option value="S">Serviço</option>
+                <option value="A">Ambos</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="telefone-input" class="form-label bold">Telefone:</label>
               <input
                 type="text"
                 class="form-control"
-                id="telephone-input"
-                placeholder="(xx) xxxx-xxxx"
-                v-model="telephone"
-                >
+                id="telefone-input"
+                placeholder="Telefone (com DDD)"
+                v-model="telefone">
             </div>
 
             <div class="mb-3">
@@ -96,24 +186,13 @@ export default {
                 type="text"
                 class="form-control"
                 id="address-input"
-                placeholder="Avenida Exemplo, 000"
-                v-model="address">
+                placeholder="Avenida dos Fornecedores, 1000"
+                v-model="endereco">
             </div>
 
-            <div class="mb-3">
-              <label for="category-select" class="bold">Categoria:</label>
-              <select
-                class="form-select"
-                id="category-select"
-                v-model="category">
-                <option value="Material">Material</option>
-                <option value="S">Serviço</option>
-                <option value="M/S">Material/Serviço</option>
-              </select>
-            </div>
           </form>
-
         </div>
+
         <div class="modal-footer">
           <button
             type="button"
@@ -125,7 +204,87 @@ export default {
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
-            @click="addInfo"
+            @click="createInfoDB"
+          >Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UpdateModal -->
+  <div class="modal" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Fornecedor</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="PUT">
+
+            <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                disabled
+                v-model="codigo">
+            </div>
+
+            <div class="mb-3">
+              <label for="nome-input" class="form-label bold">Nome:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nome-input"
+                placeholder="Alvenaria, Ferragens, etc..."
+                v-model="nome">
+            </div>
+
+            <div class="mb-3">
+              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <select
+                class="form-select"
+                id="tipoFornecedor-select"
+                v-model="tipoFornecedor">
+                <option value="M">Material</option>
+                <option value="S">Serviço</option>
+                <option value="A">Ambos</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="telefone-input" class="form-label bold">Telefone:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="telefone-input"
+                placeholder="Telefone (com DDD)"
+                v-model="telefone">
+            </div>
+
+            <div class="mb-3">
+              <label for="endereco-input" class="form-label bold">Endereço:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="endereco-input"
+                placeholder="Avenida dos Fornecedores, 1000"
+                v-model="endereco">
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancel"
+          >Fechar</button>
+
+          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+            @click="updateInfoDB(this.codigo, this.nome, this.tipoFornecedor, this.telefone, this.endereco)"
           >Salvar</button>
         </div>
       </div>
@@ -142,32 +301,37 @@ export default {
           <th scope="col">Categoria</th>
           <th scope="col">Telefone</th>
           <th scope="col">Endereço</th>
-          <th scope="col">Data Cadastro</th>
+          <th></th>
           <th></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(supplier, index) in info" :key="index">
-          <th scope="row">{{ supplier.id }}</th>
-          <td>{{ supplier.name }}</td>
-          <td>{{ supplier.category }}</td>
-          <td>{{ supplier.telephone }}</td>
-          <td>{{ supplier.address }}</td>
-          <td>{{ supplier.registrationDate }}</td>
+        <tr v-for="(fornecedor, i) in info" :key="i">
+          <th scope="row">{{ fornecedor.codigo }}</th>
+          <td>{{ fornecedor.nome }}</td>
+          <td>{{ fornecedor.tipoFornecedor }}</td>
+          <td>{{ fornecedor.telefone }}</td>
+          <td>{{ fornecedor.endereco }}</td>
+          <td></td>
           <td></td>
           <td class="editar-excluir">
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Editar"
-              @click="edit"
+              data-bs-toggle="modal"
+              data-bs-target="#updateModal"
+              @click="fillUpdateDeleteModal(fornecedor.codigo, fornecedor.nome,
+              fornecedor.tipoFornecedor, fornecedor.telefone, fornecedor.endereco)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Excluir"
-              @click="remove(supplier.name)"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              @click="fillUpdateDeleteModal(fornecedor.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>

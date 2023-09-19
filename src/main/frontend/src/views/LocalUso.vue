@@ -66,6 +66,9 @@ export default {
       } else {
           return null;
       }
+    },
+    fixTimeZone () {
+
     }
   },
 
@@ -150,15 +153,17 @@ export default {
 
         <div class="modal-body">
           <form action="POST">
+
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Categoria:</label>
+              <label for="name-input" class="form-label bold">Categoria:</label>
               <input
                 type="text"
                 class="form-control"
-                id="category-input"
+                id="name-input"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra">
             </div>
+
           </form>
         </div>
 
@@ -191,13 +196,13 @@ export default {
 
         <div class="modal-body">
           <form action="PUT">
+
             <div class="mb-3">
               <label for="id-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
                 id="id-input"
-                placeholder=""
                 disabled
                 v-model="codigoLocalUsoObra">
             </div>
@@ -218,7 +223,6 @@ export default {
                 type="date"
                 class="form-control"
                 id="dataDesativacao-input"
-                placeholder="Ativo"
                 v-model="dataDesativacao">
             </div>
 
@@ -226,8 +230,8 @@ export default {
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary dark-grey"
-            data-bs-dismiss="modal" @click="cancel"
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancel"
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
@@ -277,7 +281,7 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra)"
+              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra, localUso.dataDesativacao)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
