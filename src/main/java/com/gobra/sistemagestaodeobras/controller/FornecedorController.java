@@ -56,7 +56,7 @@ public class FornecedorController {
 
       return ResponseEntity.ok(fornecedor);
     } else {
-        throw new EntityNotFoundException();
+      throw new EntityNotFoundException();
     }
   }
 

@@ -1,12 +1,12 @@
-// colunas Código, nome, telefone de contato,
-// endereço, tipo de fornecedor(Material, Serviço ou Ambos)
-
 package com.gobra.sistemagestaodeobras.model;
 
 import com.gobra.sistemagestaodeobras.dto.FornecedorRequestDTO;
+import com.gobra.sistemagestaodeobras.utils.TipoFornecedorEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,8 +41,9 @@ public class Fornecedor {
   @Column(name = "endereço", length = 100, unique = true)
   private String endereco;
 
-  @Column(name = "tipo_fornecedor", length = 1)
-  private String tipoFornecedor;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "tipo_fornecedor", length = 10)
+  private TipoFornecedorEnum tipoFornecedor;
 
   public Fornecedor(FornecedorRequestDTO data) {
     this.nome = data.nome();

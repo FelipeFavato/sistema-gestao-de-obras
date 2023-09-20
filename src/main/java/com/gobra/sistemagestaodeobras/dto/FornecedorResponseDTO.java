@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.dto;
 
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
+import com.gobra.sistemagestaodeobras.utils.TipoFornecedorEnum;
 
 public record FornecedorResponseDTO (
   
@@ -12,7 +13,7 @@ public record FornecedorResponseDTO (
 
   String endereco,
 
-  String tipoFornecedor
+  TipoFornecedorEnum tipoFornecedor
 
 ) {
 
