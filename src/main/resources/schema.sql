@@ -46,6 +46,8 @@
 -- 10. D ---> Deletar registros com base em uma condição especifica:
 --    DELETE FROM nome_da_tabela WHERE coluna = valor;
 
+-- 11. Toda vez que iniciar a aplicação, vai dropar a tabela. Não serve para o ambiente de produção:
+--    DROP TABLE IF EXISTS nome_da_tabela
 
 
 -- TIPOS DE DADOS => Letras maiusculas, minusculas ou combinação de ambas são aceitas. 
@@ -72,11 +74,16 @@
 -- 14. TIMESTAMP: 'YYYY-MM-DD HH:MI:SS.ssssss'. 'sssssss' representa as frações de segundos.
 
 
-DROP TABLE IF EXISTS obra;
+-- schema.sql => Convenção para procura de arquivos
+
+-- DROP TABLE IF EXISTS obra;
 
 CREATE TABLE obra (
   CODIGO BIGSERIAL PRIMARY KEY NOT NULL,
   NOME VARCHAR(30) NOT NULL,
   ENDERECO VARCHAR(40) NOT NULL,
-
+  DATAINICIO DATE NOT NULL,
+  DATAPREVISTAFIM DATE,
+  DATAREALFIM DATE,
+  CUSTOPREVISTO INTEGER
 )
