@@ -64,6 +64,9 @@ export default {
       this.cancel();
     },
     fixTelNumber(numero) {
+      if (numero === null) {
+        return ''
+      }
       // Remove todos os caracteres não numéricos do número de telefone
       const numeroLimpo = numero.replace(/\D/g, '');
 
@@ -75,7 +78,7 @@ export default {
       if (numeroLimpo.length === 10) {
         return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`
       }
-    }
+    },
   },
 
   mounted () {
