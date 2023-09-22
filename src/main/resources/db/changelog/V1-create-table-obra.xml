@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>   
+<!-- <?xml version="1.0" encoding="UTF-8"?>   
 <databaseChangeLog
    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -19,33 +19,33 @@
         <!-- NOME -->
 
         <column  name="nome"  type="VARCHAR(50)">
-          <constraints nullable="false"/>
+          <constraints  nullable="false"/>
         </column>
+
         <!-- ENDERECO -->
-
         <column  name="endereco"  type="VARCHAR(70)">
-          <constraints nullable="false"/>
-         <column/>
+          <constraints  nullable="false"/>
+        </column>
 
-         <!-- DATA INICIO -->
-        <column  name="data_inicio"  type="VARCHAR(50)">
-          <constraints nullable="false"/>
-        <column />
+        <!-- DATA INICIO -->
+        <column  name="data_inicio"  type="DATE">
+          <constraints  nullable="false"/>
+        </column>
 
         <!-- DATA PREVISTA FIM -->
-        <column  name="data_prevista_fim"  type="VARCHAR(50)">
-          <constraints nullable="false"/>
-        <column/>
+        <column  name="data_prevista_fim"  type="DATE">
+          <constraints  nullable="false"/>
+        </column>
 
         <!-- DATA FIM -->
-        <column  name="data_fim"  type="VARCHAR(50)">
-          <constraints nullable="false"/>
-        <column/>
+        <column  name="data_fim"  type="DATE">
+          <constraints  nullable="false"/>
+        </column>
 
         <!-- CUSTO PREVISTO -->
-        <column  name="custo_previsto"  type="VARCHAR(50)">
-          <constraints nullable="false"/>
-        <column/>
+        <column  name="custo_previsto"  type="INTEGER">
+          <constraints  nullable="false"/>
+        </column>
       </createTable>
    </changeSet>
 
@@ -53,4 +53,4 @@
     <createSequence sequenceName="sq_obra" incrementBy="1" startValue="1"/>
    </changeSet>
 
-</databaseChangeLog>
+</databaseChangeLog> -->
