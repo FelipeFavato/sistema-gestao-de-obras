@@ -1,4 +1,4 @@
-package com.gobra.sistemagestaodeobras.DAO;
+package com.gobra.sistemagestaodeobras.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -74,6 +74,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO{
 
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+    // https://www.digitalocean.com/community/tutorials/spring-jdbc-example#spring-jdbctemplate-example
     // O método queryForObject esta depreciado e precisa ser alterado por outro
     // https://www.baeldung.com/spring-boot-replace-deprecated-jdbctemplate-queryforobject-query
     Obra obra = jdbcTemplate.queryForObject(query, new Object[]{codigo}, new RowMapper<Obra>() {

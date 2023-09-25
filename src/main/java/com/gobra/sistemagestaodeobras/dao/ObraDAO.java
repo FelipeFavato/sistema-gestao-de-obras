@@ -7,7 +7,7 @@
 //  - Interface DAO: Conjunto de métodos abstratos para acessar dados.
 //  - Implementação DAO: Implementação desses métodos abstratos. Classe responsavel
 //    por interafir diretamente com o banco de dados usando o JDBC.
-package com.gobra.sistemagestaodeobras.DAO;
+package com.gobra.sistemagestaodeobras.dao;
 
 import java.util.List;
 
