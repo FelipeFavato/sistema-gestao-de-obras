@@ -1,6 +1,6 @@
 package com.gobra.sistemagestaodeobras.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Obra {
   // private: Variável só pode ser acessada dentro da própria classe.
@@ -12,7 +12,7 @@ public class Obra {
   // 1L: O valor atribuido a variavel é 1L (um literal longo).
   // private static final Long serialVersionUID = 1L;
 
-  private Integer codigo;
+  private int codigo;
 
   private String nome;
 
@@ -48,11 +48,11 @@ public class Obra {
   // }
 
   // codigo => Getter e Setter
-  public Integer getCodigo() {
+  public int getCodigo() {
     return codigo;
   }
 
-  public void setCodigo(Integer codigo) {
+  public void setCodigo(int codigo) {
     this.codigo = codigo;
   }
 
