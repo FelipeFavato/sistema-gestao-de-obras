@@ -4,7 +4,9 @@ public enum TipoProdutoEnum {
 
   Material("Material"),
 
-  Serviço("Serviço");
+  Serviço("Serviço"),
+
+  TaxasImpostos("Taxas/Impostos");
 
   private String tipo;
 

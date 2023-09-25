@@ -52,6 +52,13 @@ export default {
           }
         }).then(() => this.fetchInfoDB());
       this.cancel();
+    },
+    fixTaxasImpostos(tipo) {
+      const Tipo = tipo
+      if (Tipo === "TaxasImpostos") {
+        return "Taxas/Impostos"
+      }
+      return Tipo
     }
   },
 
@@ -132,6 +139,7 @@ export default {
                 v-model="tipoProduto">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
+                <option value="TaxasImpostos">Taxas/Impostos</option>
               </select>
             </div>
 
@@ -197,6 +205,7 @@ export default {
                 v-model="tipoProduto">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
+                <option value="TaxasImpostos">Taxas/Impostos</option>
               </select>
             </div>
 
@@ -236,7 +245,7 @@ export default {
         <tr v-for="(produto, i) in info" :key="i">
           <th scope="row">{{ produto.codigo }}</th>
           <td>{{ produto.nome }}</td>
-          <td>{{ produto.tipoProduto }}</td>
+          <td>{{ fixTaxasImpostos(produto.tipoProduto) }}</td>
           <td></td>
           <td></td>
           <td></td>
