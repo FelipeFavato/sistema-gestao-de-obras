@@ -1,4 +1,4 @@
-<!-- <?xml version="1.0" encoding="UTF-8"?>   
+<?xml version="1.0" encoding="UTF-8"?>   
 <databaseChangeLog
    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,43 +9,33 @@
       http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
 
     <!-- O id deve ser único -->
-    <!-- codigo, nome, endereco, data inicio, data prevista fim, data fim, custo previsto -->
    <changeSet  author="felipe.favato"  id="0">
       <createTable tableName="obra">
         <!-- ID -->
-        <column  name="id"  autoIncrement="true" type="INTEGER">
+        <column  name="codigo"  autoIncrement="true" type="int">
           <constraints  nullable="false"  primaryKey="true"  unique="true"/>
         </column>
-        <!-- NOME -->
 
-        <column  name="nome"  type="VARCHAR(50)">
+        <!-- NOME -->
+        <column  name="nome"  type="VARCHAR(100)">
           <constraints  nullable="false"/>
         </column>
 
         <!-- ENDERECO -->
-        <column  name="endereco"  type="VARCHAR(70)">
-          <constraints  nullable="false"/>
-        </column>
+        <column  name="endereco"  type="VARCHAR(100)" />
 
         <!-- DATA INICIO -->
-        <column  name="data_inicio"  type="DATE">
-          <constraints  nullable="false"/>
-        </column>
+        <column  name="data_inicio"  type="DATE" />
 
         <!-- DATA PREVISTA FIM -->
-        <column  name="data_prevista_fim"  type="DATE">
-          <constraints  nullable="false"/>
-        </column>
+        <column  name="data_prevista_fim"  type="DATE" />
 
         <!-- DATA FIM -->
-        <column  name="data_fim"  type="DATE">
-          <constraints  nullable="false"/>
-        </column>
+        <column  name="data_real_fim"  type="DATE" />
 
         <!-- CUSTO PREVISTO -->
-        <column  name="custo_previsto"  type="INTEGER">
-          <constraints  nullable="false"/>
-        </column>
+        <column  name="custo_previsto"  type="INTEGER" />
+
       </createTable>
    </changeSet>
 
@@ -53,4 +43,4 @@
     <createSequence sequenceName="sq_obra" incrementBy="1" startValue="1"/>
    </changeSet>
 
-</databaseChangeLog> -->
+</databaseChangeLog>

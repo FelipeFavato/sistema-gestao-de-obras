@@ -57,7 +57,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
   public void save(Obra obra) {
     // Preciso passar o ID (codigo) na query? Teoricamente o banco vai gerar um automaticamente.
     // 1. String query: Query a, em formato de String, a ser realizada quando o serviço for acionado.
-    String query = "insert into Obra (codigo, nome, endereco, data_inicio, data_prevista_fim, data_real_fim, custo_previsto) values (?, ?, ?, ?, ?, ?, ?)";
+    String query = "insert into Obra (nome, endereco, data_inicio, data_prevista_fim, data_real_fim, custo_previsto) values (?, ?, ?, ?, ?, ?)";
 
     // 1. JdbcTemplate: Classe fornecida pelo Spring Framework que simplifica a execução
     //    de operações no banco de dados. Abstrai muitas das complexidades do JDBC,
@@ -73,7 +73,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
     // 2. new Object[] {obra.getCodigo(), ...}: Cria um novo array de objetos e inicializa
     //    esses objetos com os valores das propriedades do objeto obra.
     Object[] argumentos = new Object[] {
-      obra.getCodigo(),
+      // obra.getCodigo(),
       obra.getNome(),
       obra.getEndereco(),
       obra.getDataInicio(),

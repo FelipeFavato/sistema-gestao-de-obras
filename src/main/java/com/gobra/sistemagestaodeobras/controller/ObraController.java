@@ -25,8 +25,7 @@ public class ObraController {
   @Autowired
   private ObraDAOJDBCImplemented obraDAOJDBC;
 
-  // Funcionando 90%
-  //  Problema a ser corrigido: O campo 'codigo' precisa ser 'autoIncrement'
+  
   @PostMapping
   public void saveObra(@RequestBody ObraReqResDTO data) {
     Obra obraData = new Obra();
