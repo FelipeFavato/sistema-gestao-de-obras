@@ -157,10 +157,10 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
         obra.setCodigo(resultSet.getInt("codigo"));
         obra.setNome(resultSet.getString("nome"));
         obra.setEndereco(resultSet.getString("endereco"));
-        obra.setDataInicio(resultSet.getDate("dataInicio"));
-        obra.setDataPrevistaFim(resultSet.getDate("dataPrevistaFim"));
-        obra.setDataRealFim(resultSet.getDate("dataRealFim"));
-        obra.setCustoPrevisto(resultSet.getInt("custoPrevisto"));
+        obra.setDataInicio(resultSet.getDate("data_inicio"));
+        obra.setDataPrevistaFim(resultSet.getDate("data_prevista_fim"));
+        obra.setDataRealFim(resultSet.getDate("data_real_fim"));
+        obra.setCustoPrevisto(resultSet.getInt("custo_previsto"));
 
         return obra;
       }
@@ -289,7 +289,8 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
       obra.getDataInicio(),
       obra.getDataPrevistaFim(),
       obra.getDataRealFim(),
-      obra.getCustoPrevisto()
+      obra.getCustoPrevisto(),
+      obra.getCodigo()
     };
 
     int out = jdbcTemplate.update(query, args);
