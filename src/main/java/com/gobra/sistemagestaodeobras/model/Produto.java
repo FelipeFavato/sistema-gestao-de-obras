@@ -32,11 +32,11 @@ public class Produto {
   @SequenceGenerator(name = "seq_generator_produto", sequenceName = "SEQUENCIA_PRODUTO", initialValue = 1, allocationSize = 1)  
   private Integer codigo;
 
-  @Column(name = "nome", length = 30, unique = true)
+  @Column(name = "nome", length = 100, unique = true)
   private String nome;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "tipo_produto", length = 10)
+  @Column(name = "tipo_produto", length = 20)
   private TipoProdutoEnum tipoProduto;
 
   public Produto(ProdutoRequestDTO data) {
