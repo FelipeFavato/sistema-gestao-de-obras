@@ -14,25 +14,50 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import com.gobra.sistemagestaodeobras.model.Obra;
 
+
+// 1. @Component: Essa anotação é do Spring Framework e indica que a Classe 'ObraDAOJDBCImplemented'
+//    é um COMPONENTE gerenciado pelo Spring. Isso significa que o Spring cuidará da criação e
+//    configuração desta classe, permitindo a injeção de dependência e outros recursos do Spring.
+// 2. public class ObraDAOJDBCImplemented implements ObraDAO: Aqui é definida a classe
+//    'ObraDAOJDBCImplemented' que implementa a classe 'ObraDAO' devendo implementar os métodos desta.
+// BONUS: Oque é 'Injeção de Dependências'?
+//        Conceito importe no Spring Framework, que permite que os objetos dependentes sejam fornecidos
+//        externamente, geralmente através de configuração XML ou anotações, em vez de criá-los
+//        internamente na classe. As dependências de uma classe (ou seja, outros objetos que a classe
+//        precisa para funcionar) são fornecidas externamente em vez de serem criadas internamente
+//        pela classe, facilitando a substituição de componentes e promovendo a modularização do código.
+@Component
 public class ObraDAOJDBCImplemented implements ObraDAO {
   
+  // 1. private DataSource dataSource: Variável 'dataSource' do tipo 'DataSource'. Será usada para
+  //    acessar e manipular um banco de dados.
+  // 2. @Autowired: A anotação 'Autowired' é usada para realizar injeção de dependências de maneira
+  //    automática. Indica que uma determinada PROPRIEDADE, CONSTRUTOR ou MÉTODO de uma classe
+  //    precisa ser injetada com uma instância de outra classe.
+  @Autowired
 	private DataSource dataSource;
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+  // 1. public void setDataSource(DataSource dataSource) { ... }: Método publico chamado 'setDataSource',
+  //    que recebe como argumento um OBJETO do tipo 'DataSource'. Esse método é uma forma de injeção de
+  //    dependência, onde o Spring irá injetar uma instância de 'DataSource' para a classe
+  //    'ObraDAOJDBCImplemented'.
+	// public void setDataSource(DataSource dataSource) {
+	// 	this.dataSource = dataSource;
+	// }
 
   // 1. @Override: Esta anotação indica que o método está substituindo um método da classe pai ou uma interface.
   @Override
   public void save(Obra obra) {
     // Preciso passar o ID (codigo) na query? Teoricamente o banco vai gerar um automaticamente.
     // 1. String query: Query a, em formato de String, a ser realizada quando o serviço for acionado.
-    String query = "insert into Obra (codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoPrevisto) values(?, ?, ?, ?, ?, ?, ?)";
+    String query = "insert into Obra (codigo, nome, endereco, data_inicio, data_prevista_fim, data_real_fim, custo_previsto) values (?, ?, ?, ?, ?, ?, ?)";
 
     // 1. JdbcTemplate: Classe fornecida pelo Spring Framework que simplifica a execução
     //    de operações no banco de dados. Abstrai muitas das complexidades do JDBC,
@@ -44,7 +69,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
     //    configuração e conexão com o BD são fornecidas pelo dataSource.
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-    // 1. Object[] args: Cria um array de objetos chamado 'args'
+    // 1. Object[] argumentos: Cria um array de objetos chamado 'argumentos'
     // 2. new Object[] {obra.getCodigo(), ...}: Cria um novo array de objetos e inicializa
     //    esses objetos com os valores das propriedades do objeto obra.
     Object[] argumentos = new Object[] {
@@ -147,7 +172,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
   @Override
   public List<Obra> getAll() {
     // String query = "select codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoPrevisto from Obra";
-    String query = "select * from Obra";
+    String query = "select codigo, nome, endereco, data_inicio, data_prevista_fim, data_real_fim, custo_previsto from Obra";
   
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
   
@@ -157,7 +182,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
     // 3. new ArrayList<Obra>: Cria uma nova instância de uma lista do tipo ArrayList (lista dinâmica
     //    que pode adicionar ou remover elementos facilmente). A lista deve conter apenas objetos do tipo
     //    Obra.
-    List<Obra> ObraList = new ArrayList<Obra>(null);
+    List<Obra> ObraList = new ArrayList<Obra>();
   
     // 1. List<Map<String, Object>> ObraRows: Declara uma variável chamada ObraRows, que é uma lista
     //    do tipo List<Map<String, Object>>, que contem objetos de mapa, em que as chaves são STRINGS,
@@ -214,7 +239,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
       obra.setNome(String.valueOf(obraRow.get("nome")));
       obra.setEndereco(String.valueOf(obraRow.get("endereco")));
 
-      String dataInicioStr = String.valueOf(obraRow.get("dataInicio"));
+      String dataInicioStr = String.valueOf(obraRow.get("data_inicio"));
       Date dataInicio = null;
       try {
           dataInicio = dateFormat.parse(dataInicioStr);
@@ -223,7 +248,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
       }
       obra.setDataInicio(dataInicio);
 
-      String dataPrevistaFimStr = String.valueOf(obraRow.get("dataPrevistaFim"));
+      String dataPrevistaFimStr = String.valueOf(obraRow.get("data_prevista_fim"));
       Date dataPrevistaFim = null;
       try {
           dataPrevistaFim = dateFormat.parse(dataPrevistaFimStr);
@@ -232,7 +257,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
       }
       obra.setDataPrevistaFim(dataPrevistaFim);
 
-      String dataRealFimStr = String.valueOf(obraRow.get("dataRealFim"));
+      String dataRealFimStr = String.valueOf(obraRow.get("data_real_fim"));
       Date dataRealFim = null;
       try {
           dataRealFim = dateFormat.parse(dataRealFimStr);
@@ -241,7 +266,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
       }
       obra.setDataRealFim(dataRealFim);
 
-      obra.setCustoPrevisto(Integer.parseInt(String.valueOf(obraRow.get("custoPrevisto"))));
+      obra.setCustoPrevisto(Integer.parseInt(String.valueOf(obraRow.get("custo_previsto"))));
       ObraList.add(obra);
     }
 
@@ -251,7 +276,7 @@ public class ObraDAOJDBCImplemented implements ObraDAO {
 
   @Override
   public void update(Obra obra) {
-    String query = "update Obra set nome=?, endereco=?, dataInicio=?, dataPrevistaFim=?, dataRealFim=?, custoPrevisto=? where codigo=?";
+    String query = "update Obra set nome=?, endereco=?, data_inicio=?, data_prevista_fim=?, data_real_fim=?, custo_previsto=? where codigo=?";
 
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
