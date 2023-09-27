@@ -1,0 +1,21 @@
+<!-- Spring Bean -->
+<!-- Cria o DataSource e seta para a classe de Implementação do DAO -->
+<!-- Será que falta algo aqui? -->
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="https://www.springframework.org/schema/beans"
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="ObraDAOJDBCImplemented" class="com.gobra.sistemagestaodeobras.dao.ObraDAOJDBCImplemented">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://silly.db.elephantsql.com/pbnuamcd" />
+		<property name="username" value="pbnuamcd" />
+		<property name="password" value="azz81veY3rNtI6oTm5tmU6-AfHmTI_sx" />
+	</bean>
+
+</beans>
