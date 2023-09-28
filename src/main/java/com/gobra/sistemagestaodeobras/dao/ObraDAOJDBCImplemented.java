@@ -3,13 +3,8 @@
 
 package com.gobra.sistemagestaodeobras.dao;
 
-// import java.sql.ResultSet;
-// import java.sql.SQLException;
-// import java.text.ParseException;
-// import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-// import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +13,6 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-// import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.gobra.sistemagestaodeobras.model.Obra;

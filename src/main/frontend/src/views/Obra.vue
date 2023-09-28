@@ -168,7 +168,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="name-input"
-                placeholder="Nome da Obra"
+                placeholder="Projeto: "
                 v-model="nome">
             </div>
 
@@ -218,7 +218,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="custo-previsto-input"
-                placeholder="R$"
+                placeholder="R$... (inserir apenas números)"
                 v-model="custoPrevisto">
             </div>
 
@@ -320,7 +320,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="custo-previsto-input"
-                placeholder="R$"
+                placeholder="R$... (inserir apenas números)"
                 v-model="custoPrevisto">
             </div>
 
