@@ -2,6 +2,10 @@ package com.gobra.sistemagestaodeobras.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity(name = "obra")
 public class Obra {
   // private: Variável só pode ser acessada dentro da própria classe.
   // static: Variável pertence a classe em vez de a instâncias individuais.
@@ -12,6 +16,7 @@ public class Obra {
   // 1L: O valor atribuido a variavel é 1L (um literal longo).
   // private static final Long serialVersionUID = 1L;
 
+  @Id
   private int codigo;
 
   private String nome;

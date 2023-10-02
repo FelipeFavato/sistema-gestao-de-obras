@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <h2>ObraCusto</h2>
+  <h2>Compra</h2>
 </template>
 
 <style scope>
