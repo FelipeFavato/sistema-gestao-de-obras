@@ -2,6 +2,7 @@ package com.gobra.sistemagestaodeobras.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.CompraRequestDTO;
 
 // import jakarta.persistence.CascadeType;
@@ -48,11 +49,14 @@ public class Compra {
   // 2.3 referencedColumnName = "codigo": Especifica o nome da coluna na tabela da entidade relacionada
   //     que será usada como chave estrangeira. Ou seja a chave estrangeira "id_obra" na tabela "compra"
   //     será a coluna "codigo" da tabela "Obra".
-  // @ManyToOne(cascade = CascadeType.ALL)
-  // @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
-  // private Obra obra;
+  // @JsonIgnore: Quebra o loop de repetições entre as relações da tabela
+  @JsonIgnore
+  @ManyToOne  // (cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
+  private Obra obra;
 
-  @ManyToOne //(cascade = CascadeType.ALL)
+  @JsonIgnore
+  @ManyToOne  // (cascade = CascadeType.ALL)
   @JoinColumn(name = "id_fornecedor", referencedColumnName = "codigo")
   private Fornecedor fornecedor;
 
@@ -75,7 +79,7 @@ public class Compra {
 
 
   public Compra(CompraRequestDTO data) {
-    // this.obra = data.obra();
+    this.obra = data.obra();
     this.fornecedor = data.fornecedor();
     this.dataCompra = data.dataCompra();
     this.dataEntrega = data.dataEntrega();

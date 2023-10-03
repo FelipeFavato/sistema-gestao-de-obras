@@ -51,6 +51,7 @@ public class CompraController {
 
     if (optionalCompra.isPresent()) {
       Compra compra = optionalCompra.get();
+      compra.setObra(data.obra());
       compra.setFornecedor(data.fornecedor());
       compra.setDataCompra(data.dataCompra());
       compra.setDataEntrega(data.dataEntrega());

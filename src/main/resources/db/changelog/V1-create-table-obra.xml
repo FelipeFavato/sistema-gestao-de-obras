@@ -53,4 +53,10 @@
     <createSequence sequenceName="sq_obra" incrementBy="1" startValue="1"/>
    </changeSet>
 
+   <!-- <changeSet id="2" author="felipe.favato">
+    <addColumn tableName="obra">
+      <column name="compras" type="array" />
+    </addColumn>
+   </changeSet> -->
+
 </databaseChangeLog>

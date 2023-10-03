@@ -1,9 +1,13 @@
 package com.gobra.sistemagestaodeobras.model;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity(name = "obra")
 public class Obra {
@@ -30,6 +34,10 @@ public class Obra {
   private LocalDate dataRealFim;
 
   private Integer custoPrevisto;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "obra")
+  private List<Compra> compras;
 
   // Constructor => é necessário?
   // Teoricamente o codigo será gerado pelo Banco de Dados, então
@@ -113,6 +121,15 @@ public class Obra {
 
   public void setCustoPrevisto(Integer custoPrevisto) {
     this.custoPrevisto = custoPrevisto;
+  }
+
+  // Lista de Obras => Getter e Setter
+  public List<Compra> getCompras() {
+    return compras;
+  }
+
+  public void setCompras(List<Compra> compras) {
+    this.compras = compras;
   }
 
   // Método que fornece uma representação em formato de string legível
