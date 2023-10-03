@@ -3,13 +3,13 @@ package com.gobra.sistemagestaodeobras.dto;
 import java.util.Date;
 
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
-import com.gobra.sistemagestaodeobras.model.Obra;
+// import com.gobra.sistemagestaodeobras.model.Obra;
 
 public record CompraRequestDTO (
 
   Integer codigo,
 
-  Obra obra,
+  // Obra obra,
 
   Fornecedor fornecedor,
 
@@ -17,10 +17,10 @@ public record CompraRequestDTO (
 
   Date dataEntrega,
 
-  int valorOriginal,
+  Integer valorOriginal,
 
-  int valorDesconto,
+  Integer valorDesconto,
 
-  int valorFinal
+  Integer valorFinal
 
 ) { }

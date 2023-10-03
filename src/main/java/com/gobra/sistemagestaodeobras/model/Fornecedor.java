@@ -1,7 +1,8 @@
 package com.gobra.sistemagestaodeobras.model;
 
-// import java.util.List;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.FornecedorRequestDTO;
 import com.gobra.sistemagestaodeobras.utils.TipoFornecedorEnum;
 
@@ -12,7 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-// import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -49,15 +50,16 @@ public class Fornecedor {
   private TipoFornecedorEnum tipoFornecedor;
 
   // 1. OneToMany: Cada Fornecedor terá uma lista de compras atrelada a ele.
-  // @OneToMany
-  // private List<Compra> compras;
+  @JsonIgnore
+  @OneToMany(mappedBy = "fornecedor")
+  private List<Compra> compras;
 
   public Fornecedor(FornecedorRequestDTO data) {
     this.nome = data.nome();
     this.telefone = data.telefone();
     this.endereco = data.endereco();
     this.tipoFornecedor = data.tipoFornecedor();
-    // this.compras = data.compras();
+    this.compras = data.compras();
   }
 }
 

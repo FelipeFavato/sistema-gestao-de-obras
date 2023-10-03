@@ -4,13 +4,13 @@ import java.util.Date;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
-import com.gobra.sistemagestaodeobras.model.Obra;
+// import com.gobra.sistemagestaodeobras.model.Obra;
 
 public record CompraResponseDTO (
 
   Integer codigo,
 
-  Obra obra,
+  // Obra obra,
 
   Fornecedor fornecedor,
 
@@ -29,7 +29,7 @@ public record CompraResponseDTO (
   public CompraResponseDTO(Compra compraModel) {
     this(
       compraModel.getCodigo(),
-      compraModel.getObra(),
+      // compraModel.getObra(),
       compraModel.getFornecedor(),
       compraModel.getDataCompra(),
       compraModel.getDataEntrega(),

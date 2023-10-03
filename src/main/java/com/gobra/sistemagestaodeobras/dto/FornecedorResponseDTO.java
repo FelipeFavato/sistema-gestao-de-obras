@@ -1,5 +1,8 @@
 package com.gobra.sistemagestaodeobras.dto;
 
+import java.util.List;
+
+import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
 import com.gobra.sistemagestaodeobras.utils.TipoFornecedorEnum;
 
@@ -13,7 +16,9 @@ public record FornecedorResponseDTO (
 
   String endereco,
 
-  TipoFornecedorEnum tipoFornecedor
+  TipoFornecedorEnum tipoFornecedor,
+
+  List<Compra> compras
 
 ) {
 
@@ -23,7 +28,8 @@ public record FornecedorResponseDTO (
       fornecedorModel.getNome(),
       fornecedorModel.getTelefone(),
       fornecedorModel.getEndereco(),
-      fornecedorModel.getTipoFornecedor()
+      fornecedorModel.getTipoFornecedor(),
+      fornecedorModel.getCompras()
     );
   }
 

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.gobra.sistemagestaodeobras.dto.CompraRequestDTO;
 
+// import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,14 +40,20 @@ public class Compra {
   @SequenceGenerator(name = "compra_seq_generator", sequenceName = "COMPRA_SEQUENCIA", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
-  // 1. ManyToOne: MUITAS compras para UMA obra.
-  // 2. @JoinColumn(): Informa ao JPA que 'id_obra' será uma chave estrangeira.
-  @ManyToOne
-  @JoinColumn(name = "id_obra")
-  private Obra obra;
+  // 1.1 ManyToOne: MUITAS compras para UMA obra.
+  // 1.2 (cascade = CascadeType.ALL): Indica que qualquer operação de persistência (salvar, atualizar
+  //      ou excluir) realizada no objeto atual tambem será aplicada ao objeto relacionado.
+  // 2.1 @JoinColumn(): Informa ao JPA que 'id_obra' será uma chave estrangeira.
+  // 2.2 name = "id_obra":
+  // 2.3 referencedColumnName = "codigo": Especifica o nome da coluna na tabela da entidade relacionada
+  //     que será usada como chave estrangeira. Ou seja a chave estrangeira "id_obra" na tabela "compra"
+  //     será a coluna "codigo" da tabela "Obra".
+  // @ManyToOne(cascade = CascadeType.ALL)
+  // @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
+  // private Obra obra;
 
-  @ManyToOne
-  @JoinColumn(name = "id_fornecedor")
+  @ManyToOne //(cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_fornecedor", referencedColumnName = "codigo")
   private Fornecedor fornecedor;
 
   @Column(name = "data_compra", length = 30)
@@ -68,7 +75,7 @@ public class Compra {
 
 
   public Compra(CompraRequestDTO data) {
-    this.obra = data.obra();
+    // this.obra = data.obra();
     this.fornecedor = data.fornecedor();
     this.dataCompra = data.dataCompra();
     this.dataEntrega = data.dataEntrega();
