@@ -68,6 +68,14 @@ public class Compra {
   @Temporal(TemporalType.DATE)
   private Date dataEntrega;
 
+  @Column(name = "data_pagamento", length = 30)
+  @Temporal(TemporalType.DATE)
+  private Date dataPagamento;
+
+  @Column(name = "data_vencimento", length = 30)
+  @Temporal(TemporalType.DATE)
+  private Date dataVencimento;
+
   @Column(name = "valor_original", length = 30)
   private int valorOriginal;
 
@@ -83,6 +91,8 @@ public class Compra {
     this.fornecedor = data.fornecedor();
     this.dataCompra = data.dataCompra();
     this.dataEntrega = data.dataEntrega();
+    this.dataPagamento = data.dataPagamento();
+    this.dataVencimento = data.dataVencimento();
     this.valorOriginal = data.valorOriginal();
     this.valorDesconto = data.valorDesconto();
     this.valorFinal = data.valorFinal();

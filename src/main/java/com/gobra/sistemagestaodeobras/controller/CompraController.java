@@ -55,6 +55,8 @@ public class CompraController {
       compra.setFornecedor(data.fornecedor());
       compra.setDataCompra(data.dataCompra());
       compra.setDataEntrega(data.dataEntrega());
+      compra.setDataPagamento(data.dataPagamento());
+      compra.setDataVencimento(data.dataVencimento());
       compra.setValorOriginal(data.valorOriginal());
       compra.setValorDesconto(data.valorDesconto());
       compra.setValorFinal(data.valorFinal());

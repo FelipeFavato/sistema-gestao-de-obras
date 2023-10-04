@@ -18,6 +18,10 @@ public record CompraResponseDTO (
 
   Date dataEntrega,
 
+  Date dataPagamento,
+
+  Date dataVencimento,
+
   int valorOriginal,
 
   int valorDesconto,
@@ -33,6 +37,8 @@ public record CompraResponseDTO (
       compraModel.getFornecedor(),
       compraModel.getDataCompra(),
       compraModel.getDataEntrega(),
+      compraModel.getDataPagamento(),
+      compraModel.getDataVencimento(),
       compraModel.getValorOriginal(),
       compraModel.getValorDesconto(),
       compraModel.getValorFinal()

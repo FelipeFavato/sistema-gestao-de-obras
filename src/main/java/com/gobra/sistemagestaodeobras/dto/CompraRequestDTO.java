@@ -17,6 +17,10 @@ public record CompraRequestDTO (
 
   Date dataEntrega,
 
+  Date dataPagamento,
+
+  Date dataVencimento,
+
   Integer valorOriginal,
 
   Integer valorDesconto,
