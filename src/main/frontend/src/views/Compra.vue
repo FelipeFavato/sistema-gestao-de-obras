@@ -4,25 +4,70 @@ import axios from 'axios';
 export default {
   data () {
     return {
-      info: []
+      comprasInfo: [],
+      selectedComprasByObra: [],
+      obrasInfo: [],
+      selectedObra: ''
     }
   },
 
   methods: {
     fetchComprasInfoDB () {
       axios.get("/api/compra").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
-      )
+        (res) => this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+    },
+    fetchObrasInfoDB () {
+      axios.get("/api/obra").then(
+        (res) => this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+    },
+    selectComprasByObra (nomeObra) {
+      this.selectedObra = nomeObra;
+      this.selectedComprasByObra = [];
+      for (let compra of this.comprasInfo) {
+        if (compra.obra.nome === this.selectedObra) {
+          return this.selectedComprasByObra.push(compra);
+        }
+      }
     }
   },
 
   mounted () {
     this.fetchComprasInfoDB();
+    this.fetchObrasInfoDB();
   }
 }
 </script>
 
 <template>
+  
+  <!-- <div>{{ this.selectedComprasByObra }}</div> -->
+  <!-- Header -->
+  <header class="header middle-margin">
+    <!-- DropDown 'Obras' -->
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ selectedObra ? selectedObra : 'Obras' }}
+      </button>
+      <ul class="dropdown-menu">
+        <li v-for="(obra, i) in obrasInfo" :key="i">
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="selectComprasByObra(obra.nome)"
+            >{{ obra.nome }}</button>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="selectComprasByObra('')"
+          >Limpar</button>
+        </li>
+      </ul>
+    </div>
+  </header>
+
   <!-- Tabela -->
   <main class="middle-margin table-responsive">
     <table class="table table-hover">
@@ -40,7 +85,7 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(compra, i) in info" :key="i">
+        <tr v-for="(compra, i) in selectedComprasByObra" :key="i">
           <th scope="row">{{ compra.codigo }}</th>
           <td>{{ compra.obra.nome }}</td>
           <td>{{ compra.fornecedor.nome }}</td>
@@ -65,13 +110,14 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(fornecedor.codigo)"
+              @click="fillUpdateDeleteModal(compra.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
       </tbody>
     </table>
   </main>
+
 </template>
 
 <style scope>
