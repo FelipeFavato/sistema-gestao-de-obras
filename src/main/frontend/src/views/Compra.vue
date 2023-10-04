@@ -89,7 +89,7 @@ export default {
     fillObraForRequest () {
       for (let chosenObra of this.obrasInfo) {
         if (chosenObra.nome === this.selectedObraNome) {
-          return this.obra = chosenObra;
+          this.obra = chosenObra;
         }
       }
     },
@@ -98,7 +98,7 @@ export default {
     fillFornecedorForRequest () {
       for (let chosenFornecedor of this.fornecedoresInfo) {
         if (chosenFornecedor.nome === this.selectedFornecedorNome) {
-          return this.fornecedor = chosenFornecedor;
+          this.fornecedor = chosenFornecedor;
         }
       }
     },
@@ -116,24 +116,57 @@ export default {
       this.fillObraForRequest();
       this.emptySelectedComprasByObraArray();
       this.selectComprasByObra();
-    }, 
-    // Insere Nova Compra
+    },
+    // Método para preencher a modal de DELETE e UPDATE
+    fillUpdateDeleteModal (cod, obra, fornecedor, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+      this.codigo = cod;
+      this.obra = obra;
+      this.fornecedor = fornecedor;
+      this.dataCompra = dataC;
+      this.dataEntrega = dataE;
+      this.dataPagamento = dataP;
+      this.dataVencimento = dataV;
+      this.valorOriginal = valorO;
+      this.valorDesconto = valorD;
+      this.valorFinal = valorF;
+    },
+    // Método para inserir Nova Compra
+    createCompra () {
+      axios.post("/api/compra",
+        {
+          obra: this.obra,
+          fornecedor: this.fornecedor,
+          dataCompra: this.dataCompra,
+          dataEntrega: this.dataEntrega,
+          dataPagamento: this.dataPagamento,
+          dataVencimento: this.dataVencimento,
+          valorOriginal: this.valorOriginal,
+          valorDesconto: this.valorDesconto,
+          valorFinal: this.valorFinal
+        }).then(() => this.fetchComprasInfoDB());
+    },
+    // Insere nova compra
     createCompraInfoDB () {
       this.fillFornecedorForRequest();
-      axios.post("/api/compra",
-      {
-        obra: this.obra,
-        fornecedor: this.fornecedor,
-        dataCompra: this.dataCompra,
-        dataEntrega: this.dataEntrega,
-        dataPagamento: this.dataPagamento,
-        dataVencimento: this.dataVencimento,
-        valorOriginal: this.valorOriginal,
-        valorDesconto: this.valorDesconto,
-        valorFinal: this.valorFinal
-      }).then(() => this.fetchComprasInfoDB());
+      this.createCompra();
       this.cancel();
+      console.log(this.comprasInfo);
+      this.emptySelectedComprasByObraArray();
+      this.selectComprasByObra();
     },
+    // Remove Compra selecionada
+    removeCompraFromDB (codigo) {
+      axios.delete("/api/compra",
+        {
+          headers: {
+            Authorization: ''
+          },
+          data: {
+            codigo: Number(codigo)
+          }
+        }).then(() => this.fetchComprasInfoDB());
+      this.cancel();
+    }
   },
 
   mounted () {
@@ -147,7 +180,7 @@ export default {
 <template>
   
   <!-- <div>{{ this.selectedComprasByObra }}</div> -->
-  <!-- Header -->
+  <!-- Header com o DropDown 'Obras' -->
   <header class="header middle-margin">
     <!-- DropDown 'Obras' -->
     <div class="dropdown">
@@ -184,6 +217,34 @@ export default {
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
     >+ Nova Compra</button>
+  </div>
+
+    <!-- DeleteModal -->
+    <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancel"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeCompraFromDB(this.codigo)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- InsertModal -->
@@ -310,7 +371,7 @@ export default {
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
-            @click="createCompraInfoDB"
+            @click="createCompraInfoDB()"
           >Salvar</button>
         </div>
       </div>
