@@ -27,7 +27,7 @@ export default {
     },
     fetchInfoDB () {
       axios.get("/api/obra").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => this.info = res.data.sort((s1, s2) => s2.codigo - s1.codigo))
     },
     createInfoDB () {
       axios.post("/api/obra",
@@ -183,7 +183,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-inicio-input" class="form-label bold">Data de início:</label>
+              <label for="data-inicio-input" class="form-label bold">Data início:</label>
               <input
                 type="date"
                 class="form-control"
@@ -193,7 +193,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-prevista-fim-input" class="form-label bold">Data prevista fim:</label>
+              <label for="data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
               <input
                 type="date"
                 class="form-control"
@@ -203,7 +203,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-real-fim-input" class="form-label bold">Data real fim:</label>
+              <label for="data-real-fim-input" class="form-label bold">Data entrega:</label>
               <input
                 type="date"
                 class="form-control"
@@ -213,7 +213,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="custo-previsto-input" class="form-label bold">Custo Previsto:</label>
+              <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="text"
                 class="form-control"
@@ -286,7 +286,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-inicio-input" class="form-label bold">Data de início:</label>
+              <label for="data-inicio-input" class="form-label bold">Data início:</label>
               <input
                 type="date"
                 class="form-control"
@@ -295,7 +295,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-prevista-fim-input" class="form-label bold">Data prevista fim:</label>
+              <label for="data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
               <input
                 type="date"
                 class="form-control"
@@ -305,7 +305,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="data-real-fim-input" class="form-label bold">Data real fim:</label>
+              <label for="data-real-fim-input" class="form-label bold">Data entrega:</label>
               <input
                 type="date"
                 class="form-control"
@@ -315,7 +315,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="custo-previsto-input" class="form-label bold">Custo Previsto:</label>
+              <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="text"
                 class="form-control"
@@ -348,10 +348,10 @@ export default {
           <th scope="col">Código</th>
           <th scope="col">Nome</th>
           <th scope="col">Endereço</th>
-          <th scope="col">Data de Início</th>
-          <th scope="col">Data Prevista Fim</th>
-          <th scope="col">Data Real Fim</th>
-          <th scope="col">CustoPrevisto</th>
+          <th scope="col">Data início</th>
+          <th scope="col">Data entrega prevista</th>
+          <th scope="col">Data entrega</th>
+          <th scope="col">Custo previsto</th>
           <th></th>
         </tr>
       </thead>
