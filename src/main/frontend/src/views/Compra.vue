@@ -43,9 +43,9 @@ export default {
       dataEntrega: '',
       dataPagamento: '',
       dataVencimento: '',
-      valorOriginal: 0,
-      valorDesconto: 0,
-      valorFinal: 0,
+      valorOriginal: '',
+      valorDesconto: '',
+      valorFinal: '',
     }
   },
 
@@ -58,9 +58,9 @@ export default {
       this.dataEntrega = '';
       this.dataPagamento = '';
       this.dataVencimento = '';
-      this.valorOriginal = 0;
-      this.valorDesconto = 0;
-      this.valorFinal = 0;
+      this.valorOriginal = '';
+      this.valorDesconto = '';
+      this.valorFinal = '';
     },
     // Método GET - Compras.
     fetchComprasInfoDB () {
@@ -118,7 +118,8 @@ export default {
       this.selectComprasByObra();
     },
     // Método para preencher a modal de DELETE e UPDATE.
-    fillUpdateDeleteModal (cod, obra, fornecedor, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+    fillUpdateDeleteModal (cod, obra, fornecedor, dataC, dataE, dataP,
+      dataV, valorO, valorD, valorF, selectedFornecedorNome) {
       this.codigo = cod;
       this.obra = obra;
       this.fornecedor = fornecedor;
@@ -129,6 +130,7 @@ export default {
       this.valorOriginal = valorO;
       this.valorDesconto = valorD;
       this.valorFinal = valorF;
+      this.selectedFornecedorNome = selectedFornecedorNome;
     },
     // Método para inserir Nova Compra.
     createCompra () {
@@ -177,6 +179,33 @@ export default {
         this.selectComprasByObra();
       }, 250);
     },
+    // Método para atualizar uma Compra selecionada.
+    updateCompra (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+      axios.put("/api/compra",
+      {
+        codigo: Number(cod),
+        obra: this.obra,
+        fornecedor: this.fornecedor,
+        dataCompra: dataC,
+        dataEntrega: dataE,
+        dataPagamento: dataP,
+        dataVencimento: dataV,
+        valorOriginal: valorO,
+        valorDesconto: valorD,
+        valorFinal: valorF
+      }).then(() => this.fetchComprasInfoDB());
+    },
+    // Chama o método 'updateCompra' e repopula a lista corretamente.
+    updateCompraInfoDB (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+      this.fillObraForRequest();
+      this.fillFornecedorForRequest();
+      this.updateCompra(cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF);
+      this.cancel();
+      setTimeout(() => {
+        this.emptySelectedComprasByObraArray();
+        this.selectComprasByObra();
+      }, 250);
+      },
     // Método para apresentar valores monetários BRL corretamente.
     fixCurrency (dinheiroDouble) {
       if (dinheiroDouble === null) {
@@ -216,7 +245,6 @@ export default {
 
 <template>
   
-  <!-- <div>{{ this.selectedComprasByObra }}</div> -->
   <!-- Header com o DropDown 'Obras' -->
   <header class="header middle-margin">
     <!-- DropDown 'Obras' -->
@@ -256,8 +284,8 @@ export default {
     >+ Nova Compra</button>
   </div>
 
-    <!-- DeleteModal -->
-    <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <!-- DeleteModal -->
+  <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -368,7 +396,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="valor-original-input"
-                placeholder="R$... (inserir apenas números)"
+                placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal">
             </div>
 
@@ -379,7 +407,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="desconto-input"
-                placeholder="R$... (inserir apenas números)"
+                placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto">
             </div>
 
@@ -390,7 +418,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="valor-final-input"
-                placeholder="R$... (inserir apenas números)"
+                placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorFinal">
             </div>
 
@@ -409,6 +437,146 @@ export default {
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
             @click="createCompraInfoDB"
+          >Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UpdateModal -->
+  <div class="modal" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Compra</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="PUT">
+
+            <!-- Código -->
+            <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                disabled
+                v-model="codigo">
+            </div>
+
+            <!-- Obra -->
+            <div class="mb-3">
+              <label for="obra-select" class="bold">Obra:</label>
+              <select
+                class="form-select"
+                id="obra-select"
+                v-model="selectedObraNome">
+                <option
+                  v-for="(obra, i) in obrasInfo" :key="i" :value="obra.nome"
+                  >{{ obra.nome }}</option>
+              </select>
+            </div>
+
+            <!-- Fornecedor -->
+            <div class="mb-3">
+              <label for="fornecedor-select" class="bold">Fornecedor:</label>
+              <select
+                class="form-select"
+                id="fornecedor-select"
+                v-model="selectedFornecedorNome">
+                <option
+                  v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
+                  >{{ fornecedor.nome }}</option>
+              </select>
+            </div>
+
+            <!-- Data da Compra -->
+            <div class="mb-3">
+              <label for="data-compra-input" class="form-label bold">Data da Compra:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data-compra-input"
+                v-model="dataCompra">
+            </div>
+
+            <!-- Data da Entrega -->
+            <div class="mb-3">
+              <label for="data-entrega-input" class="form-label bold">Data da Entrega:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data-entrega-input"
+                v-model="dataEntrega">
+            </div>
+
+            <!-- Data de Pagamento -->
+            <div class="mb-3">
+              <label for="data-pagamento-input" class="form-label bold">Data de Pagamento:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data-pagamento-input"
+                v-model="dataPagamento">
+            </div>
+
+            <!-- Data de Vencimento -->
+            <div class="mb-3">
+              <label for="data-vencimento-input" class="form-label bold">Data de Vencimento:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="data-vencimento-input"
+                v-model="dataVencimento">
+            </div>
+
+            <!-- Valor Original -->
+            <div class="mb-3">
+              <label for="valor-original-input" class="form-label bold">Valor Original:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-original-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorOriginal">
+            </div>
+
+            <!-- Valor Desconto -->
+            <div class="mb-3">
+              <label for="desconto-input" class="form-label bold">Desconto:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="desconto-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorDesconto">
+            </div>
+
+            <!-- Valor Final -->
+            <div class="mb-3">
+              <label for="valor-final-input" class="form-label bold">Valor Final:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-final-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorFinal">
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancel"
+          >Fechar</button>
+
+          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+            @click="updateCompraInfoDB(this.codigo, this.dataCompra, this.dataEntrega,
+              this.dataPagamento, this.dataVencimento,
+              this.valorOriginal, this.valorDesconto, this.valorFinal)"
           >Salvar</button>
         </div>
       </div>
@@ -452,8 +620,9 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(fornecedor.codigo, fornecedor.nome,
-              fornecedor.tipoFornecedor, fornecedor.telefone, fornecedor.endereco)"
+              @click="fillUpdateDeleteModal(compra.codigo, compra.obra, compra.fornecedor,
+                compra.dataCompra, compra.dataEntrega, compra.dataPagamento, compra.dataVencimento,
+                compra.valorOriginal, compra.valorDesconto, compra.valorFinal, compra.fornecedor.nome)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
