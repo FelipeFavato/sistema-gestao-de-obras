@@ -156,7 +156,7 @@ export default {
       setTimeout(() => {
         this.emptySelectedComprasByObraArray();
         this.selectComprasByObra();
-      }, 1000);
+      }, 2000);
     },
     // Remove Compra selecionada.
     removeCompra (codigo) {
@@ -177,7 +177,7 @@ export default {
       setTimeout(() => {
         this.emptySelectedComprasByObraArray();
         this.selectComprasByObra();
-      }, 1000);
+      }, 2000);
     },
     // Método para atualizar uma Compra selecionada.
     updateCompra (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
@@ -204,7 +204,7 @@ export default {
       setTimeout(() => {
         this.emptySelectedComprasByObraArray();
         this.selectComprasByObra();
-      }, 1000);
+      }, 2000);
       },
     // Método para apresentar valores monetários BRL corretamente.
     fixCurrency (dinheiroDouble) {
