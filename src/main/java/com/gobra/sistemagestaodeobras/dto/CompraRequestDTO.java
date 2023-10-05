@@ -21,10 +21,10 @@ public record CompraRequestDTO (
 
   Date dataVencimento,
 
-  Integer valorOriginal,
+  double valorOriginal,
 
-  Integer valorDesconto,
+  double valorDesconto,
 
-  Integer valorFinal
+  double valorFinal
 
 ) { }

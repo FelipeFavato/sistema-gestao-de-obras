@@ -77,13 +77,13 @@ public class Compra {
   private Date dataVencimento;
 
   @Column(name = "valor_original", length = 30)
-  private int valorOriginal;
+  private double valorOriginal;
 
   @Column(name = "valor_desconto", length = 30)
-  private int valorDesconto;
+  private double valorDesconto;
 
   @Column(name = "valor_final", length = 30)
-  private int valorFinal;
+  private double valorFinal;
 
 
   public Compra(CompraRequestDTO data) {

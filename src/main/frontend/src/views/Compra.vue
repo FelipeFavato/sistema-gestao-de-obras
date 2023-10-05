@@ -50,7 +50,7 @@ export default {
   },
 
   methods: {
-    // Método para apagar dados que foram preenchidos e não enviados
+    // Método para apagar dados que foram preenchidos e enviados ou não enviados.
     cancel () {
       this.selectedFornecedorNome = '';
       this.fornecedor = {};
@@ -102,7 +102,7 @@ export default {
         }
       }
     },
-    // Método para popular o array "selectedComprasByObra"
+    // Método para popular o array "selectedComprasByObra".
     selectComprasByObra () {
       for (let compra of this.comprasInfo) {
         if (compra.obra.nome === this.selectedObraNome) {
@@ -110,14 +110,14 @@ export default {
         }
       }
     },
-    // Método para renderizar a lista de Compras por Obra
+    // Método para renderizar a lista de Compras por Obra.
     obrasDropDownActions (nomeObra) {
       this.selectObra(nomeObra);
       this.fillObraForRequest();
       this.emptySelectedComprasByObraArray();
       this.selectComprasByObra();
     },
-    // Método para preencher a modal de DELETE e UPDATE
+    // Método para preencher a modal de DELETE e UPDATE.
     fillUpdateDeleteModal (cod, obra, fornecedor, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
       this.codigo = cod;
       this.obra = obra;
@@ -130,7 +130,7 @@ export default {
       this.valorDesconto = valorD;
       this.valorFinal = valorF;
     },
-    // Método para inserir Nova Compra
+    // Método para inserir Nova Compra.
     createCompra () {
       axios.post("/api/compra",
         {
@@ -145,17 +145,19 @@ export default {
           valorFinal: this.valorFinal
         }).then(() => this.fetchComprasInfoDB());
     },
-    // Insere nova compra
+    // Chama o método 'createCompra' e repopula a lista correta.
     createCompraInfoDB () {
+      this.fillObraForRequest();
       this.fillFornecedorForRequest();
       this.createCompra();
       this.cancel();
-      console.log(this.comprasInfo);
-      this.emptySelectedComprasByObraArray();
-      this.selectComprasByObra();
+      setTimeout(() => {
+        this.emptySelectedComprasByObraArray();
+        this.selectComprasByObra();
+      }, 250);
     },
-    // Remove Compra selecionada
-    removeCompraFromDB (codigo) {
+    // Remove Compra selecionada.
+    removeCompra (codigo) {
       axios.delete("/api/compra",
         {
           headers: {
@@ -165,7 +167,42 @@ export default {
             codigo: Number(codigo)
           }
         }).then(() => this.fetchComprasInfoDB());
+    },
+    // Chama o método 'removeCompra' e repopula a lista correta.
+    removeCompraFromDB (codigo) {
+      this.removeCompra(codigo);
       this.cancel();
+      setTimeout(() => {
+        this.emptySelectedComprasByObraArray();
+        this.selectComprasByObra();
+      }, 250);
+    },
+    // Método para apresentar valores monetários BRL corretamente.
+    fixCurrency (dinheiroDouble) {
+      if (dinheiroDouble === null) {
+        return null
+      } else {
+        const valorFormatado = dinheiroDouble.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+
+        return valorFormatado;
+      }
+    },
+    // Método para ajustar para data brasileira.
+    brazilDate (data) {
+      if (data === null) {
+        return null
+      }
+
+      let partes = data.split("-");
+
+      if (partes.length === 3) {
+          return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      } else {
+          return null;
+      }
     }
   },
 
@@ -371,7 +408,7 @@ export default {
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
-            @click="createCompraInfoDB()"
+            @click="createCompraInfoDB"
           >Salvar</button>
         </div>
       </div>
@@ -401,13 +438,13 @@ export default {
           <th scope="row">{{ compra.codigo }}</th>
           <td>{{ compra.obra.nome }}</td>
           <td>{{ compra.fornecedor.nome }}</td>
-          <td>{{ compra.dataCompra }}</td>
-          <td>{{ compra.dataEntrega }}</td>
-          <td>{{ compra.dataPagamento }}</td>
-          <td>{{ compra.dataVencimento }}</td>
-          <td>{{ compra.valorOriginal }}</td>
-          <td>{{ compra.valorDesconto }}</td>
-          <td>{{ compra.valorFinal }}</td>
+          <td>{{ brazilDate(compra.dataCompra) }}</td>
+          <td>{{ brazilDate(compra.dataEntrega) }}</td>
+          <td>{{ brazilDate(compra.dataPagamento) }}</td>
+          <td>{{ brazilDate(compra.dataVencimento) }}</td>
+          <td>{{ fixCurrency(compra.valorOriginal) }}</td>
+          <td>{{ fixCurrency(compra.valorDesconto) }}</td>
+          <td>{{ fixCurrency(compra.valorFinal) }}</td>
           <td class="editar-excluir">
             <button
               type="button"

@@ -22,11 +22,11 @@ public record CompraResponseDTO (
 
   Date dataVencimento,
 
-  int valorOriginal,
+  double valorOriginal,
 
-  int valorDesconto,
+  double valorDesconto,
 
-  int valorFinal
+  double valorFinal
 
 ) {
   
