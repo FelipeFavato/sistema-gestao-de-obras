@@ -97,29 +97,6 @@ export default {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <!-- <div class="modal-body">
-          <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="id-input"
-                placeholder=""
-                disabled
-                v-model="codigoLocalUsoObra">
-            </div>
-            <div class="mb-3">
-              <label for="category-input" class="form-label bold">Categoria:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="category-input"
-                placeholder=""
-                disabled
-                v-model="nomeLocalUsoObra">
-            </div>
-        </div> -->
-
         <div class="modal-footer header">
           <button
             type="button"
@@ -215,7 +192,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="dataDesativacao-input" class="form-label bold">Data de Desativação:</label>
+              <label for="dataDesativacao-input" class="form-label bold">Data desativação:</label>
               <input
                 type="date"
                 class="form-control"
@@ -246,7 +223,7 @@ export default {
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Categoria</th>
-          <th scope="col">Data de desativação</th>
+          <th scope="col">Data desativação</th>
           <th></th>
           <th></th>
           <th></th>

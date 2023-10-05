@@ -351,7 +351,7 @@ export default {
 
             <!-- Data da Compra -->
             <div class="mb-3">
-              <label for="data-compra-input" class="form-label bold">Data da Compra:</label>
+              <label for="data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
                 class="form-control"
@@ -361,7 +361,7 @@ export default {
 
             <!-- Data da Entrega -->
             <div class="mb-3">
-              <label for="data-entrega-input" class="form-label bold">Data da Entrega:</label>
+              <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
                 class="form-control"
@@ -371,7 +371,7 @@ export default {
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="data-pagamento-input" class="form-label bold">Data de Pagamento:</label>
+              <label for="data-pagamento-input" class="form-label bold">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
@@ -381,7 +381,7 @@ export default {
 
             <!-- Data de Vencimento -->
             <div class="mb-3">
-              <label for="data-vencimento-input" class="form-label bold">Data de Vencimento:</label>
+              <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
                 class="form-control"
@@ -391,7 +391,7 @@ export default {
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="valor-original-input" class="form-label bold">Valor Original:</label>
+              <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="text"
                 class="form-control"
@@ -413,7 +413,7 @@ export default {
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="valor-final-input" class="form-label bold">Valor Final:</label>
+              <label for="valor-final-input" class="form-label bold">Valor total:</label>
               <input
                 type="text"
                 class="form-control"
@@ -494,7 +494,7 @@ export default {
 
             <!-- Data da Compra -->
             <div class="mb-3">
-              <label for="data-compra-input" class="form-label bold">Data da Compra:</label>
+              <label for="data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
                 class="form-control"
@@ -504,7 +504,7 @@ export default {
 
             <!-- Data da Entrega -->
             <div class="mb-3">
-              <label for="data-entrega-input" class="form-label bold">Data da Entrega:</label>
+              <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
                 class="form-control"
@@ -514,7 +514,7 @@ export default {
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="data-pagamento-input" class="form-label bold">Data de Pagamento:</label>
+              <label for="data-pagamento-input" class="form-label bold">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
@@ -524,7 +524,7 @@ export default {
 
             <!-- Data de Vencimento -->
             <div class="mb-3">
-              <label for="data-vencimento-input" class="form-label bold">Data de Vencimento:</label>
+              <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
                 class="form-control"
@@ -534,7 +534,7 @@ export default {
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="valor-original-input" class="form-label bold">Valor Original:</label>
+              <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="text"
                 class="form-control"
@@ -556,7 +556,7 @@ export default {
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="valor-final-input" class="form-label bold">Valor Final:</label>
+              <label for="valor-final-input" class="form-label bold">Valor total:</label>
               <input
                 type="text"
                 class="form-control"
@@ -589,29 +589,29 @@ export default {
       <thead>
         <tr>
           <th scope="col">Código</th>
-          <th scope="col">Obra</th>
+          <!-- <th scope="col">Obra</th> -->
           <th scope="col">Fornecedor</th>
-          <th scope="col">Data da Compra</th>
-          <th scope="col">Data da Entrega</th>
-          <th scope="col">Data de Pagamento</th>
-          <th scope="col">Data de Vencimento</th>
-          <th scope="col">Valor Original</th>
-          <th scope="col">Desconto</th>
-          <th scope="col">Valor Final</th>
+          <!-- <th scope="col">Data da compra</th> -->
+          <!-- <th scope="col">Data da entrega</th> -->
+          <th scope="col">Data de pagamento</th>
+          <!-- <th scope="col">Data de vencimento</th> -->
+          <!-- <th scope="col">Valor original</th> -->
+          <!-- <th scope="col">Desconto</th> -->
+          <th scope="col">Valor total</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(compra, i) in selectedComprasByObra" :key="i">
           <th scope="row">{{ compra.codigo }}</th>
-          <td>{{ compra.obra.nome }}</td>
+          <!-- <td>{{ compra.obra.nome }}</td> -->
           <td>{{ compra.fornecedor.nome }}</td>
-          <td>{{ brazilDate(compra.dataCompra) }}</td>
-          <td>{{ brazilDate(compra.dataEntrega) }}</td>
+          <!-- <td>{{ brazilDate(compra.dataCompra) }}</td> -->
+          <!-- <td>{{ brazilDate(compra.dataEntrega) }}</td> -->
           <td>{{ brazilDate(compra.dataPagamento) }}</td>
-          <td>{{ brazilDate(compra.dataVencimento) }}</td>
-          <td>{{ fixCurrency(compra.valorOriginal) }}</td>
-          <td>{{ fixCurrency(compra.valorDesconto) }}</td>
+          <!-- <td>{{ brazilDate(compra.dataVencimento) }}</td> -->
+          <!-- <td>{{ fixCurrency(compra.valorOriginal) }}</td> -->
+          <!-- <td>{{ fixCurrency(compra.valorDesconto) }}</td> -->
           <td>{{ fixCurrency(compra.valorFinal) }}</td>
           <td class="editar-excluir">
             <button
