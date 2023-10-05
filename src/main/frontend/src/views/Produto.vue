@@ -18,7 +18,7 @@ export default {
     },
     fetchInfoDB () {
       axios.get("/api/produto").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
     },
     createInfoDB () {
       axios.post("/api/produto",
