@@ -19,7 +19,7 @@ export default {
     },
     fetchInfoDB () {
       axios.get("/api/localuso").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1.codigoLocalUsoObra - s2.codigoLocalUsoObra))
+        (res) => this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
     },
     createInfoDB () {
       axios.post("/api/localuso", 
@@ -129,7 +129,7 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Categoria:</label>
+              <label for="name-input" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
@@ -182,13 +182,14 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Categoria:</label>
+              <label for="category-input" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
                 id="category-input"
                 placeholder="Alvenaria, Ferragens, etc..."
-                v-model="nomeLocalUsoObra">
+                v-model="nomeLocalUsoObra"
+                disabled>
             </div>
 
             <div class="mb-3">
@@ -222,7 +223,7 @@ export default {
       <thead>
         <tr>
           <th scope="col">Código</th>
-          <th scope="col">Categoria</th>
+          <th scope="col">Local</th>
           <th scope="col">Data desativação</th>
           <th></th>
           <th></th>

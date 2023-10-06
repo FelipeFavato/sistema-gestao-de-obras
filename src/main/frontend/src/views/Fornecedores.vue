@@ -22,7 +22,7 @@ export default {
     },
     fetchInfoDB () {
       axios.get("/api/fornecedor").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
     },
     createInfoDB () {
       axios.post("/api/fornecedor",
@@ -258,7 +258,8 @@ export default {
                 class="form-control"
                 id="nome-input"
                 placeholder="Alvenaria, Ferragens, etc..."
-                v-model="nome">
+                v-model="nome"
+                disabled>
             </div>
 
             <div class="mb-3">

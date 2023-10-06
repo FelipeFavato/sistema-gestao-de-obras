@@ -129,7 +129,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Produto, mão de obra, etc..."
-                v-model="nome">
+                v-model="nome"
+                disabled>
             </div>
 
             <div class="mb-3">
@@ -195,7 +196,8 @@ export default {
                 class="form-control"
                 id="nome-input"
                 placeholder="Produto, mão de obra, etc..."
-                v-model="nome">
+                v-model="nome"
+                disabled>
             </div>
 
             <div class="mb-3">
