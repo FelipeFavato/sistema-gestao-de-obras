@@ -1,30 +1,59 @@
 <script>
-  // Requisição de NOVA COMPRA:
-  // {
-  //   "obra":  {
-  //     "codigo": 2,
-  //     "nome": "Obra Teste 2",
-  //     "endereco": "Rua Obra Teste, 2000",
-  //     "dataInicio": "2023-10-10",
-  //     "dataPrevistaFim": "2023-10-15",
-  //     "dataRealFim": "2023-10-25",
-  //     "custoPrevisto": 45000
-  //   },
-  //   "fornecedor": {
-  //     "codigo": 15,
-  //     "nome": "Fornecedor Teste 1",
-  //     "telefone": "(11) 97557-8998",
-  //     "endereco": "Rua Fornecedor Teste, 1000",
-  //     "tipoFornecedor": "Material"
-  //   },
-  //   "dataCompra": "2023-05-30",
-  //   "dataEntrega": "2023-05-30",
-  //   "dataPagamento": "",
-  //   "dataVencimento": "",
-  //   "valorOriginal": 90,
-  //   "valorDesconto": 0,
-  //   "valorFinal": 90
-  // }
+
+// Requisição de NOVA COMPRA:
+// {
+//   "obra":  {
+//     "codigo": 2,
+//     "nome": "Obra Teste 2",
+//     "endereco": "Rua Obra Teste, 2000",
+//     "dataInicio": "2023-10-10",
+//     "dataPrevistaFim": "2023-10-15",
+//     "dataRealFim": "2023-10-25",
+//     "custoPrevisto": 45000
+//   },
+//   "fornecedor": {
+//     "codigo": 15,
+//     "nome": "Fornecedor Teste 1",
+//     "telefone": "(11) 97557-8998",
+//     "endereco": "Rua Fornecedor Teste, 1000",
+//     "tipoFornecedor": "Material"
+//   },
+//   "dataCompra": "2023-05-30",
+//   "dataEntrega": "2023-05-30",
+//   "dataPagamento": "",
+//   "dataVencimento": "",
+//   "valorOriginal": 90,
+//   "valorDesconto": 0,
+//   "valorFinal": 90
+// }
+
+// Requisição de NOVO ITEM DE COMPRA:
+// {
+//   "compra": {
+//     "codigo": 89,
+//     "dataCompra": "2006-11-27",
+//     "dataEntrega": "2017-04-20",
+//     "dataPagamento": "2015-06-09",
+//     "dataVencimento": "1971-05-17",
+//     "valorOriginal": 100.0,
+//     "valorDesconto": 0.0,
+//     "valorFinal": 100.0
+//   },
+//   "produto": {
+//     "codigo": 1,
+//     "nome": "Areia",
+//     "tipoProduto": "Material"
+//   },
+//   "localUso": {
+//     "codigoLocalUsoObra": 2,
+//     "nomeLocalUsoObra": "Fundação",
+//     "dataDesativacao": null
+//   },
+//   "quantidade": 10,
+//   "valorUnitario": 1.50,
+//   "valorTotal": 15
+// }
+
 import axios from 'axios';
 
 export default {
@@ -624,6 +653,11 @@ export default {
                 compra.dataCompra, compra.dataEntrega, compra.dataPagamento, compra.dataVencimento,
                 compra.valorOriginal, compra.valorDesconto, compra.valorFinal, compra.fornecedor.nome)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Itens"
+            ><img src="../assets/imagens/lista_itens_2.png" alt="lista"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
