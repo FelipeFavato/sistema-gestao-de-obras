@@ -4,7 +4,9 @@
 package com.gobra.sistemagestaodeobras.model;
 
 import java.util.Date;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.LocalUsoRequestDTO;
 
 import jakarta.persistence.Column;
@@ -12,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -50,8 +53,13 @@ public class LocalUso {
   @Temporal(TemporalType.DATE) // TemporalType.DATE armazena apenas a data, sem informações de HORA
   private Date dataDesativacao;
 
+  @JsonIgnore
+  @OneToMany(mappedBy = "localUso")
+  private List<ItemCompra> itensCompra;
+
   public LocalUso(LocalUsoRequestDTO data) {
     this.nomeLocalUsoObra = data.nomeLocalUsoObra();
     this.dataDesativacao = data.dataDesativacao();
+    this.itensCompra = data.itensCompra();
   }
 }

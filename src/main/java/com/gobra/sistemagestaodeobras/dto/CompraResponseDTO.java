@@ -1,9 +1,11 @@
 package com.gobra.sistemagestaodeobras.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
+import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.Obra;
 
 public record CompraResponseDTO (
@@ -26,7 +28,9 @@ public record CompraResponseDTO (
 
   double valorDesconto,
 
-  double valorFinal
+  double valorFinal,
+
+  List<ItemCompra> itensCompra
 
 ) {
   
@@ -41,7 +45,8 @@ public record CompraResponseDTO (
       compraModel.getDataVencimento(),
       compraModel.getValorOriginal(),
       compraModel.getValorDesconto(),
-      compraModel.getValorFinal()
+      compraModel.getValorFinal(),
+      compraModel.getItensCompra()
     );
   }
 

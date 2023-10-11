@@ -108,7 +108,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <!-- <div class="modal-body">
@@ -159,7 +159,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Fornecedor</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -235,7 +235,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="updateModalLabel">Editar Fornecedor</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">

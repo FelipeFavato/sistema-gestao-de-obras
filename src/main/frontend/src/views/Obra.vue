@@ -112,8 +112,8 @@ export default {
 
 <template>
 
-    <!-- Header com o botão de +Novo -->
-    <header class="header middle-margin">
+  <!-- Header com o botão de +Novo -->
+  <header class="header middle-margin">
     <button
       type="button"
       class="btn btn-success light-green"
@@ -128,7 +128,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-footer header">
@@ -156,7 +156,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Nova Obra</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -249,7 +249,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="updateModalLabel">Editar Obra</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">

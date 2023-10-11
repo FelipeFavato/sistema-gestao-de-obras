@@ -4,7 +4,9 @@
 package com.gobra.sistemagestaodeobras.dto;
 
 import java.util.Date;
+import java.util.List;
 
+import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.LocalUso;
 
 public record LocalUsoResponseDTO(
@@ -13,7 +15,9 @@ public record LocalUsoResponseDTO(
   
   String nomeLocalUsoObra,
 
-  Date dataDesativacao
+  Date dataDesativacao,
+
+  List<ItemCompra> itensCompra
 
   ) {
 
@@ -22,7 +26,8 @@ public record LocalUsoResponseDTO(
     this(
       localUsoModel.getCodigoLocalUsoObra(),
       localUsoModel.getNomeLocalUsoObra(),
-      localUsoModel.getDataDesativacao()
+      localUsoModel.getDataDesativacao(),
+      localUsoModel.getItensCompra()
     );
   }
 }

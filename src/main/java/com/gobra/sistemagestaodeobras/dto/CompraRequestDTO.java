@@ -1,8 +1,10 @@
 package com.gobra.sistemagestaodeobras.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
+import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.Obra;
 
 public record CompraRequestDTO (
@@ -25,6 +27,8 @@ public record CompraRequestDTO (
 
   double valorDesconto,
 
-  double valorFinal
+  double valorFinal,
+
+  List<ItemCompra> itensCompra
 
 ) { }

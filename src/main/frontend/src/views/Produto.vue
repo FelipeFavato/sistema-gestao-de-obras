@@ -71,15 +71,15 @@ export default {
 
 <template>
 
-    <!-- Header com o botão de +Novo -->
-    <header class="header middle-margin">
-      <button
-        type="button"
-        class="btn btn-success light-green"
-        data-bs-toggle="modal"
-        data-bs-target="#insertModal"
-      >+ Novo Produto</button>
-    </header>
+  <!-- Header com o botão de +Novo -->
+  <header class="header middle-margin">
+    <button
+      type="button"
+      class="btn btn-success light-green"
+      data-bs-toggle="modal"
+      data-bs-target="#insertModal"
+    >+ Novo Produto</button>
+  </header>
 
   <!-- DeleteModal -->
   <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -87,7 +87,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="deleteModalLabel">Realmente deseja excluir?</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-footer header">
@@ -115,7 +115,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Produto</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -130,7 +130,7 @@ export default {
                 id="name-input"
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
-                disabled>
+                >
             </div>
 
             <div class="mb-3">
@@ -172,7 +172,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="updateModalLabel">Editar Produto</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">

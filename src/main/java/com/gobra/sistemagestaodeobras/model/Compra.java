@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.CompraRequestDTO;
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -85,6 +87,11 @@ public class Compra {
   @Column(name = "valor_final", length = 30)
   private double valorFinal;
 
+  // OneToMany: Cada Compra terá uma lista de itensCompra atrelada a ela.
+  @JsonIgnore
+  @OneToMany(mappedBy = "compra")
+  private List<ItemCompra> itensCompra;
+
 
   public Compra(CompraRequestDTO data) {
     this.obra = data.obra();
@@ -96,5 +103,6 @@ public class Compra {
     this.valorOriginal = data.valorOriginal();
     this.valorDesconto = data.valorDesconto();
     this.valorFinal = data.valorFinal();
+    this.itensCompra = data.itensCompra();
   }
 }

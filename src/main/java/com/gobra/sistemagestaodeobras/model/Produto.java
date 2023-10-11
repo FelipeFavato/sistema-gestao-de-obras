@@ -1,5 +1,8 @@
 package com.gobra.sistemagestaodeobras.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.ProdutoRequestDTO;
 import com.gobra.sistemagestaodeobras.utils.TipoProdutoEnum;
 
@@ -10,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,8 +43,14 @@ public class Produto {
   @Column(name = "tipo_produto", length = 20)
   private TipoProdutoEnum tipoProduto;
 
+  // OneToMany: Cada produto tera uma lista de itensCompra atrelada a ele.
+  @JsonIgnore
+  @OneToMany(mappedBy = "produto")
+  private List<ItemCompra> itensCompra;
+
   public Produto(ProdutoRequestDTO data) {
     this.nome = data.nome();
     this.tipoProduto = data.tipoProduto();
+    this.itensCompra = data.itensCompra();
   }
 }
