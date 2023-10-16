@@ -381,6 +381,40 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
       }, 2000);
+    },
+    // Método para preencher a ItemModal de DELETE e UPDATE.
+    fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
+      selectedProdNome, selectedLocUsoNome) {
+      this.codigoItem = cod;
+      this.compra = comp;
+      this.produto = prod;
+      this.localUso = locUso;
+      this.quantidade = qnt;
+      this.valorUnitario = valorU;
+      this.valorTotal = valorT;
+      this.selectedProdutoNome = selectedProdNome;
+      this.selectedLocalUsoNome = selectedLocUsoNome;
+    },
+    // Método que exclui um item.
+    removeItem (cod) {
+      axios.delete("/api/itemcompra",
+        {
+          headers: {
+            Authorization: ''
+          },
+          data: {
+            codigo: Number(cod)
+          }
+        }).then(() => this.fetchItensCompraInfoDB());
+    },
+    // Método que chama 'removeItem' e renderiza a lista.
+    removeItemFromDB (cod) {
+      this.removeItem(cod);
+      this.cancelItem();
+      setTimeout(() => {
+        this.clearSelectedItensByCompra();
+        this.selectItensByCompra();
+      }, 2000);
     }
   },
 
@@ -391,10 +425,10 @@ export default {
     this.fetchItensCompraInfoDB();
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
-    setTimeout(() => {
-      console.log(this.comprasInfo);
-      console.log(this.itensCompraInfo);
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log(this.comprasInfo);
+    //   console.log(this.itensCompraInfo);
+    // }, 1000);
   }
 }
 </script>
@@ -763,13 +797,41 @@ export default {
     </div>
   </div>
 
+  <!-- DeleteModalItem -->
+  <div class="modal" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteItemModalLabel">Realmente deseja excluir?</h1>
+          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancelItem"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeItemFromDB(this.codigoItem)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- InsertModalItem -->
   <div class="modal" id="insertItemModal" tabindex="-1" aria-labelledby="insertItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertItemModalLabel">Novo Item</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -970,8 +1032,8 @@ export default {
               class="btn btn-light btn-sm small"
               title="Excluir"
               data-bs-toggle="modal"
-              data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal()"
+              data-bs-target="#deleteItemModal"
+              @click="fillUpdateDeleteItemModal(item.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
