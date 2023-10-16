@@ -2,7 +2,7 @@
 
 <template>
   <h2>Home</h2>
-  <p></p>
+  <p>Home</p>
 </template>
 
 <setup>
