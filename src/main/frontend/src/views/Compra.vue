@@ -62,6 +62,7 @@ export default {
       comprasInfo: [],
       obrasInfo: [],
       fornecedoresInfo: [],
+      itensCompraInfo: [],
       selectedComprasByObra: [],
       selectedObraNome: '',
       selectedFornecedorNome: '',
@@ -105,6 +106,11 @@ export default {
     fetchFornecedoresInfoDB () {
       axios.get("/api/fornecedor").then(
         (res) => this.fornecedoresInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+    },
+    // Método GET - Itens das compras.
+    fetchItensCompraInfoDB () {
+      axios.get("/api/itemcompra").then(
+        (res) => this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
     },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
@@ -268,6 +274,10 @@ export default {
     this.fetchComprasInfoDB();
     this.fetchObrasInfoDB();
     this.fetchFornecedoresInfoDB();
+    this.fetchItensCompraInfoDB();
+    setTimeout(() => {
+      console.log(this.itensCompraInfo);
+    }, 100);
   }
 }
 </script>
@@ -313,7 +323,7 @@ export default {
     >+ Nova Compra</button>
   </div>
 
-  <!-- DeleteModal -->
+  <!-- DeleteModalCompra -->
   <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
       <div class="modal-content">
@@ -341,7 +351,7 @@ export default {
     </div>
   </div>
 
-  <!-- InsertModal -->
+  <!-- InsertModalCompra -->
   <div class="modal" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
       <div class="modal-content">
@@ -472,7 +482,7 @@ export default {
     </div>
   </div>
 
-  <!-- UpdateModal -->
+  <!-- UpdateModalCompra -->
   <div class="modal" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
