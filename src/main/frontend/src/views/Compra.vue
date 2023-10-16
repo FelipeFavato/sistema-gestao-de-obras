@@ -63,9 +63,16 @@ export default {
       obrasInfo: [],
       fornecedoresInfo: [],
       itensCompraInfo: [],
+      produtosInfo: [],
+      localUsoInfo: [],
       selectedComprasByObra: [],
+      selectedItensByCompra: [],
       selectedObraNome: '',
       selectedFornecedorNome: '',
+      selectedProdutoNome: '',
+      selectedLocalUsoNome: '',
+      selectedCompraID: '',
+      showItems: false,
       codigo: '',
       obra: {},
       fornecedor: {},
@@ -76,6 +83,13 @@ export default {
       valorOriginal: '',
       valorDesconto: '',
       valorFinal: '',
+      codigoItem: '',
+      produto: {},
+      localUso: {},
+      compra: {},
+      quantidade: '',
+      valorUnitario: '',
+      valorTotal: ''
     }
   },
 
@@ -112,6 +126,16 @@ export default {
       axios.get("/api/itemcompra").then(
         (res) => this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
     },
+    // Método GET - Produtos.
+    fetchProdutosInfoDB() {
+      axios.get("/api/produto").then(
+        (res) => this.produtosInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+    },
+    // Método GET - LocalUso.
+    fetchLocalUsoInfoDB () {
+      axios.get("/api/localuso").then(
+        (res) => this.localUsoInfo = res.data)
+    },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
       this.selectedComprasByObra = [];
@@ -128,8 +152,7 @@ export default {
         }
       }
     },
-    // Método para preencher o objeto "this.fornecedor" com o fornecedor correto
-    // para a requisição.
+    // Método para preencher o objeto "this.fornecedor" com o fornecedor correto para a requisição.
     fillFornecedorForRequest () {
       for (let chosenFornecedor of this.fornecedoresInfo) {
         if (chosenFornecedor.nome === this.selectedFornecedorNome) {
@@ -139,9 +162,9 @@ export default {
     },
     // Método para popular o array "selectedComprasByObra".
     selectComprasByObra () {
-      for (let compra of this.comprasInfo) {
-        if (compra.obra.nome === this.selectedObraNome) {
-          this.selectedComprasByObra.push(compra);
+      for (let chosenCompra of this.comprasInfo) {
+        if (chosenCompra.obra.nome === this.selectedObraNome) {
+          this.selectedComprasByObra.push(chosenCompra);
         }
       }
     },
@@ -240,7 +263,7 @@ export default {
         this.emptySelectedComprasByObraArray();
         this.selectComprasByObra();
       }, 2000);
-      },
+    },
     // Método para apresentar valores monetários BRL corretamente.
     fixCurrency (dinheiroDouble) {
       if (dinheiroDouble === null) {
@@ -267,6 +290,156 @@ export default {
       } else {
           return null;
       }
+    },
+    // Método para limpar a requisição caso não seja enviada.
+    cancelItem() {
+      this.selectedProdutoNome = '';
+      this.selectedLocalUsoNome = '';
+      this.compra = {};
+      this.produto = {};
+      this.localUso = {};
+      this.quantidade = '';
+      this.valorUnitario = '';
+      this.valorTotal = '';
+    },
+    // Método para alternar a renderização de Compras e Itens.
+    switchItensCompras () {
+      this.showItems = !this.showItems;
+      this.clearSelectedCompraID();
+      this.clearSelectedItensByCompra();
+    },
+    // Método para limpar a lista de itens selecionados por compra.
+    clearSelectedItensByCompra () {
+      this.selectedItensByCompra = [];
+    },
+    // Método para retornar às compras, limpando 'selectedCompraID'.
+    clearSelectedCompraID () {
+      this.selectedCompraID = '';
+    },
+    // Método para preencher a variavel 'selectedCompraID'.
+    selectCompraID (cod) {
+      this.selectedCompraID = cod;
+    },
+    // Recupera os itens corretos para a compra selecionada.
+    getItensForThisCompra (cod) {
+      this.switchItensCompras();
+      this.selectCompraID(cod);
+      this.selectItensByCompra();
+    },
+    // Método para popular o array 'selectedItensByCompra'.
+    selectItensByCompra () {
+      for (let item of this.itensCompraInfo) {
+        if (item.compra.codigo === this.selectedCompraID) {
+          this.selectedItensByCompra.push(item);
+        }
+      }
+    },
+    // Método para preencher o 'this.compra' com o formato correto para a requisição.
+    fillCompraForRequest () {
+      for (let chosenCompra of this.comprasInfo) {
+        if (chosenCompra.codigo === this.selectedCompraID) {
+          this.compra = chosenCompra;
+        }
+      }
+    },
+    // Método para preencher o 'this.produto' com o formato correto para a requisição.
+    fillProdutoForRequest () {
+      for (let chosenProduto of this.produtosInfo) {
+        if (chosenProduto.nome === this.selectedProdutoNome) {
+          this.produto = chosenProduto;
+        }
+      }
+    },
+    // Método para preencher 'this.localUso' com o formato correto para a requisição.
+    fillLocalUsoForRequest () {
+      for (let chosenLocalUso of this.localUsoInfo) {
+        if (chosenLocalUso.nomeLocalUsoObra === this.selectedLocalUsoNome) {
+          this.localUso = chosenLocalUso;
+        }
+      }
+    },
+    // Método para inserir um novo Item a uma Compra.
+    createItem () {
+      axios.post("/api/itemcompra",
+        {
+          compra: this.compra,
+          produto: this.produto,
+          localUso: this.localUso,
+          quantidade: this.quantidade,
+          valorUnitario: this.valorUnitario,
+          valorTotal: this.valorTotal
+        }).then(() => this.fetchItensCompraInfoDB());
+    },
+    // Método que chama o método 'createItem' e realiza a requisição.
+    createItemInfoDB () {
+      this.fillCompraForRequest();
+      this.fillProdutoForRequest();
+      this.fillLocalUsoForRequest();
+      this.createItem();
+      this.cancelItem();
+      setTimeout(() => {
+        this.clearSelectedItensByCompra();
+        this.selectItensByCompra();
+      }, 2000);
+    },
+    // Método para preencher a ItemModal de DELETE e UPDATE.
+    fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
+      selectedProdNome, selectedLocUsoNome) {
+      this.codigoItem = cod;
+      this.compra = comp;
+      this.produto = prod;
+      this.localUso = locUso;
+      this.quantidade = qnt;
+      this.valorUnitario = valorU;
+      this.valorTotal = valorT;
+      this.selectedProdutoNome = selectedProdNome;
+      this.selectedLocalUsoNome = selectedLocUsoNome;
+    },
+    // Método que exclui um item.
+    removeItem (cod) {
+      axios.delete("/api/itemcompra",
+        {
+          headers: {
+            Authorization: ''
+          },
+          data: {
+            codigo: Number(cod)
+          }
+        }).then(() => this.fetchItensCompraInfoDB());
+    },
+    // Método que chama 'removeItem' e renderiza a lista.
+    removeItemFromDB (cod) {
+      this.removeItem(cod);
+      this.cancelItem();
+      setTimeout(() => {
+        this.clearSelectedItensByCompra();
+        this.selectItensByCompra();
+      }, 2000);
+    },
+    // Método para atualizar um Item selecionado.
+    updateItem (cod, qnt, valorU, valorT) {
+      axios.put("/api/itemcompra",
+      {
+        codigo: Number(cod),
+        compra: this.compra,
+        produto: this.produto,
+        localUso: this.localUso,
+        quantidade: qnt,
+        valorUnitario: valorU,
+        valorTotal: valorT
+      }).then(() => this.fetchItensCompraInfoDB());
+    },
+    // Chama o método 'updateItem' e repopula a lista corretamente.
+    updateItemInfoDB (cod, qnt, valorU, valorT) {
+      this.fillCompraForRequest();
+      this.fillProdutoForRequest();
+      this.fillLocalUsoForRequest();
+      this.updateItem(cod, qnt, valorU, valorT);
+      this.cancelItem();
+      setTimeout(() => {
+        this.clearSelectedItensByCompra();
+        this.selectItensByCompra();
+      }, 2000);
     }
   },
 
@@ -275,9 +448,12 @@ export default {
     this.fetchObrasInfoDB();
     this.fetchFornecedoresInfoDB();
     this.fetchItensCompraInfoDB();
-    setTimeout(() => {
-      console.log(this.itensCompraInfo);
-    }, 100);
+    this.fetchProdutosInfoDB();
+    this.fetchLocalUsoInfoDB();
+    // setTimeout(() => {
+    //   console.log(this.comprasInfo);
+    //   console.log(this.itensCompraInfo);
+    // }, 1000);
   }
 }
 </script>
@@ -285,7 +461,7 @@ export default {
 <template>
   
   <!-- Header com o DropDown 'Obras' -->
-  <header class="header middle-margin">
+  <header v-show="!this.showItems" class="header middle-margin">
     <!-- DropDown 'Obras' -->
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -311,11 +487,35 @@ export default {
     </div>
   </header>
 
-  <!-- Elementos condicionais baseado na escolha da Obra -->
-  <div class="header middle-margin">
+  <!-- Botão para voltar as compras -->
+  <div v-show="this.showItems" class="header middle-margin">
+    <button
+      type="button"
+      class="btn btn-dark"
+      title="Voltar às compras"
+      @click="switchItensCompras"
+    >
+      Voltar
+    </button>
+  </div>
+
+  <!-- Botão para adicionar Novo Item à Compra -->
+  <div v-show="this.showItems" class="header middle-margin">
+    <button
+      type="button"
+      class="btn btn-success light-green"
+      data-bs-toggle="modal"
+      data-bs-target="#insertItemModal"
+    >
+      + Novo item
+    </button>
+  </div>
+
+  <!-- Elementos condicionais baseado na escolha da Obra (Botão + Nova Compra) -->
+  <div v-show="this.selectedObraNome" class="header middle-margin">
     <!-- Botão para adicionar Compra -->
     <button
-      v-show="this.selectedObraNome"
+      v-show="!this.showItems"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -622,8 +822,239 @@ export default {
     </div>
   </div>
 
-  <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <!-- DeleteModalItem -->
+  <div class="modal" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteItemModalLabel">Realmente deseja excluir?</h1>
+          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancelItem"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeItemFromDB(this.codigoItem)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- InsertModalItem -->
+  <div class="modal" id="insertItemModal" tabindex="-1" aria-labelledby="insertItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="insertItemModalLabel">Novo Item</h1>
+          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <form action="POST">
+
+            <!-- Compra -->
+            <div class="mb-3">
+              <label for="compra-input" class="bold">Compra:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="compra-input"
+                disabled
+                v-model="selectedCompraID">
+            </div>
+
+            <!-- Produto -->
+            <div class="mb-3">
+              <label for="produto-select" class="bold">Produto:</label>
+              <select
+                class="form-select"
+                id="produto-select"
+                v-model="selectedProdutoNome">
+                <option
+                  v-for="(produto, i) in produtosInfo" :key="i" :value="produto.nome"
+                  >{{ produto.nome }}</option>
+              </select>
+            </div>
+
+            <!-- localUso -->
+            <div class="mb-3">
+              <label for="local-uso-select" class="bold">Local de uso:</label>
+              <select
+                class="form-select"
+                id="local-uso-select"
+                v-model="selectedLocalUsoNome">
+                <option
+                  v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.nomeLocalUsoObra"
+                  >{{ localUso.nomeLocalUsoObra }}</option>
+              </select>
+            </div>
+
+            <!-- Quantidade -->
+            <div class="mb-3">
+              <label for="quantidade-input" class="form-label bold">Quantidade:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="quantidade-input"
+                placeholder="(inserir apenas números)"
+                v-model="quantidade">
+            </div>
+
+            <!-- Valor Unitario -->
+            <div class="mb-3">
+              <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-unitario-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorUnitario">
+            </div>
+
+            <!-- Valor Total -->
+            <div class="mb-3">
+              <label for="valor-total-input" class="form-label bold">Valor total:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-total-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorTotal">
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancelItem"
+          >Fechar</button>
+          <button
+            type="button"
+            class="btn btn-success  light-green"
+            data-bs-dismiss="modal"
+            @click="createItemInfoDB"
+          >Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UpdateModalItem -->
+  <div class="modal" id="updateItemModal" tabindex="-1" aria-labelledby="updateItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="updateItemModalLabel">Editar Item</h1>
+          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="PUT">
+
+            <!-- Código -->
+            <div class="mb-3">
+              <label for="codigo-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="codigo-input"
+                disabled
+                v-model="codigoItem">
+            </div>
+
+            <!-- Produto -->
+            <div class="mb-3">
+              <label for="produto-select" class="bold">Produto:</label>
+              <select
+                class="form-select"
+                id="produto-select"
+                v-model="selectedProdutoNome">
+                <option
+                  v-for="(produto, i) in produtosInfo" :key="i" :value="produto.nome"
+                  >{{ produto.nome }}</option>
+              </select>
+            </div>
+
+            <!-- Local de uso -->
+            <div class="mb-3">
+              <label for="local-uso-select" class="bold">Local de uso:</label>
+              <select
+                class="form-select"
+                id="local-uso-select"
+                v-model="selectedLocalUsoNome">
+                <option
+                  v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.nomeLocalUsoObra"
+                  >{{ localUso.nomeLocalUsoObra }}</option>
+              </select>
+            </div>
+        
+            <!-- Quantidade -->
+            <div class="mb-3">
+              <label for="quantidade-input" class="form-label bold">Quantidade:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="quantidade-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="quantidade">
+            </div>
+
+            <!-- Valor Unitario -->
+            <div class="mb-3">
+              <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-unitario-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorUnitario">
+            </div>
+
+            <!-- Valor Total -->
+            <div class="mb-3">
+              <label for="valor-total-input" class="form-label bold">Valor total:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="valor-total-input"
+                placeholder="R$... (inserir apenas números e ponto)"
+                v-model="valorTotal">
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancelItem"
+          >Fechar</button>
+
+          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+            @click="updateItemInfoDB(this.codigoItem, this.quantidade, this.valorUnitario, this.valorTotal)"
+          >Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabelas condicionais baseadas na escolha de Itens ou Compras -->
+  <!-- Tabela de Compras -->
+  <main v-show="!showItems" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
@@ -667,6 +1098,7 @@ export default {
               type="button"
               class="btn btn-light btn-sm small"
               title="Itens"
+              @click="getItensForThisCompra(compra.codigo)"
             ><img src="../assets/imagens/lista_itens_2.png" alt="lista"></button>
             <button
               type="button"
@@ -675,6 +1107,58 @@ export default {
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
               @click="fillUpdateDeleteModal(compra.codigo)"
+            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Tabela de Itens -->
+  <main v-show="showItems" class="middle-margin table-responsive">
+    <div></div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Código</th>
+          <th scope="col">Produto</th>
+          <th scope="col">Quantidade</th>
+          <th scope="col">Valor unitário</th>
+          <th scope="col">Valor total</th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, i) in selectedItensByCompra" :key="i">
+          <th scope="row">{{ item.codigo }}</th>
+          <td>{{ item.produto.nome }}</td>
+          <td>{{ item.quantidade }}</td>
+          <td>{{ fixCurrency(item.valorUnitario) }}</td>
+          <td>{{ fixCurrency(item.valorTotal) }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="editar-excluir">
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Editar"
+              data-bs-toggle="modal"
+              data-bs-target="#updateItemModal"
+              @click="fillUpdateDeleteItemModal(item.codigo, item.compra, item.produto, item.localUso,
+                item.quantidade, item.valorUnitario, item.valorTotal,
+                item.produto.nome, item.localUso.nomeLocalUsoObra)"
+            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Excluir"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteItemModal"
+              @click="fillUpdateDeleteItemModal(item.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
