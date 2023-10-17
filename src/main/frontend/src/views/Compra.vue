@@ -528,7 +528,7 @@ export default {
     >
       Voltar
     </button>
-    <!-- Informações da compra -->
+    <!-- Informações da compra  -->
     <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
     <div>
       <h6>Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
@@ -537,7 +537,7 @@ export default {
   </div>
 
 
-  <!-- Botão para adicionar Novo Item à Compra -->
+  <!-- Botão para adicionar Novo Item à Compra. -->
   <div v-show="this.showItems" class="header middle-margin">
     <button
       @click="fillCompraCodForne"
