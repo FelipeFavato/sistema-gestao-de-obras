@@ -1,5 +1,4 @@
 <script>
-
 // Requisição de NOVA COMPRA:
 // {
 //   "obra":  {
@@ -72,6 +71,7 @@ export default {
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
       selectedCompraID: '',
+      getCompraInfo: {}, // Apenas informações da compra para serem usadas na página.
       showItems: false,
       codigo: '',
       obra: {},
@@ -129,12 +129,12 @@ export default {
     // Método GET - Produtos.
     fetchProdutosInfoDB() {
       axios.get("/api/produto").then(
-        (res) => this.produtosInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => this.produtosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
     },
     // Método GET - LocalUso.
     fetchLocalUsoInfoDB () {
       axios.get("/api/localuso").then(
-        (res) => this.localUsoInfo = res.data)
+        (res) => this.localUsoInfo = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
     },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
@@ -295,7 +295,7 @@ export default {
     cancelItem() {
       this.selectedProdutoNome = '';
       this.selectedLocalUsoNome = '';
-      this.compra = {};
+      // this.compra = {};
       this.produto = {};
       this.localUso = {};
       this.quantidade = '';
@@ -324,6 +324,8 @@ export default {
     getItensForThisCompra (cod) {
       this.switchItensCompras();
       this.selectCompraID(cod);
+      this.fillCompraInfo();
+      this.fillCompraForRequest();
       this.selectItensByCompra();
     },
     // Método para popular o array 'selectedItensByCompra'.
@@ -331,6 +333,14 @@ export default {
       for (let item of this.itensCompraInfo) {
         if (item.compra.codigo === this.selectedCompraID) {
           this.selectedItensByCompra.push(item);
+        }
+      }
+    },
+    // Método para preencher o 'this.getCompraInfo' para usar informações na página.
+    fillCompraInfo () {
+      for (let chosenCompra of this.comprasInfo) {
+        if (chosenCompra.codigo === this.selectedCompraID) {
+          this.getCompraInfo = chosenCompra;
         }
       }
     },
@@ -372,7 +382,7 @@ export default {
     },
     // Método que chama o método 'createItem' e realiza a requisição.
     createItemInfoDB () {
-      this.fillCompraForRequest();
+      this.fillCompraForRequest();  // Teoricamente não precisa dessa chamada.
       this.fillProdutoForRequest();
       this.fillLocalUsoForRequest();
       this.createItem();
@@ -497,6 +507,11 @@ export default {
     >
       Voltar
     </button>
+  </div>
+
+  <!-- Informações da Compra -->
+  <div v-if="this.showItems" class="header middle-margin">
+    <p>{{ getCompraInfo.codigo }} | {{ getCompraInfo.fornecedor.nome }}</p>
   </div>
 
   <!-- Botão para adicionar Novo Item à Compra -->
@@ -1175,6 +1190,13 @@ export default {
   justify-content: space-between;
   padding-bottom: 5px;
   /* border-bottom: solid #212529 2px; */
+}
+
+.column {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding-bottom: 5px;
 }
 
 .light-green {
