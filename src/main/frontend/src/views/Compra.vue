@@ -129,9 +129,12 @@ export default {
         (res) => this.fornecedoresInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
     },
     // Método GET - Itens das compras.
-    fetchItensCompraInfoDB () {
+    fetchItensCompraInfoDB (callback) {
       axios.get("/api/itemcompra").then(
-        (res) => this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => {
+          this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
+          if (callback) callback();
+        })
     },
     // Método GET - Produtos.
     fetchProdutosInfoDB() {
@@ -421,7 +424,7 @@ export default {
       this.selectedLocalUsoNome = selectedLocUsoNome;
     },
     // Método que exclui um item.
-    removeItem (cod) {
+    removeItem (cod, callback) {
       axios.delete("/api/itemcompra",
         {
           headers: {
@@ -430,17 +433,19 @@ export default {
           data: {
             codigo: Number(cod)
           }
-        }).then(() => this.fetchItensCompraInfoDB());
+        }).then(() => callback());
     },
     // Método que chama 'removeItem' e renderiza a lista.
     removeItemFromDB (cod) {
-      this.removeItem(cod);
+      var self = this;
+      this.removeItem(cod, () => {
+        self.clearSelectedItensByCompra();
+        self.fetchItensCompraInfoDB(() => {
+          self.selectItensByCompra();
+          self.sumValorTotalCompra();
+        });
+      });
       this.cancelItem();
-      setTimeout(() => {
-        this.clearSelectedItensByCompra();
-        this.selectItensByCompra();
-        this.sumValorTotalCompra();
-      }, this.timeOut);
     },
     // Método para atualizar um Item selecionado.
     updateItem (cod, qnt, valorU, valorT) {
