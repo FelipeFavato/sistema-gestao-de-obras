@@ -404,7 +404,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2000);
+      }, 2500);
     },
     // Método para preencher a ItemModal de DELETE e UPDATE.
     fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
@@ -439,7 +439,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2000);
+      }, 2500);
     },
     // Método para atualizar um Item selecionado.
     updateItem (cod, qnt, valorU, valorT) {
@@ -465,7 +465,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2000);
+      }, 2500);
     },
     // Método que traz o valor total dos itens de uma compra.
     sumValorTotalCompra () {
