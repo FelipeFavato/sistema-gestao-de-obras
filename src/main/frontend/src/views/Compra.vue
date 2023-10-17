@@ -475,7 +475,6 @@ export default {
       }
 
       this.checkValueStatus();
-      console.log(this.valueStatus)
     },
     // Método para verificar se a soma dos itens passa do total da compra.
     checkValueStatus () {
