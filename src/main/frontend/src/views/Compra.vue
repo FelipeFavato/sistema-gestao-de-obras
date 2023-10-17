@@ -531,8 +531,8 @@ export default {
     <!-- Informações da compra  -->
     <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
     <div>
-      <!-- <h6>Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6> -->
-      <p>Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+      <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
+      <p v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
     </div>
   </div>
 
