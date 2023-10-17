@@ -77,6 +77,7 @@ export default {
       compraCodForne: '',
       valorTotalCompra: 0,
       showItems: false,
+      valueStatus: '',
       // Variáveis para requisição
       codigo: '',
       obra: {},
@@ -472,6 +473,19 @@ export default {
       for (let item of this.selectedItensByCompra) {
         this.valorTotalCompra += item.valorTotal
       }
+
+      this.checkValueStatus();
+      console.log(this.valueStatus)
+    },
+    // Método para verificar se a soma dos itens passa do total da compra.
+    checkValueStatus () {
+      if (this.getCompraInfo.valorFinal > this.valorTotalCompra) {
+        this.valueStatus = 'grey-letter';
+      } else if (this.getCompraInfo.valorFinal < this.valorTotalCompra) {
+        this.valueStatus = 'red-letter';
+      } else {
+        this.valueStatus = 'green-letter';
+      }
     }
   },
 
@@ -532,7 +546,9 @@ export default {
     <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
     <div>
       <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
-      <p v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+      <p
+        :class="this.valueStatus"
+        v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
     </div>
   </div>
 
@@ -1249,5 +1265,17 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+.red-letter {
+  color: red;
+}
+
+.green-letter {
+  color:green;
+}
+
+.grey-letter {
+  color: #212529;
 }
 </style>
