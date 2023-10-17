@@ -78,6 +78,7 @@ export default {
       valorTotalCompra: 0,
       showItems: false,
       valueStatus: '',
+      timeOut: 3000,
       // Variáveis para requisição
       codigo: '',
       obra: {},
@@ -404,7 +405,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2500);
+      }, this.timeOut);
     },
     // Método para preencher a ItemModal de DELETE e UPDATE.
     fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
@@ -439,7 +440,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2500);
+      }, this.timeOut);
     },
     // Método para atualizar um Item selecionado.
     updateItem (cod, qnt, valorU, valorT) {
@@ -465,7 +466,7 @@ export default {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
         this.sumValorTotalCompra();
-      }, 2500);
+      }, this.timeOut);
     },
     // Método que traz o valor total dos itens de uma compra.
     sumValorTotalCompra () {
