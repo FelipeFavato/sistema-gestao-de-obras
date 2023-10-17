@@ -531,38 +531,45 @@ export default {
     </div>
   </header>
 
-  <!-- Botão para voltar as compras -->
-  <div v-show="this.showItems" class="header middle-margin">
-    <button
-      type="button"
-      class="btn btn-dark"
-      title="Voltar às compras"
-      @click="switchItensCompras"
-    >
-      Voltar
-    </button>
-    <!-- Informações da compra  -->
-    <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
-    <div>
-      <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
-      <p
-        :class="this.valueStatus"
-        v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+  <!-- Botão 'Voltar' + informações + botão 'Novo Item' -->
+  <div class="header middle-margin">
+    <!-- Botão 'Voltar' + botão '+ Novo Item' -->
+    <div v-show="this.showItems" class="column">
+      <!-- Botão para voltar as compras -->
+      <button
+        type="button"
+        class="btn btn-dark"
+        title="Voltar às compras"
+        @click="switchItensCompras"
+      >
+        Voltar
+      </button>
+      <!-- Botão para adicionar Novo Item à Compra. -->
+      <button
+        @click="fillCompraCodForne"
+        type="button"
+        class="btn btn-success light-green"
+        data-bs-toggle="modal"
+        data-bs-target="#insertItemModal"
+      >
+        + Novo item
+      </button>
     </div>
-  </div>
 
+    <!-- Informações da compra  -->
+    <div v-show="this.showItems" class="column">
+      <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
+      <div>
+        <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
+        <p
+          :class="this.valueStatus"
+          v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+      </div>
+    </div>
 
-  <!-- Botão para adicionar Novo Item à Compra. -->
-  <div v-show="this.showItems" class="header middle-margin">
-    <button
-      @click="fillCompraCodForne"
-      type="button"
-      class="btn btn-success light-green"
-      data-bs-toggle="modal"
-      data-bs-target="#insertItemModal"
-    >
-      + Novo item
-    </button>
+    <!-- div's extras que ajustam a visibilidade -->
+    <div></div>
+    <div></div>
   </div>
 
   <!-- Elementos condicionais baseado na escolha da Obra (Botão + Nova Compra) -->
@@ -1033,15 +1040,13 @@ export default {
 
             <!-- Produto -->
             <div class="mb-3">
-              <label for="produto-select" class="bold">Produto:</label>
-              <select
-                class="form-select"
-                id="produto-select"
-                v-model="selectedProdutoNome">
-                <option
-                  v-for="(produto, i) in produtosInfo" :key="i" :value="produto.nome"
-                  >{{ produto.nome }}</option>
-              </select>
+              <label for="produto-input" class="form-label bold">Produto:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="produto-input"
+                v-model="selectedProdutoNome"
+                disabled>
             </div>
 
             <!-- Local de uso -->
@@ -1233,7 +1238,7 @@ export default {
 
 .column {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-direction: column;
   padding-bottom: 5px;
 }
