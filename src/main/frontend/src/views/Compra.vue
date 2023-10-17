@@ -569,7 +569,7 @@ export default {
         <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
         <p
           :class="this.valueStatus"
-          v-if="this.showItems">Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+          v-if="this.showItems">Valor dos itens: {{ fixCurrency(valorTotalCompra) }}</p>
       </div>
     </div>
 
