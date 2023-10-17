@@ -58,6 +58,7 @@ import axios from 'axios';
 export default {
   data () {
     return {
+      // Arrays auxiliares
       comprasInfo: [],
       obrasInfo: [],
       fornecedoresInfo: [],
@@ -66,13 +67,17 @@ export default {
       localUsoInfo: [],
       selectedComprasByObra: [],
       selectedItensByCompra: [],
+      // Variáveis auxiliares
       selectedObraNome: '',
       selectedFornecedorNome: '',
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
       selectedCompraID: '',
       getCompraInfo: {}, // Apenas informações da compra para serem usadas na página.
+      compraCodForne: '',
+      valorTotalCompra: 0,
       showItems: false,
+      // Variáveis para requisição
       codigo: '',
       obra: {},
       fornecedor: {},
@@ -327,6 +332,7 @@ export default {
       this.fillCompraInfo();
       this.fillCompraForRequest();
       this.selectItensByCompra();
+      this.sumValorTotalCompra();
     },
     // Método para popular o array 'selectedItensByCompra'.
     selectItensByCompra () {
@@ -335,6 +341,8 @@ export default {
           this.selectedItensByCompra.push(item);
         }
       }
+      // Ordena por nome de produto
+      this.selectedItensByCompra.sort((s1, s2) => s1.produto['nome'].localeCompare(s2.produto['nome']))
     },
     // Método para preencher o 'this.getCompraInfo' para usar informações na página.
     fillCompraInfo () {
@@ -368,6 +376,10 @@ export default {
         }
       }
     },
+    // Método para preencher o 'this.compraCodForne' para a inserção de novo Item.
+    fillCompraCodForne () {
+      this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
+    },
     // Método para inserir um novo Item a uma Compra.
     createItem () {
       axios.post("/api/itemcompra",
@@ -390,6 +402,7 @@ export default {
       setTimeout(() => {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
+        this.sumValorTotalCompra();
       }, 2000);
     },
     // Método para preencher a ItemModal de DELETE e UPDATE.
@@ -424,6 +437,7 @@ export default {
       setTimeout(() => {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
+        this.sumValorTotalCompra();
       }, 2000);
     },
     // Método para atualizar um Item selecionado.
@@ -449,7 +463,15 @@ export default {
       setTimeout(() => {
         this.clearSelectedItensByCompra();
         this.selectItensByCompra();
+        this.sumValorTotalCompra();
       }, 2000);
+    },
+    // Método que traz o valor total dos itens de uma compra.
+    sumValorTotalCompra () {
+      this.valorTotalCompra = 0;
+      for (let item of this.selectedItensByCompra) {
+        this.valorTotalCompra += item.valorTotal
+      }
     }
   },
 
@@ -461,8 +483,7 @@ export default {
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
     // setTimeout(() => {
-    //   console.log(this.comprasInfo);
-    //   console.log(this.itensCompraInfo);
+    //   console.log(this.selectedItensByCompra);
     // }, 1000);
   }
 }
@@ -507,16 +528,19 @@ export default {
     >
       Voltar
     </button>
+    <!-- Informações da compra -->
+    <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
+    <div>
+      <h6>Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
+      <p>Valor cadastrado: {{ fixCurrency(valorTotalCompra) }}</p>
+    </div>
   </div>
 
-  <!-- Informações da Compra -->
-  <div v-if="this.showItems" class="header middle-margin">
-    <p>{{ getCompraInfo.codigo }} | {{ getCompraInfo.fornecedor.nome }}</p>
-  </div>
 
   <!-- Botão para adicionar Novo Item à Compra -->
   <div v-show="this.showItems" class="header middle-margin">
     <button
+      @click="fillCompraCodForne"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -886,7 +910,7 @@ export default {
                 class="form-control"
                 id="compra-input"
                 disabled
-                v-model="selectedCompraID">
+                v-model="compraCodForne">
             </div>
 
             <!-- Produto -->
