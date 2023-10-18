@@ -578,7 +578,7 @@ export default {
       </h5>
 
       <div>
-        <!-- Se tiver DESCONTO -->
+        <!-- Se tiver desconto -->
         <h6 v-if="this.getCompraInfo.valorDesconto">
           Valor da Compra: {{ fixCurrency(getCompraInfo.valorOriginal) }}
           - {{ fixCurrency(getCompraInfo.valorDesconto) }}
