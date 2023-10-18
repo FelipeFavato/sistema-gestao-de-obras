@@ -133,6 +133,11 @@ export default {
       axios.get("/api/itemcompra").then(
         (res) => {
           this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
+          // 1. if (callback) callback(): Verifica se uma função de retorno de chamada foi
+          //    fornecida como argumento da função. Se uma 'callback' foi fornecida, ela é
+          //    chamada aqui. Permitindo que quem chame a função 'fetchItensCompraInfoDB'
+          //    especifique uma função a ser executada após a conclusa da busca e da
+          //    ordenação dos itens de compra.
           if (callback) callback();
         })
     },
@@ -424,6 +429,9 @@ export default {
       this.selectedLocalUsoNome = selectedLocUsoNome;
     },
     // Método que exclui um item.
+    // 1. .then(() => callback()): função de retorno de chamada a ser executada
+    //    após a remoção bem-sucedida do item. Permite que a função que chame
+    //    'removeItem' defina essa callback a ser executada após a exclusão.
     removeItem (cod, callback) {
       axios.delete("/api/itemcompra",
         {
@@ -436,8 +444,9 @@ export default {
         }).then(() => callback());
     },
     // Método que chama 'removeItem' e renderiza a lista.
+    // Função organizada por ordem de execução usando callbacks.
     removeItemFromDB (cod) {
-      var self = this;
+      let self = this;
       this.removeItem(cod, () => {
         self.clearSelectedItensByCompra();
         self.fetchItensCompraInfoDB(() => {
@@ -484,9 +493,9 @@ export default {
     },
     // Método para verificar se a soma dos itens passa do total da compra.
     checkValueStatus () {
-      if (this.getCompraInfo.valorFinal > this.valorTotalCompra) {
+      if (this.getCompraInfo.valorOriginal > this.valorTotalCompra) {
         this.valueStatus = 'grey-letter';
-      } else if (this.getCompraInfo.valorFinal < this.valorTotalCompra) {
+      } else if (this.getCompraInfo.valorOriginal < this.valorTotalCompra) {
         this.valueStatus = 'red-letter';
       } else {
         this.valueStatus = 'green-letter';
@@ -564,12 +573,19 @@ export default {
 
     <!-- Informações da compra  -->
     <div v-show="this.showItems" class="column">
-      <h5 v-if="this.showItems">{{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}</h5>
+      <h5 v-if="this.showItems">
+        {{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}
+      </h5>
+
       <div>
-        <h6 v-if="this.showItems">Valor da compra: {{ fixCurrency(getCompraInfo.valorFinal) }}</h6>
-        <p
-          :class="this.valueStatus"
-          v-if="this.showItems">Valor dos itens: {{ fixCurrency(valorTotalCompra) }}</p>
+        <h6 v-if="this.showItems">
+          Valor da Compra: {{ fixCurrency(getCompraInfo.valorOriginal) }}
+          - {{ fixCurrency(getCompraInfo.valorDesconto) }}
+          = {{ fixCurrency(getCompraInfo.valorFinal) }}
+        </h6>
+        <p :class="this.valueStatus" v-if="this.showItems">
+          Valor dos itens: {{ fixCurrency(valorTotalCompra) }}
+        </p>
       </div>
     </div>
 
