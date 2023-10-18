@@ -572,18 +572,23 @@ export default {
     </div>
 
     <!-- Informações da compra  -->
-    <div v-show="this.showItems" class="column">
-      <h5 v-if="this.showItems">
+    <div v-if="this.showItems" class="column">
+      <h5>
         {{ getCompraInfo.codigo }} - {{ getCompraInfo.fornecedor.nome }}
       </h5>
 
       <div>
-        <h6 v-if="this.showItems">
+        <!-- Se tiver DESCONTO -->
+        <h6 v-if="this.getCompraInfo.valorDesconto">
           Valor da Compra: {{ fixCurrency(getCompraInfo.valorOriginal) }}
           - {{ fixCurrency(getCompraInfo.valorDesconto) }}
           = {{ fixCurrency(getCompraInfo.valorFinal) }}
         </h6>
-        <p :class="this.valueStatus" v-if="this.showItems">
+        <!-- Se NÃO tiver DESCONTO -->
+        <h6 v-if="!this.getCompraInfo.valorDesconto">
+          Valor da Compra: {{ fixCurrency(getCompraInfo.valorOriginal) }}
+        </h6>
+        <p :class="this.valueStatus">
           Valor dos itens: {{ fixCurrency(valorTotalCompra) }}
         </p>
       </div>
