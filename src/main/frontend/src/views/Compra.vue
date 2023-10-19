@@ -548,9 +548,9 @@ export default {
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
     this.fetchUnidadeMedidaInfoDB();
-    setTimeout(() => {
-      console.log(this.unidadeMedidaInfo);
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log(this.unidadeMedidaInfo);
+    // }, 1000);
   }
 }
 </script>
