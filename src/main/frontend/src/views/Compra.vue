@@ -132,7 +132,7 @@ export default {
     // Método GET - Fornecedores.
     fetchFornecedoresInfoDB () {
       axios.get("/api/fornecedor").then(
-        (res) => this.fornecedoresInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => this.fornecedoresInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
     },
     // Método GET - Itens das compras.
     fetchItensCompraInfoDB (callback) {
@@ -637,7 +637,7 @@ export default {
     <div></div>
   </div>
 
-  <!-- Elementos condicionais baseados na escolha da Obra (Botão + Nova Compra) -->
+  <!-- Elementos condicionais baseados na escolha da Obra (Botão + Novo Custo) -->
   <div v-show="this.selectedObraNome" class="header middle-margin">
     <!-- Botão para adicionar Compra -->
     <button
@@ -646,7 +646,7 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
-    >+ Nova Compra</button>
+    >+ Novo Custo</button>
   </div>
 
   <!-- DeleteModalCompra -->
@@ -682,7 +682,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="insertModalLabel">Nova Compra</h1>
+          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Custo</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -813,7 +813,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Compra</h1>
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Custo</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
