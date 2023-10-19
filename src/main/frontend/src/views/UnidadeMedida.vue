@@ -1,91 +1,74 @@
 <script>
 import axios from 'axios';
-// import transformDate from '../utils/transformDate'
 
 export default {
   data () {
     return {
       info: [],
-      codigoLocalUsoObra: '',
-      nomeLocalUsoObra: '',
-      dataDesativacao: null,
-    };
+      codigo: '',
+      unidade: ''
+    }
   },
 
   methods: {
-    cancel() {
-      this.codigoLocalUsoObra = '';
-      this.nomeLocalUsoObra = '';
+    cancel () {
+      this.codigo = '';
+      this.unidade = '';
     },
     fetchInfoDB () {
-      axios.get("/api/localuso").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
+      axios.get("/api/unidademedida").then(
+        (res) => this.info = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade'])))
     },
     createInfoDB () {
-      axios.post("/api/localuso", 
+      axios.post("/api/unidademedida",
       {
-        nomeLocalUsoObra: this.nomeLocalUsoObra,
-        dataDesativacao: null
+        unidade: this.unidade
       }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, data) {
-      this.codigoLocalUsoObra = codigo;
-      this.nomeLocalUsoObra = nome;
-      this.dataDesativacao = data;
+    fillUpdateDeleteModal (codigo, unidade) {
+      this.codigo = codigo;
+      this.unidade = unidade;
     },
-    updateInfoDB (codigo, nome, data) {
-      axios.put("/api/localuso",
-        {
-          codigoLocalUsoObra: Number(codigo),
-          nomeLocalUsoObra: nome,
-          dataDesativacao: data
-        }).then(() => this.fetchInfoDB());
+    updateInfoDB (codigo, unidade) {
+      axios.put("/api/unidademedida",
+      {
+        codigo: Number(codigo),
+        unidade: unidade
+      }).then(() => this.fetchInfoDB());
       this.cancel();
     },
     removeFromDB (codigo) {
-      axios.delete("/api/localuso", {
+      axios.delete("/api/unidademedida",
+      {
         headers: {
           Authorization: ''
         },
         data: {
-          codigoLocalUsoObra: Number(codigo)
+          codigo: Number(codigo)
         }
-      }).then(() => this.fetchInfoDB())
+      }).then(() => this.fetchInfoDB());
       this.cancel();
-    },
-    brazilDate (data) {
-      if (data === null) {
-        return null
-      }
-
-      let partes = data.split("-");
-
-      if (partes.length === 3) {
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      } else {
-        return null;
-      }
-    },
+    }
   },
-
+  
   mounted () {
     this.fetchInfoDB();
   }
 }
-
 </script>
 
 <template>
 
-  <!-- Header com o botão de +Novo -->
+  <!-- Header com o botão de + Novo -->
   <header class="header middle-margin">
     <button
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
-    >+ Novo Local de Uso</button>
+    >+ Nova Medida
+    </button>
   </header>
 
   <!-- DeleteModal -->
@@ -109,7 +92,7 @@ export default {
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
-            @click="removeFromDB(this.codigoLocalUsoObra)"
+            @click="removeFromDB(this.codigo)"
           >Sim</button>
         </div>
       </div>
@@ -121,7 +104,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Local de Uso</h1>
+          <h1 class="modal-title fs-5" id="insertModalLabel">Nova unidade de medida</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -129,13 +112,13 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Local:</label>
+              <label for="unidade-input" class="form-label bold">Unidade de medida:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
-                placeholder="Fundação, Hidráulica, etc..."
-                v-model="nomeLocalUsoObra">
+                id="unidade-input"
+                placeholder="Gramas, quilos, metros..."
+                v-model="unidade">
             </div>
 
           </form>
@@ -164,7 +147,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Local de Uso</h1>
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar unidade de medida</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -178,27 +161,17 @@ export default {
                 class="form-control"
                 id="id-input"
                 disabled
-                v-model="codigoLocalUsoObra">
+                v-model="codigo">
             </div>
 
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Local:</label>
+              <label for="category-input" class="form-label bold">Unidade de medida:</label>
               <input
                 type="text"
                 class="form-control"
                 id="category-input"
                 placeholder="Alvenaria, Ferragens, etc..."
-                v-model="nomeLocalUsoObra"
-                disabled>
-            </div>
-
-            <div class="mb-3">
-              <label for="dataDesativacao-input" class="form-label bold">Data desativação:</label>
-              <input
-                type="date"
-                class="form-control"
-                id="dataDesativacao-input"
-                v-model="dataDesativacao">
+                v-model="unidade">
             </div>
 
           </form>
@@ -210,7 +183,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigoLocalUsoObra, this.nomeLocalUsoObra, this.dataDesativacao)"
+            @click="updateInfoDB(this.codigo, this.unidade)"
           >Salvar</button>
         </div>
       </div>
@@ -223,8 +196,8 @@ export default {
       <thead>
         <tr>
           <th scope="col">Código</th>
-          <th scope="col">Local</th>
-          <th scope="col">Data desativação</th>
+          <th scope="col">Unidade de medida</th>
+          <th></th>
           <th></th>
           <th></th>
           <th></th>
@@ -233,10 +206,10 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(localUso, i) in info" :key="i">
-          <th scope="row">{{ localUso.codigoLocalUsoObra }}</th>
-          <td>{{ localUso.nomeLocalUsoObra }}</td>
-          <td>{{ this.brazilDate(localUso.dataDesativacao) }}</td>
+        <tr v-for="(unidadeMedida, i) in info" :key="i">
+          <th scope="row">{{ unidadeMedida.codigo}}</th>
+          <td>{{ unidadeMedida.unidade }}</td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -248,7 +221,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra, localUso.dataDesativacao)"
+              @click="fillUpdateDeleteModal(unidadeMedida.codigo, unidadeMedida.unidade)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
@@ -256,7 +229,7 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(localUso.codigoLocalUsoObra ,localUso.nomeLocalUsoObra, localUso.dataDesativacao)"
+              @click="fillUpdateDeleteModal(unidadeMedida.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>

@@ -49,6 +49,12 @@ public class ItemCompra {
   @JoinColumn(name = "id_local_uso", referencedColumnName = "codigo_local_uso_obra")
   private LocalUso localUso;
 
+  // Muitos itens podem ter 1 tipo de unidade de medida.
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "id_unidade_medida", referencedColumnName = "codigo")
+  private UnidadeMedida unidadeMedida;
+
   @Column(name = "quantidade", length = 30)
   private int quantidade;
 
@@ -62,6 +68,7 @@ public class ItemCompra {
     this.compra = data.compra();
     this.produto = data.produto();
     this.localUso = data.localUso();
+    this.unidadeMedida = data.unidadeMedida();
     this.quantidade = data.quantidade();
     this.valorUnitario = data.valorUnitario();
     this.valorTotal = data.valorTotal();

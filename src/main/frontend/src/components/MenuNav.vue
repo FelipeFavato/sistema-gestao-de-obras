@@ -65,6 +65,7 @@ const redirect = (path) => {
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#fornecedor">Fornecedores</a></li>
               <li><a class="dropdown-item" href="#localuso">Local de uso</a></li>
+              <li><a class="dropdown-item" href="#unidademedida">Medidas</a></li>
               <li><a class="dropdown-item" href="#obra">Obras</a></li>
               <li><a class="dropdown-item" href="#produto">Produtos</a></li>
               <!-- <li><hr class="dropdown-divider"></li> -->

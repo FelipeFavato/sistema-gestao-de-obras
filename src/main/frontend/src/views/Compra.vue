@@ -65,6 +65,7 @@ export default {
       itensCompraInfo: [],
       produtosInfo: [],
       localUsoInfo: [],
+      unidadeMedidaInfo: [],
       selectedComprasByObra: [],
       selectedItensByCompra: [],
       // Variáveis auxiliares
@@ -72,6 +73,7 @@ export default {
       selectedFornecedorNome: '',
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
+      selectedUnidadeMedida: '',
       selectedCompraID: '',
       getCompraInfo: {}, // Apenas informações da compra para serem usadas na página.
       compraCodForne: '',
@@ -94,6 +96,7 @@ export default {
       produto: {},
       localUso: {},
       compra: {},
+      unidadeMedida: {},
       quantidade: '',
       valorUnitario: '',
       valorTotal: ''
@@ -153,6 +156,11 @@ export default {
     fetchLocalUsoInfoDB () {
       axios.get("/api/localuso").then(
         (res) => this.localUsoInfo = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
+    },
+    // Método GET - UnidadeMedida.
+    fetchUnidadeMedidaInfoDB () {
+      axios.get("/api/unidademedida").then(
+        (res) => this.unidadeMedidaInfo = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade'])))
     },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
@@ -319,7 +327,9 @@ export default {
     cancelItem() {
       this.selectedProdutoNome = '';
       this.selectedLocalUsoNome = '';
+      this.selectedUnidadeMedida = '';
       // this.compra = {};
+      this.unidadeMedida = {};
       this.produto = {};
       this.localUso = {};
       this.quantidade = '';
@@ -395,6 +405,14 @@ export default {
         }
       }
     },
+    // Método para preencher 'this.unidadeMedida' com o formato correto para a requisição.
+    fillUnidadeMedidaForRequest() {
+      for (let chosenUnidadeMedida of this.unidadeMedidaInfo) {
+        if (chosenUnidadeMedida.unidade === this.selectedUnidadeMedida) {
+          this.unidadeMedida = chosenUnidadeMedida;
+        }
+      }
+    },
     // Método para preencher o 'this.compraCodForne' para a inserção de novo Item.
     fillCompraCodForne () {
       this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
@@ -406,6 +424,7 @@ export default {
           compra: this.compra,
           produto: this.produto,
           localUso: this.localUso,
+          unidadeMedida: this.unidadeMedida,
           quantidade: this.quantidade,
           valorUnitario: this.valorUnitario,
           valorTotal: this.valorTotal
@@ -417,6 +436,7 @@ export default {
       this.fillCompraForRequest();  // Teoricamente não precisa dessa chamada.
       this.fillProdutoForRequest();
       this.fillLocalUsoForRequest();
+      this.fillUnidadeMedidaForRequest();
       this.createItem(() => {
         self.fetchItensCompraInfoDB(() => {
           self.clearSelectedItensByCompra();
@@ -427,17 +447,19 @@ export default {
       this.cancelItem();
     },
     // Método para preencher a ItemModal de DELETE e UPDATE.
-    fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
-      selectedProdNome, selectedLocUsoNome) {
+    fillUpdateDeleteItemModal (cod, comp, prod, locUso, uniMedida, qnt, valorU,
+      valorT, selectedProdNome, selectedLocUsoNome, selectedUniMedida) {
       this.codigoItem = cod;
       this.compra = comp;
       this.produto = prod;
       this.localUso = locUso;
+      this.unidadeMedida = uniMedida;
       this.quantidade = qnt;
       this.valorUnitario = valorU;
       this.valorTotal = valorT;
       this.selectedProdutoNome = selectedProdNome;
       this.selectedLocalUsoNome = selectedLocUsoNome;
+      this.selectedUnidadeMedida = selectedUniMedida;
     },
     // Método que exclui um item.
     // 1. .then(() => callback()): função de retorno de chamada a ser executada
@@ -475,6 +497,7 @@ export default {
         compra: this.compra,
         produto: this.produto,
         localUso: this.localUso,
+        unidadeMedida: this.unidadeMedida,
         quantidade: qnt,
         valorUnitario: valorU,
         valorTotal: valorT
@@ -486,6 +509,7 @@ export default {
       this.fillCompraForRequest();
       this.fillProdutoForRequest();
       this.fillLocalUsoForRequest();
+      this.fillUnidadeMedidaForRequest();
       this.updateItem(cod, qnt, valorU, valorT, () => {
         self.fetchItensCompraInfoDB(() => {
           self.clearSelectedItensByCompra();
@@ -523,9 +547,10 @@ export default {
     this.fetchItensCompraInfoDB();
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
-    // setTimeout(() => {
-    //   console.log(this.selectedItensByCompra);
-    // }, 1000);
+    this.fetchUnidadeMedidaInfoDB();
+    setTimeout(() => {
+      console.log(this.unidadeMedidaInfo);
+    }, 1000);
   }
 }
 </script>
@@ -1012,6 +1037,19 @@ export default {
                 v-model="quantidade">
             </div>
 
+            <!-- Unidade de medida -->
+            <div class="mb-3">
+              <label for="unidade-medida-select" class="bold">Unidade de medida:</label>
+              <select
+                class="form-select"
+                id="unidade-medida-select"
+                v-model="selectedUnidadeMedida">
+                <option
+                  v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.unidade"
+                  >{{ unidadeMedida.unidade }}</option>
+              </select>
+            </div>
+
             <!-- Valor Unitario -->
             <div class="mb-3">
               <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
@@ -1101,7 +1139,7 @@ export default {
                   >{{ localUso.nomeLocalUsoObra }}</option>
               </select>
             </div>
-        
+
             <!-- Quantidade -->
             <div class="mb-3">
               <label for="quantidade-input" class="form-label bold">Quantidade:</label>
@@ -1112,6 +1150,19 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="quantidade">
             </div>
+
+            <!-- Unidade de medida -->
+            <div class="mb-3">
+              <label for="unidade-medida-select" class="bold">Unidade de medida:</label>
+              <select
+                class="form-select"
+                id="unidade-medida-select"
+                v-model="selectedUnidadeMedida">
+                <option
+                  v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.unidade"
+                  >{{ unidadeMedida.unidade }}</option>
+              </select>
+            </div>        
 
             <!-- Valor Unitario -->
             <div class="mb-3">
@@ -1234,7 +1285,7 @@ export default {
         <tr v-for="(item, i) in selectedItensByCompra" :key="i">
           <th scope="row">{{ item.codigo }}</th>
           <td>{{ item.produto.nome }}</td>
-          <td>{{ item.quantidade }}</td>
+          <td>{{ item.quantidade }} {{ item.unidadeMedida ? item.unidadeMedida.unidade : '' }}</td>
           <td>{{ fixCurrency(item.valorUnitario) }}</td>
           <td>{{ fixCurrency(item.valorTotal) }}</td>
           <td></td>
@@ -1248,8 +1299,8 @@ export default {
               data-bs-toggle="modal"
               data-bs-target="#updateItemModal"
               @click="fillUpdateDeleteItemModal(item.codigo, item.compra, item.produto, item.localUso,
-                item.quantidade, item.valorUnitario, item.valorTotal,
-                item.produto.nome, item.localUso.nomeLocalUsoObra)"
+                item.unidadeMedida, item.quantidade, item.valorUnitario, item.valorTotal,
+                item.produto.nome, item.localUso.nomeLocalUsoObra, item.unidadeMedida.unidade)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"

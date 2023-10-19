@@ -50,6 +50,7 @@ public class ItemCompraController {
       itemCompra.setCompra(data.compra());
       itemCompra.setProduto(data.produto());
       itemCompra.setLocalUso(data.localUso());
+      itemCompra.setUnidadeMedida(data.unidadeMedida());
       itemCompra.setQuantidade(data.quantidade());
       itemCompra.setValorUnitario(data.valorUnitario());
       itemCompra.setValorTotal(data.valorTotal());

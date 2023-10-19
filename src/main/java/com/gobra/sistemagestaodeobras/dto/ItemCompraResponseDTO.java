@@ -4,6 +4,7 @@ import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.LocalUso;
 import com.gobra.sistemagestaodeobras.model.Produto;
+import com.gobra.sistemagestaodeobras.model.UnidadeMedida;
 
 public record ItemCompraResponseDTO (
 
@@ -14,6 +15,8 @@ public record ItemCompraResponseDTO (
   Produto produto,
 
   LocalUso localUso,
+
+  UnidadeMedida unidadeMedida,
 
   int quantidade,
 
@@ -29,6 +32,7 @@ public record ItemCompraResponseDTO (
       itemCompraModel.getCompra(),
       itemCompraModel.getProduto(),
       itemCompraModel.getLocalUso(),
+      itemCompraModel.getUnidadeMedida(),
       itemCompraModel.getQuantidade(),
       itemCompraModel.getValorUnitario(),
       itemCompraModel.getValorTotal()
