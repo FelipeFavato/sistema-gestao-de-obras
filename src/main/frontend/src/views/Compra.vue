@@ -391,7 +391,7 @@ export default {
       this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
     },
     // Método para inserir um novo Item a uma Compra.
-    createItem () {
+    createItem (callback) {
       axios.post("/api/itemcompra",
         {
           compra: this.compra,
@@ -400,20 +400,22 @@ export default {
           quantidade: this.quantidade,
           valorUnitario: this.valorUnitario,
           valorTotal: this.valorTotal
-        }).then(() => this.fetchItensCompraInfoDB());
+        }).then(() => callback());
     },
     // Método que chama o método 'createItem' e realiza a requisição.
     createItemInfoDB () {
+      let self = this;
       this.fillCompraForRequest();  // Teoricamente não precisa dessa chamada.
       this.fillProdutoForRequest();
       this.fillLocalUsoForRequest();
-      this.createItem();
+      this.createItem(() => {
+        self.fetchItensCompraInfoDB(() => {
+          self.clearSelectedItensByCompra();
+          self.selectItensByCompra();
+          self.sumValorTotalCompra();
+        });
+      });
       this.cancelItem();
-      setTimeout(() => {
-        this.clearSelectedItensByCompra();
-        this.selectItensByCompra();
-        this.sumValorTotalCompra();
-      }, this.timeOut);
     },
     // Método para preencher a ItemModal de DELETE e UPDATE.
     fillUpdateDeleteItemModal (cod, comp, prod, locUso, qnt, valorU, valorT,
@@ -448,8 +450,8 @@ export default {
     removeItemFromDB (cod) {
       let self = this;
       this.removeItem(cod, () => {
-        self.clearSelectedItensByCompra();
         self.fetchItensCompraInfoDB(() => {
+          self.clearSelectedItensByCompra();
           self.selectItensByCompra();
           self.sumValorTotalCompra();
         });
@@ -457,7 +459,7 @@ export default {
       this.cancelItem();
     },
     // Método para atualizar um Item selecionado.
-    updateItem (cod, qnt, valorU, valorT) {
+    updateItem (cod, qnt, valorU, valorT, callback) {
       axios.put("/api/itemcompra",
       {
         codigo: Number(cod),
@@ -467,20 +469,22 @@ export default {
         quantidade: qnt,
         valorUnitario: valorU,
         valorTotal: valorT
-      }).then(() => this.fetchItensCompraInfoDB());
+      }).then(() => callback());
     },
     // Chama o método 'updateItem' e repopula a lista corretamente.
     updateItemInfoDB (cod, qnt, valorU, valorT) {
+      let self = this;
       this.fillCompraForRequest();
       this.fillProdutoForRequest();
       this.fillLocalUsoForRequest();
-      this.updateItem(cod, qnt, valorU, valorT);
+      this.updateItem(cod, qnt, valorU, valorT, () => {
+        self.fetchItensCompraInfoDB(() => {
+          self.clearSelectedItensByCompra();
+          self.selectItensByCompra();
+          self.sumValorTotalCompra();
+        })
+      });
       this.cancelItem();
-      setTimeout(() => {
-        this.clearSelectedItensByCompra();
-        this.selectItensByCompra();
-        this.sumValorTotalCompra();
-      }, this.timeOut);
     },
     // Método que traz o valor total dos itens de uma compra.
     sumValorTotalCompra () {
@@ -599,7 +603,7 @@ export default {
     <div></div>
   </div>
 
-  <!-- Elementos condicionais baseado na escolha da Obra (Botão + Nova Compra) -->
+  <!-- Elementos condicionais baseados na escolha da Obra (Botão + Nova Compra) -->
   <div v-show="this.selectedObraNome" class="header middle-margin">
     <!-- Botão para adicionar Compra -->
     <button
