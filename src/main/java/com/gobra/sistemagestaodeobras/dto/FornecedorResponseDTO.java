@@ -16,6 +16,8 @@ public record FornecedorResponseDTO (
 
   String endereco,
 
+  String email,
+
   TipoFornecedorEnum tipoFornecedor,
 
   List<Compra> compras
@@ -28,6 +30,7 @@ public record FornecedorResponseDTO (
       fornecedorModel.getNome(),
       fornecedorModel.getTelefone(),
       fornecedorModel.getEndereco(),
+      fornecedorModel.getEmail(),
       fornecedorModel.getTipoFornecedor(),
       fornecedorModel.getCompras()
     );

@@ -52,6 +52,7 @@ public class FornecedorController {
       fornecedor.setNome(data.nome());
       fornecedor.setTelefone(data.telefone());
       fornecedor.setEndereco(data.endereco());
+      fornecedor.setEmail(data.email());
       fornecedor.setTipoFornecedor(data.tipoFornecedor());
 
       return ResponseEntity.ok(fornecedor);

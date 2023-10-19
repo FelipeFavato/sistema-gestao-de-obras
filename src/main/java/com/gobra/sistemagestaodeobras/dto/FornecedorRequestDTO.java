@@ -15,6 +15,8 @@ public record FornecedorRequestDTO (
 
   String endereco,
 
+  String email,
+
   TipoFornecedorEnum tipoFornecedor,
 
   List<Compra> compras

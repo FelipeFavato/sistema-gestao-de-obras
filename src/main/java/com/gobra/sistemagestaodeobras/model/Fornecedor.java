@@ -45,6 +45,9 @@ public class Fornecedor {
   @Column(name = "endereço", length = 150, unique = true)
   private String endereco;
 
+  @Column(name = "email", length = 100)
+  private String email;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "tipo_fornecedor", length = 10)
   private TipoFornecedorEnum tipoFornecedor;
@@ -58,6 +61,7 @@ public class Fornecedor {
     this.nome = data.nome();
     this.telefone = data.telefone();
     this.endereco = data.endereco();
+    this.email = data.email();
     this.tipoFornecedor = data.tipoFornecedor();
     this.compras = data.compras();
   }

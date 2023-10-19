@@ -9,7 +9,8 @@ export default {
       nome: '',
       tipoFornecedor: '',
       telefone: '',
-      endereco: ''
+      endereco: '',
+      email: ''
     };
   },
 
@@ -18,6 +19,7 @@ export default {
       this.nome = '';
       this.telefone = '';
       this.endereco = '';
+      this.email = '';
       this.tipoFornecedor = '';
     },
     fetchInfoDB () {
@@ -30,25 +32,28 @@ export default {
           nome: this.nome,
           tipoFornecedor: this.tipoFornecedor,
           telefone: this.fixTelNumber(this.telefone),
-          endereco: this.endereco
+          endereco: this.endereco,
+          email: this.email
         }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco) {
+    fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco, email) {
       this.codigo = codigo;
       this.nome = nome;
       this.tipoFornecedor = tipoFornecedor;
       this.telefone = telefone,
       this.endereco = endereco;
+      this.email = email;
     },
-    updateInfoDB (codigo, nome, tipo, telefone, endereco) {
+    updateInfoDB (codigo, nome, tipo, telefone, endereco, email) {
       axios.put("/api/fornecedor",
         {
           codigo: Number(codigo),
           nome: nome,
           tipoFornecedor: tipo,
           telefone: this.fixTelNumber(telefone),
-          endereco: endereco
+          endereco: endereco,
+          email: email
         }).then(() => this.fetchInfoDB());
       this.cancel();
     },
@@ -111,29 +116,6 @@ export default {
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <!-- <div class="modal-body">
-          <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="id-input"
-                placeholder=""
-                disabled
-                v-model="codigoLocalUsoObra">
-            </div>
-            <div class="mb-3">
-              <label for="category-input" class="form-label bold">Categoria:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="category-input"
-                placeholder=""
-                disabled
-                v-model="nomeLocalUsoObra">
-            </div>
-        </div> -->
-
         <div class="modal-footer header">
           <button
             type="button"
@@ -166,6 +148,7 @@ export default {
 
           <form action="POST">
 
+            <!-- Nome -->
             <div class="mb-3">
               <label for="name-input" class="form-label bold">Nome:</label>
               <input
@@ -176,6 +159,7 @@ export default {
                 v-model="nome">
             </div>
 
+            <!-- Categoria -->
             <div class="mb-3">
               <label for="tipoFornecedor-select" class="bold">Categoria:</label>
               <select
@@ -188,6 +172,7 @@ export default {
               </select>
             </div>
 
+            <!-- Telefone -->
             <div class="mb-3">
               <label for="telefone-input" class="form-label bold">Telefone:</label>
               <input
@@ -198,6 +183,7 @@ export default {
                 v-model="telefone">
             </div>
 
+            <!-- Endereço -->
             <div class="mb-3">
               <label for="address-input" class="form-label bold">Endereço:</label>
               <input
@@ -206,6 +192,17 @@ export default {
                 id="address-input"
                 placeholder="Avenida dos Fornecedores, 1000"
                 v-model="endereco">
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email-input" class="form-label bold">Email:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="email-input"
+                placeholder="fornecedor@gmail.com"
+                v-model="email">
             </div>
 
           </form>
@@ -241,6 +238,7 @@ export default {
         <div class="modal-body">
           <form action="PUT">
 
+            <!-- Código -->
             <div class="mb-3">
               <label for="id-input" class="form-label bold">Código:</label>
               <input
@@ -251,6 +249,7 @@ export default {
                 v-model="codigo">
             </div>
 
+            <!-- Nome -->
             <div class="mb-3">
               <label for="nome-input" class="form-label bold">Nome:</label>
               <input
@@ -262,6 +261,7 @@ export default {
                 disabled>
             </div>
 
+            <!-- Categoria -->
             <div class="mb-3">
               <label for="tipoFornecedor-select" class="bold">Categoria:</label>
               <select
@@ -274,6 +274,7 @@ export default {
               </select>
             </div>
 
+            <!-- Telefone -->
             <div class="mb-3">
               <label for="telefone-input" class="form-label bold">Telefone:</label>
               <input
@@ -284,6 +285,7 @@ export default {
                 v-model="telefone">
             </div>
 
+            <!-- Endereço -->
             <div class="mb-3">
               <label for="endereco-input" class="form-label bold">Endereço:</label>
               <input
@@ -294,6 +296,16 @@ export default {
                 v-model="endereco">
             </div>
 
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email-input" class="form-label bold">Email:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="email-input"
+                placeholder="fornecedor@gmail.com"
+                v-model="email">
+            </div>
           </form>
         </div>
 
@@ -303,7 +315,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.tipoFornecedor, this.telefone, this.endereco)"
+            @click="updateInfoDB(this.codigo, this.nome, this.tipoFornecedor, this.telefone, this.endereco, this.email)"
           >Salvar</button>
         </div>
       </div>
@@ -320,7 +332,7 @@ export default {
           <th scope="col">Categoria</th>
           <th scope="col">Telefone</th>
           <th scope="col">Endereço</th>
-          <th></th>
+          <th scope="col">Email</th>
           <th></th>
           <th></th>
         </tr>
@@ -332,7 +344,7 @@ export default {
           <td>{{ fornecedor.tipoFornecedor }}</td>
           <td>{{ this.fixTelNumber(fornecedor.telefone) }}</td>
           <td>{{ fornecedor.endereco }}</td>
-          <td></td>
+          <td>{{ fornecedor.email }}</td>
           <td></td>
           <td class="editar-excluir">
             <button
@@ -342,7 +354,7 @@ export default {
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
               @click="fillUpdateDeleteModal(fornecedor.codigo, fornecedor.nome,
-              fornecedor.tipoFornecedor, fornecedor.telefone, fornecedor.endereco)"
+              fornecedor.tipoFornecedor, fornecedor.telefone, fornecedor.endereco, fornecedor.email)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
