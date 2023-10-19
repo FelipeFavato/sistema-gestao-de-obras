@@ -114,9 +114,12 @@ export default {
       this.valorFinal = '';
     },
     // Método GET - Compras.
-    fetchComprasInfoDB () {
+    fetchComprasInfoDB (callback) {
       axios.get("/api/compra").then(
-        (res) => this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+        (res) => {
+          this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
+          if (callback) callback();
+        })
     },
     // Método GET - Obras.
     fetchObrasInfoDB () {
@@ -206,7 +209,7 @@ export default {
       this.selectedFornecedorNome = selectedFornecedorNome;
     },
     // Método para inserir Nova Compra.
-    createCompra () {
+    createCompra (callback) {
       axios.post("/api/compra",
         {
           obra: this.obra,
@@ -218,21 +221,23 @@ export default {
           valorOriginal: this.valorOriginal,
           valorDesconto: this.valorDesconto,
           valorFinal: this.valorFinal
-        }).then(() => this.fetchComprasInfoDB());
+        }).then(() => callback());
     },
     // Chama o método 'createCompra' e repopula a lista correta.
     createCompraInfoDB () {
+      let self = this;
       this.fillObraForRequest();
       this.fillFornecedorForRequest();
-      this.createCompra();
+      this.createCompra(() => {
+        self.fetchComprasInfoDB(() => {
+          self.emptySelectedComprasByObraArray();
+          self.selectComprasByObra();
+        })
+      });
       this.cancel();
-      setTimeout(() => {
-        this.emptySelectedComprasByObraArray();
-        this.selectComprasByObra();
-      }, 2000);
     },
     // Remove Compra selecionada.
-    removeCompra (codigo) {
+    removeCompra (codigo, callback) {
       axios.delete("/api/compra",
         {
           headers: {
@@ -241,19 +246,21 @@ export default {
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => this.fetchComprasInfoDB());
+        }).then(() => callback());
     },
     // Chama o método 'removeCompra' e repopula a lista correta.
     removeCompraFromDB (codigo) {
-      this.removeCompra(codigo);
+      let self = this;
+      this.removeCompra(codigo, () => {
+        self.fetchComprasInfoDB(() => {
+          self.emptySelectedComprasByObraArray();
+          self.selectComprasByObra();
+        });
+      });
       this.cancel();
-      setTimeout(() => {
-        this.emptySelectedComprasByObraArray();
-        this.selectComprasByObra();
-      }, 2000);
     },
     // Método para atualizar uma Compra selecionada.
-    updateCompra (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+    updateCompra (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF, callback) {
       axios.put("/api/compra",
       {
         codigo: Number(cod),
@@ -266,18 +273,20 @@ export default {
         valorOriginal: valorO,
         valorDesconto: valorD,
         valorFinal: valorF
-      }).then(() => this.fetchComprasInfoDB());
+      }).then(() => callback());
     },
     // Chama o método 'updateCompra' e repopula a lista corretamente.
     updateCompraInfoDB (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
+      let self = this;
       this.fillObraForRequest();
       this.fillFornecedorForRequest();
-      this.updateCompra(cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF);
+      this.updateCompra(cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF, () => {
+        self.fetchComprasInfoDB(() => {
+          self.emptySelectedComprasByObraArray();
+          self.selectComprasByObra();
+        });
+      });
       this.cancel();
-      setTimeout(() => {
-        this.emptySelectedComprasByObraArray();
-        this.selectComprasByObra();
-      }, 2000);
     },
     // Método para apresentar valores monetários BRL corretamente.
     fixCurrency (dinheiroDouble) {
@@ -482,7 +491,7 @@ export default {
           self.clearSelectedItensByCompra();
           self.selectItensByCompra();
           self.sumValorTotalCompra();
-        })
+        });
       });
       this.cancelItem();
     },
