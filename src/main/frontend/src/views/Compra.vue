@@ -80,7 +80,6 @@ export default {
       valorTotalCompra: 0,
       showItems: false,
       valueStatus: '',
-      timeOut: 3000,
       // Variáveis para requisição
       codigo: '',
       obra: {},
@@ -758,7 +757,9 @@ export default {
             <div class="mb-3">
               <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -769,7 +770,9 @@ export default {
             <div class="mb-3">
               <label for="desconto-input" class="form-label bold">Desconto:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -780,7 +783,9 @@ export default {
             <div class="mb-3">
               <label for="valor-final-input" class="form-label bold">Valor total:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -901,7 +906,9 @@ export default {
             <div class="mb-3">
               <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -912,7 +919,9 @@ export default {
             <div class="mb-3">
               <label for="desconto-input" class="form-label bold">Desconto:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -923,7 +932,7 @@ export default {
             <div class="mb-3">
               <label for="valor-final-input" class="form-label bold">Valor total:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -1030,7 +1039,7 @@ export default {
             <div class="mb-3">
               <label for="quantidade-input" class="form-label bold">Quantidade:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="quantidade-input"
                 placeholder="(inserir apenas números)"
@@ -1054,7 +1063,9 @@ export default {
             <div class="mb-3">
               <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -1065,7 +1076,9 @@ export default {
             <div class="mb-3">
               <label for="valor-total-input" class="form-label bold">Valor total:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=''
                 class="form-control"
                 id="valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -1144,7 +1157,7 @@ export default {
             <div class="mb-3">
               <label for="quantidade-input" class="form-label bold">Quantidade:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="quantidade-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -1168,7 +1181,9 @@ export default {
             <div class="mb-3">
               <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=""
                 class="form-control"
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
@@ -1179,7 +1194,9 @@ export default {
             <div class="mb-3">
               <label for="valor-total-input" class="form-label bold">Valor total:</label>
               <input
-                type="text"
+                type="number"
+                step="2"
+                title=""
                 class="form-control"
                 id="valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"

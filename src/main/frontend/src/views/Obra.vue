@@ -215,7 +215,7 @@ export default {
             <div class="mb-3">
               <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"
@@ -317,7 +317,7 @@ export default {
             <div class="mb-3">
               <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"

@@ -67,7 +67,7 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
-    >+ Nova Medida
+    >+ Nova Unidade de medida
     </button>
   </header>
 
