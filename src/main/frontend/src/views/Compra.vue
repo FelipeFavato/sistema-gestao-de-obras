@@ -758,7 +758,7 @@ export default {
               <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="valor-original-input"
@@ -771,7 +771,7 @@ export default {
               <label for="desconto-input" class="form-label bold">Desconto:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="desconto-input"
@@ -784,7 +784,7 @@ export default {
               <label for="valor-final-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="valor-final-input"
@@ -907,7 +907,7 @@ export default {
               <label for="valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="valor-original-input"
@@ -920,7 +920,7 @@ export default {
               <label for="desconto-input" class="form-label bold">Desconto:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="desconto-input"
@@ -1064,7 +1064,7 @@ export default {
               <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="valor-unitario-input"
@@ -1077,7 +1077,7 @@ export default {
               <label for="valor-total-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=''
                 class="form-control"
                 id="valor-total-input"
@@ -1182,7 +1182,7 @@ export default {
               <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=""
                 class="form-control"
                 id="valor-unitario-input"
@@ -1195,7 +1195,7 @@ export default {
               <label for="valor-total-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
-                step="2"
+                step="0.01"
                 title=""
                 class="form-control"
                 id="valor-total-input"
