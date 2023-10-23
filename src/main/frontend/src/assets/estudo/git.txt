@@ -1,0 +1,1 @@
+https://refine.dev/blog/git-delete-remote-branch-and-local-branch/#deleting-a-git-local-branch
