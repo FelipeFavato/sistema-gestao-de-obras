@@ -649,7 +649,7 @@ export default {
   </div>
 
   <!-- DeleteModalCompra -->
-  <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -677,8 +677,8 @@ export default {
   </div>
 
   <!-- InsertModalCompra -->
-  <div class="modal" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+  <div class="modal fade" id="insertModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Custo</h1>
@@ -814,7 +814,7 @@ export default {
   </div>
 
   <!-- UpdateModalCompra -->
-  <div class="modal" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+  <div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -958,7 +958,7 @@ export default {
   </div>
 
   <!-- DeleteModalItem -->
-  <div class="modal" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deleteItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -986,8 +986,8 @@ export default {
   </div>
 
   <!-- InsertModalItem -->
-  <div class="modal" id="insertItemModal" tabindex="-1" aria-labelledby="insertItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+  <div class="modal fade" id="insertItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="insertItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertItemModalLabel">Novo Item</h1>
@@ -1107,7 +1107,7 @@ export default {
   </div>
 
   <!-- UpdateModalItem -->
-  <div class="modal" id="updateItemModal" tabindex="-1" aria-labelledby="updateItemModalLabel" aria-hidden="true">
+  <div class="modal fade" id="updateItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
