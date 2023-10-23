@@ -72,7 +72,7 @@ export default {
 
 <template>
 
-  <!-- Header com o botão de +Novo -->
+  <!-- Header com o botão de +Novo Usuário -->
   <header class="header middle-margin">
     <button
       type="button"
