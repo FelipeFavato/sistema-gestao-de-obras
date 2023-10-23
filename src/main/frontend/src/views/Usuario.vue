@@ -7,58 +7,49 @@ export default {
       info: [],
       codigo: '',
       nome: '',
-      tipoFornecedor: '',
-      telefone: '',
-      endereco: '',
-      email: ''
+      email: '',
+      tipoPerfil: ''
     };
   },
 
   methods: {
-    cancel() {
+    cancel () {
+      this.codigo = '';
       this.nome = '';
-      this.telefone = '';
-      this.endereco = '';
       this.email = '';
-      this.tipoFornecedor = '';
+      this.tipoPerfil = '';
     },
     fetchInfoDB () {
-      axios.get("/api/fornecedor").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
+      axios.get("/api/usuario").then(
+        (res) => this.info = res.data)
     },
     createInfoDB () {
-      axios.post("/api/fornecedor",
-        {
-          nome: this.nome,
-          tipoFornecedor: this.tipoFornecedor,
-          telefone: this.fixTelNumber(this.telefone),
-          endereco: this.endereco,
-          email: this.email
-        }).then(() => this.fetchInfoDB());
+      axios.post("/api/usuario",
+      {
+        nome: this.nome,
+        email: this.email,
+        tipoPerfil: this.tipoPerfil
+      }).then(() => this.fetchInfoDB());
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco, email) {
-      this.codigo = codigo;
+    fillUpdateDeleteModal(cod, nome, email, tipoPerfil) {
+      this.codigo = cod;
       this.nome = nome;
-      this.tipoFornecedor = tipoFornecedor;
-      this.telefone = telefone,
-      this.endereco = endereco;
       this.email = email;
+      this.tipoPerfil = tipoPerfil;
     },
-    updateInfoDB (codigo, nome, tipo, telefone, endereco, email) {
-      axios.put("/api/fornecedor",
+    updateInfoDB (codigo, nome, email, tipo) {
+      axios.put("/api/usuario",
         {
           codigo: Number(codigo),
           nome: nome,
-          tipoFornecedor: tipo,
-          telefone: this.fixTelNumber(telefone),
-          endereco: endereco,
-          email: email
+          email: email,
+          tipoPerfil: tipo
         }).then(() => this.fetchInfoDB());
       this.cancel();
     },
     removeFromDB (codigo) {
-      axios.delete("/api/fornecedor",
+      axios.delete("/api/usuario",
         {
           headers: {
             Authorization: ''
@@ -68,22 +59,6 @@ export default {
           }
         }).then(() => this.fetchInfoDB())
       this.cancel();
-    },
-    fixTelNumber(numero) {
-      if (numero === null) {
-        return ''
-      }
-      // Remove todos os caracteres não numéricos do número de telefone
-      const numeroLimpo = numero.replace(/\D/g, '');
-
-      // Verifica se o número tem 11 dígitos
-      if (numeroLimpo.length === 11) {
-          // Formata o número de telefone
-          return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7)}`;
-      }
-      if (numeroLimpo.length === 10) {
-        return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`
-      }
     },
   },
 
@@ -104,7 +79,7 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
-    >+ Novo Fornecedor</button>
+    >+ Novo Usuário</button>
   </header>
 
   <!-- DeleteModal -->
@@ -140,7 +115,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Fornecedor</h1>
+          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Usuário</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -155,43 +130,20 @@ export default {
                 type="text"
                 class="form-control"
                 id="name-input"
-                placeholder="Nome do Fornecedor"
+                placeholder="Nome do usuário"
                 v-model="nome">
             </div>
 
-            <!-- Categoria -->
+            <!-- Perfil -->
             <div class="mb-3">
-              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <label for="tipo-perfil-select" class="bold">Perfil:</label>
               <select
                 class="form-select"
-                id="tipoFornecedor-select"
-                v-model="tipoFornecedor">
-                <option value="Material">Material</option>
-                <option value="Serviço">Serviço</option>
-                <option value="Ambos">Ambos</option>
+                id="tipo-perfil-select"
+                v-model="tipoPerfil">
+                <option value="Gestor">Gestor</option>
+                <option value="Operacional">Operacional</option>
               </select>
-            </div>
-
-            <!-- Telefone -->
-            <div class="mb-3">
-              <label for="telefone-input" class="form-label bold">Telefone:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="telefone-input"
-                placeholder="Telefone (com DDD)"
-                v-model="telefone">
-            </div>
-
-            <!-- Endereço -->
-            <div class="mb-3">
-              <label for="address-input" class="form-label bold">Endereço:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="address-input"
-                placeholder="Avenida dos Fornecedores, 1000"
-                v-model="endereco">
             </div>
 
             <!-- Email -->
@@ -201,7 +153,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="email-input"
-                placeholder="fornecedor@gmail.com"
+                placeholder="perfil@gmail.com"
                 v-model="email">
             </div>
 
@@ -231,7 +183,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Fornecedor</h1>
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Usuário</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -256,43 +208,21 @@ export default {
                 type="text"
                 class="form-control"
                 id="nome-input"
+                placeholder="Nome do usuário"
                 v-model="nome"
                 disabled>
             </div>
 
-            <!-- Categoria -->
+            <!-- Perfil -->
             <div class="mb-3">
-              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <label for="tipo-perfil-select" class="bold">Perfil:</label>
               <select
                 class="form-select"
-                id="tipoFornecedor-select"
-                v-model="tipoFornecedor">
-                <option value="Material">Material</option>
-                <option value="Serviço">Serviço</option>
-                <option value="Ambos">Ambos</option>
+                id="tipo-perfil-select"
+                v-model="tipoPerfil">
+                <option value="Gestor">Gestor</option>
+                <option value="Operacional">Operacional</option>
               </select>
-            </div>
-
-            <!-- Telefone -->
-            <div class="mb-3">
-              <label for="telefone-input" class="form-label bold">Telefone:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="telefone-input"
-                placeholder="Telefone (com DDD)"
-                v-model="telefone">
-            </div>
-
-            <!-- Endereço -->
-            <div class="mb-3">
-              <label for="endereco-input" class="form-label bold">Endereço:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="endereco-input"
-                placeholder="Avenida dos Fornecedores, 1000"
-                v-model="endereco">
             </div>
 
             <!-- Email -->
@@ -302,7 +232,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="email-input"
-                placeholder="fornecedor@gmail.com"
+                placeholder="usuario@gmail.com"
                 v-model="email">
             </div>
           </form>
@@ -314,7 +244,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.tipoFornecedor, this.telefone, this.endereco, this.email)"
+            @click="updateInfoDB(this.codigo, this.nome, this.email, this.tipoPerfil)"
           >Salvar</button>
         </div>
       </div>
@@ -329,21 +259,21 @@ export default {
           <th scope="col">Código</th>
           <th scope="col">Nome</th>
           <th scope="col">Categoria</th>
-          <th scope="col">Telefone</th>
-          <th scope="col">Endereço</th>
           <th scope="col">Email</th>
+          <th></th>
+          <th></th>
           <th></th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(fornecedor, i) in info" :key="i">
-          <th scope="row">{{ fornecedor.codigo }}</th>
-          <td>{{ fornecedor.nome }}</td>
-          <td>{{ fornecedor.tipoFornecedor }}</td>
-          <td>{{ this.fixTelNumber(fornecedor.telefone) }}</td>
-          <td>{{ fornecedor.endereco }}</td>
-          <td>{{ fornecedor.email }}</td>
+        <tr v-for="(usuario, i) in info" :key="i">
+          <th scope="row">{{ usuario.codigo }}</th>
+          <td>{{ usuario.nome }}</td>
+          <td>{{ usuario.tipoPerfil }}</td>
+          <td>{{ usuario.email }}</td>
+          <td></td>
+          <td></td>
           <td></td>
           <td class="editar-excluir">
             <button
@@ -352,8 +282,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(fornecedor.codigo, fornecedor.nome,
-              fornecedor.tipoFornecedor, fornecedor.telefone, fornecedor.endereco, fornecedor.email)"
+              @click="fillUpdateDeleteModal(usuario.codigo, usuario.nome, usuario.email, usuario.tipoPerfil)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
@@ -361,14 +290,14 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(fornecedor.codigo)"
+              @click="fillUpdateDeleteModal(usuario.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
       </tbody>
     </table>
   </main>
-  
+
 </template>
 
 <style scope>
