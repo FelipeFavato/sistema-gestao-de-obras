@@ -49,7 +49,8 @@ public class UsuarioController {
       Usuario usuario = optionalUsuario.get();
       usuario.setNome(data.nome());
       usuario.setEmail(data.email());
-      usuario.setTipoPerfil(data.tipoPerfil());
+      usuario.setSenha(data.senha());
+      usuario.setPerfil(data.perfil());
     
       return ResponseEntity.ok(usuario);
     } else {

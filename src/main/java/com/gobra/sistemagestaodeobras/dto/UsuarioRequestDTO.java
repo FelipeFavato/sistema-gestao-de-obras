@@ -1,6 +1,6 @@
 package com.gobra.sistemagestaodeobras.dto;
 
-import com.gobra.sistemagestaodeobras.utils.TipoPerfilEnum;
+import com.gobra.sistemagestaodeobras.model.Perfil;
 
 public record UsuarioRequestDTO (
 
@@ -10,6 +10,8 @@ public record UsuarioRequestDTO (
 
   String email,
 
-  TipoPerfilEnum tipoPerfil
+  String senha,
+
+  Perfil perfil
 
 ) { }

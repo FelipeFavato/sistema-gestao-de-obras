@@ -1,15 +1,16 @@
 package com.gobra.sistemagestaodeobras.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.UsuarioRequestDTO;
-import com.gobra.sistemagestaodeobras.utils.TipoPerfilEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -38,14 +39,21 @@ public class Usuario {
   @Column(name = "email", length = 70, unique = true)
   private String email;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "tipo_perfil", length = 15)
-  private TipoPerfilEnum tipoPerfil;
+  @Column(name = "senha", length = 40)
+  private String senha;
+
+  // Muitos usuários podem ter 1 perfil
+  // Cada usuário terá 1 perfil
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "id_perfil", referencedColumnName = "codigo")
+  private Perfil perfil;
 
   public Usuario(UsuarioRequestDTO data) {
     this.nome = data.nome();
     this.email = data.email();
-    this.tipoPerfil = data.tipoPerfil();
+    this.senha = data.senha();
+    this.perfil = data.perfil();
   }
 
 }
