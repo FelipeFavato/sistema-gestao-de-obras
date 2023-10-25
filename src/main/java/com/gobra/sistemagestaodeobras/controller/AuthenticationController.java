@@ -36,7 +36,7 @@ public class AuthenticationController {
   private TokenService tokenService;
 
   @PostMapping("/login")
-  public ResponseEntity login (@RequestBody AuthenticationDTO data) {
+  public ResponseEntity<LoginResponseDTO> login (@RequestBody AuthenticationDTO data) {
     // UsernamePasswordAuthenticationToken(): Essa classe vem do Spring Security e
     //  recebe como parametro (loginUsuario(), senha()).
     var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
@@ -51,7 +51,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/registrar")
-  public ResponseEntity register (@RequestBody RegistroDTO data) {
+  public ResponseEntity<Usuario> register (@RequestBody RegistroDTO data) {
     if (this.usuarioRepository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().build();
 
     String encryptedSenha = new BCryptPasswordEncoder().encode(data.senha());
@@ -59,6 +59,6 @@ public class AuthenticationController {
 
     this.usuarioRepository.save(newUsuario);
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(newUsuario);
   }
 }

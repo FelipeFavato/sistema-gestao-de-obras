@@ -8,8 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-// import com.fasterxml.jackson.annotation.JsonIgnore;
-// import com.gobra.sistemagestaodeobras.dto.UsuarioRequestDTO;
+
 import com.gobra.sistemagestaodeobras.utils.TipoPerfilEnum;
 
 import jakarta.persistence.Column;
@@ -19,8 +18,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-// import jakarta.persistence.JoinColumn;
-// import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -56,19 +53,11 @@ public class Usuario implements UserDetails {
   @Column(name = "tipo_perfil", length = 15)
   private TipoPerfilEnum tipoPerfil;
 
-  // Muitos usuários podem ter 1 perfil
-  // Cada usuário terá 1 perfil
-  // @JsonIgnore
-  // @ManyToOne
-  // @JoinColumn(name = "id_perfil", referencedColumnName = "codigo")
-  // private Perfil perfil;
-
   public Usuario(String nome, String email, String senha, TipoPerfilEnum tipoPerfil) {
     this.nome = nome;
     this.email = email;
     this.senha = senha;
     this.tipoPerfil = tipoPerfil;
-    // this.perfil = data.perfil();
   }
 
   // 1. public Collection<? extends GrantedAuthority> getAuthorities(): O método getAuthorities () retorna
