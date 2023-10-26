@@ -1,13 +1,5 @@
 <script setup>
 
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const redirect = (path) => {
-  router.push(path)
-}
-
 </script>
 
 <template>

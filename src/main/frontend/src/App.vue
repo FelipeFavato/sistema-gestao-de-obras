@@ -1,7 +1,7 @@
 <script setup>
 
-import { RouterView } from 'vue-router';
-import MenuNav from './components/MenuNav.vue';
+  import { RouterView } from 'vue-router';
+  import MenuNav from './components/MenuNav.vue';
 
 </script>
 
