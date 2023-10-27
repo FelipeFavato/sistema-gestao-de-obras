@@ -48,7 +48,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
               .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/auth/registrar").permitAll()
-              .requestMatchers(HttpMethod.POST, "/api/fornecedor").hasRole("Gestor")
+              // .requestMatchers(HttpMethod.POST, "/api/produto").permitAll()
+              // .requestMatchers(HttpMethod.PUT, "/api/produto").authenticated()
+              // .requestMatchers(HttpMethod.POST, "/api/fornecedor").hasRole("Gestor")
               .anyRequest().authenticated()
             )
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

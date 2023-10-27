@@ -1,9 +1,13 @@
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigo: '',
       nome: '',
@@ -16,6 +20,22 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatusCode = succesError;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
     cancel () {
       this.codigo = '';
       this.nome = '';
@@ -26,19 +46,38 @@ export default {
       this.custoPrevisto = '';
     },
     fetchInfoDB () {
-      axios.get("/api/obra").then(
-        (res) => this.info = res.data.sort((s1, s2) => s2.codigo - s1.codigo))
+      axios.get("/api/obra",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.info = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.status);
+      })
     },
     createInfoDB () {
       axios.post("/api/obra",
-      {
-        nome: this.nome,
-        endereco: this.endereco,
-        dataInicio: this.dataInicio,
-        dataPrevistaFim: this.dataPrevistaFim,
-        dataRealFim: this.dataRealFim,
-        custoPrevisto: this.custoPrevisto
-      }).then(() => this.fetchInfoDB());
+        {
+          nome: this.nome,
+          endereco: this.endereco,
+          dataInicio: this.dataInicio,
+          dataPrevistaFim: this.dataPrevistaFim,
+          dataRealFim: this.dataRealFim,
+          custoPrevisto: this.custoPrevisto
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     fillUpdateDeleteModal (codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoPrevisto) {
@@ -52,27 +91,42 @@ export default {
     },
     updateInfoDB (cod, no, end, dataIni, dataPrFim, dataRFim, custoPrev) {
       axios.put("/api/obra",
-      {
-        codigo: cod,
-        nome: no,
-        endereco: end,
-        dataInicio: dataIni,
-        dataPrevistaFim: dataPrFim,
-        dataRealFim: dataRFim,
-        custoPrevisto: custoPrev
-      }).then(() => this.fetchInfoDB());
+        {
+          codigo: cod,
+          nome: no,
+          endereco: end,
+          dataInicio: dataIni,
+          dataPrevistaFim: dataPrFim,
+          dataRealFim: dataRFim,
+          custoPrevisto: custoPrev
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     removeFromDB (codigo) {
       axios.delete("/api/obra",
-      {
-        headers: {
-          Authorization: ''
-        },
-        data: {
-          codigo: Number(codigo)
-        }
-      }).then(() => this.fetchInfoDB())
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          },
+          data: {
+            codigo: Number(codigo)
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     brazilDate (data) {
@@ -105,6 +159,8 @@ export default {
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }

@@ -1,9 +1,13 @@
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigo: '',
       unidade: ''
@@ -11,48 +15,104 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de Login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatus = succesError;
+    },
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    // Método para esvaziar dados quando enviada/cancelada a requisição.
     cancel () {
       this.codigo = '';
       this.unidade = '';
     },
+    // Método para buscar os dados no Banco.
     fetchInfoDB () {
-      axios.get("/api/unidademedida").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade'])))
+      axios.get("/api/unidademedida", 
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => { 
+        this.info = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade']))
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.code);
+      });
     },
+    // Método para criar dados no Banco.
     createInfoDB () {
       axios.post("/api/unidademedida",
       {
         unidade: this.unidade
-      }).then(() => this.fetchInfoDB());
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then((res) => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.status);
+      });
       this.cancel();
     },
+    // Método para preencher as informações da Modal.
     fillUpdateDeleteModal (codigo, unidade) {
       this.codigo = codigo;
       this.unidade = unidade;
     },
+    // Método para atualizar um Produto no Banco.
     updateInfoDB (codigo, unidade) {
       axios.put("/api/unidademedida",
       {
         codigo: Number(codigo),
         unidade: unidade
-      }).then(() => this.fetchInfoDB());
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then((res) => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status); // 200
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.status);
+      });
       this.cancel();
     },
+    // Método para remover um dado do Banco.
     removeFromDB (codigo) {
       axios.delete("/api/unidademedida",
       {
         headers: {
-          Authorization: ''
+          Authorization: this.localStorageToken
         },
         data: {
           codigo: Number(codigo)
         }
-      }).then(() => this.fetchInfoDB());
+      }).then((res) => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.status);
+      });
       this.cancel();
     }
   },
   
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }

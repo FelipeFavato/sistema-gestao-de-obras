@@ -1,9 +1,13 @@
 <script>
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigo: '',
       nome: '',
@@ -15,6 +19,22 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatusCode = succesError;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
     cancel() {
       this.nome = '';
       this.telefone = '';
@@ -23,18 +43,37 @@ export default {
       this.tipoFornecedor = '';
     },
     fetchInfoDB () {
-      axios.get("/api/fornecedor").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
+      axios.get("/api/fornecedor",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.setHttpStatusCode(error.response.status);
+      });
     },
     createInfoDB () {
       axios.post("/api/fornecedor",
         {
           nome: this.nome,
           tipoFornecedor: this.tipoFornecedor,
-          telefone: this.fixTelNumber(this.telefone),
+          telefone: this.telefone,
           endereco: this.endereco,
           email: this.email
-        }).then(() => this.fetchInfoDB());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco, email) {
@@ -51,22 +90,37 @@ export default {
           codigo: Number(codigo),
           nome: nome,
           tipoFornecedor: tipo,
-          telefone: this.fixTelNumber(telefone),
+          telefone: telefone,
           endereco: endereco,
           email: email
-        }).then(() => this.fetchInfoDB());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     removeFromDB (codigo) {
       axios.delete("/api/fornecedor",
         {
           headers: {
-            Authorization: ''
+            Authorization: this.localStorageToken
           },
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => this.fetchInfoDB())
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.setHttpStatusCode(error.response.status);
+        });
       this.cancel();
     },
     fixTelNumber(numero) {
@@ -88,6 +142,8 @@ export default {
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }
