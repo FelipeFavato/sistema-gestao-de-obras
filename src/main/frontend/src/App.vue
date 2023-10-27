@@ -4,11 +4,6 @@ import { RouterView } from 'vue-router';
 import MenuNav from './components/MenuNav.vue';
 
 export default {
-  data () {
-    return {
-      loginPage: true,
-    }
-  },
 
   components: {
     MenuNav,
@@ -21,7 +16,6 @@ export default {
   },
 
   mounted () {
-    console.log(this.$route) 
   }
 }
 

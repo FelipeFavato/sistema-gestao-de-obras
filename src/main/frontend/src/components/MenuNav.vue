@@ -1,4 +1,26 @@
-<script setup>
+<script>
+
+import { useRouter } from 'vue-router';
+
+export default {
+  data () {
+    return {
+      useRouter: useRouter()
+    }
+  },
+
+  methods: {
+    // Método para redirecionar para a tela de LOGIN após clicar em 'Sair'.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método que exclue o token e redireciona para a tela de LOGIN.
+    logout () {
+      localStorage.removeItem('token');
+      this.redirectToLogin();
+    }
+  }
+}
 
 </script>
 
@@ -7,22 +29,12 @@
     <div class="container-fluid">
 
       <!-- Logo/Nome => link clicável para Home -->
-      <a
-        class="navbar-brand"
-        href="#"
-      >
-        <img
-          class="logo"
-          src="../assets/imagens/capacete.png"
-          alt="Logo"
-        >
+      <a class="navbar-brand" href="#">
+        <img class="logo" src="../assets/imagens/capacete.png" alt="Logo">
       </a>
-      <a
-        class="navbar-brand"
-        href="#"
-      >HUB 
+      <a class="navbar-brand" href="#">
+        HUB 
         <p class="constr">Construções</p>
-        
       </a>
 
 
@@ -68,11 +80,21 @@
         </ul>
         <div class="d-flex separate">
 
+          <!-- Link - Perfil -->
           <a class="nav-link small" href="#perfil" title="Perfil"><img src="../assets/imagens/perfil.png" alt="Perfil"></a>
 
+          <!-- Link - Configurações -->
           <a class="nav-link small" href="#configuracoes" title="Configurações"><img src="../assets/imagens/engrenagem.png" alt="Engrenagem"></a>
 
-          <a class="nav-link small" href="#perfil" title="Sair"><img src="../assets/imagens/logout.png" alt="Sair"></a>
+          <!-- Botão - Sair -->
+          <button
+            type="button"
+            class="nav-link small"
+            title="Sair"
+            @click="logout"
+          ><img src="../assets/imagens/logout.png" alt="Sair">
+          </button>
+        
         </div>
       </div>
     </div>

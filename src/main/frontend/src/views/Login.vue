@@ -15,7 +15,7 @@ import { useRouter } from 'vue-router';
 export default {
   data () {
     return {
-      router: useRouter(),
+      useRouter: useRouter(),
       email: '',
       senha: '',
       httpStatusCode: ''
@@ -25,7 +25,7 @@ export default {
   methods: {
     // Método para redirecionar para a 'HOME' em caso de sucesso.
     redirectToHome () {
-      this.router.push('/');
+      this.useRouter.push('/');
     },
     // Método para guardar o token gerado no LocalStorage.
     saveTokenLocalStorage (token) {
@@ -59,36 +59,37 @@ export default {
 </script>
 
 <template>
-  
-  <!-- Main Container -->
-  <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <!-- Login Container -->
-    <div class="row border rounded-5 p-3 bg-white shadow box-area">
-      <!-- Left Box -->
-      <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #252925;">
-        <div class="featured-image mb-3 mt-3">
-          <img src="../assets/imagens/capacete.png" alt="capacete" class="img-fluid" style="width: 250px;">
-        </div>
-        <p class="text-white fs-2" style="font-family:'Courier New', Courier, monospace; font-weight: 700;">HUB Construções</p>
-        <!-- <small class="text-white text-warp text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;"></small> -->
-      </div>
-      <!-- Right Box -->
-      <div class="col-md-6 rounded-4 d-flex flex-column right-box">
-        <div class="ajuste-tamanho">
-            <form action="POST" class="ajuste-tamanho">
 
-              <div>
-                <!-- Email -->
-                <div class="mb-3">
-                  <label for="email-input" class="form-label bold">Email:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="email-input"
-                      placeholder="usuario@email.com"
-                      v-model="email"
-                      >
-                </div>
+  <main class="darker-body">
+    <!-- Main Container -->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+      <!-- Login Container -->
+      <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <!-- Left Box -->
+        <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #252925;">
+          <div class="featured-image mb-3 mt-3">
+            <img src="../assets/imagens/capacete.png" alt="capacete" class="img-fluid" style="width: 250px;">
+          </div>
+          <p class="text-white fs-2" style="font-family:'Courier New', Courier, monospace; font-weight: 700;">HUB Construções</p>
+          <!-- <small class="text-white text-warp text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;"></small> -->
+        </div>
+        <!-- Right Box -->
+        <div class="col-md-6 rounded-4 d-flex flex-column right-box">
+          <div class="ajuste-tamanho">
+              <form action="POST" class="ajuste-tamanho">
+
+                <div>
+                  <!-- Email -->
+                  <div class="mb-3">
+                    <label for="email-input" class="form-label bold">Email:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="email-input"
+                        placeholder="usuario@email.com"
+                        v-model="email"
+                        >
+                  </div>
 
                 <!-- Senha -->
                 <div class="mb-3">
@@ -99,42 +100,42 @@ export default {
                       id="senha-input"
                       placeholder="******"
                       v-model="senha"
-                      >
+                    >
+                  </div>
                 </div>
-              </div>
-              <!-- Lembrar de mim? -->
+                <!-- Lembrar de mim? -->
 
-              <!-- Resposta requisição com falha. -->
-              <div>
-                <p
-                  class="red-letter"
-                  v-if="httpStatusCode === 403"
-                  >Usuário e/ou senha inválidos.
-                </p>
-              </div>
+                <!-- Resposta requisição com falha. -->
+                <div>
+                  <p
+                    class="red-letter"
+                    v-if="httpStatusCode === 403"
+                    >Usuário e/ou senha inválidos.
+                  </p>
+                </div>
 
-              <!-- Entrar -->
-              <div class="mb-3">
-                <button
-                  type="button"
-                  class="btn btn-success  light-green w-100 fs-6"
-                  @click="login"
-                >Login</button>
-              </div>
+                <!-- Entrar -->
+                <div class="mb-3">
+                  <button
+                    type="button"
+                    class="btn btn-success  light-green w-100 fs-6"
+                    @click="login"
+                  >Login</button>
+                </div>
 
-            </form>
+              </form>
+          </div>
+
         </div>
-
       </div>
     </div>
-  </div>
-
+  </main>
 
 </template>
 
 <style setup>
 
-body{
+.darker-body{
   background-color: rgb(171, 180, 178);
 }
 
