@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +28,11 @@ public class UsuarioController {
   @Autowired
   private UsuarioRepository repository;
 
-  @PostMapping
-  public void saveUsuario(@RequestBody UsuarioRequestDTO data) {
-    Usuario usuarioData = new Usuario(data);
-    repository.save(usuarioData);
-  }
+  // @PostMapping
+  // public void saveUsuario(@RequestBody UsuarioRequestDTO data) {
+  //   Usuario usuarioData = new Usuario(data);
+  //   repository.save(usuarioData);
+  // }
 
   @GetMapping
   public List<UsuarioResponseDTO> getAll() {
@@ -49,7 +49,9 @@ public class UsuarioController {
       Usuario usuario = optionalUsuario.get();
       usuario.setNome(data.nome());
       usuario.setEmail(data.email());
+      usuario.setSenha(data.senha());
       usuario.setTipoPerfil(data.tipoPerfil());
+      // usuario.setPerfil(data.perfil());
     
       return ResponseEntity.ok(usuario);
     } else {

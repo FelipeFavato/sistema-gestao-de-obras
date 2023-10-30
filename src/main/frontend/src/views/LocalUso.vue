@@ -1,10 +1,13 @@
 <script>
 import axios from 'axios';
-// import transformDate from '../utils/transformDate'
+import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigoLocalUsoObra: '',
       nomeLocalUsoObra: '',
@@ -13,20 +16,60 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatus = succesError;
+    },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
     cancel() {
       this.codigoLocalUsoObra = '';
       this.nomeLocalUsoObra = '';
     },
     fetchInfoDB () {
-      axios.get("/api/localuso").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
+      axios.get("/api/localuso",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra']))
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
     },
     createInfoDB () {
       axios.post("/api/localuso", 
       {
         nomeLocalUsoObra: this.nomeLocalUsoObra,
         dataDesativacao: null
-      }).then(() => this.fetchInfoDB());
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then((res) => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
       this.cancel();
     },
     fillUpdateDeleteModal (codigo, nome, data) {
@@ -40,18 +83,34 @@ export default {
           codigoLocalUsoObra: Number(codigo),
           nomeLocalUsoObra: nome,
           dataDesativacao: data
-        }).then(() => this.fetchInfoDB());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
     removeFromDB (codigo) {
-      axios.delete("/api/localuso", {
-        headers: {
-          Authorization: ''
-        },
-        data: {
-          codigoLocalUsoObra: Number(codigo)
-        }
-      }).then(() => this.fetchInfoDB())
+      axios.delete("/api/localuso",
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          },
+          data: {
+            codigoLocalUsoObra: Number(codigo)
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
     brazilDate (data) {
@@ -61,15 +120,13 @@ export default {
 
       let partes = data.split("-");
 
-      if (partes.length === 3) {
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      } else {
-        return null;
-      }
+      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
     },
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }

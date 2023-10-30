@@ -1,5 +1,6 @@
 package com.gobra.sistemagestaodeobras.dto;
 
+// import com.gobra.sistemagestaodeobras.model.Perfil;
 import com.gobra.sistemagestaodeobras.model.Usuario;
 import com.gobra.sistemagestaodeobras.utils.TipoPerfilEnum;
 
@@ -11,7 +12,11 @@ public record UsuarioResponseDTO (
 
   String email,
 
+  String senha,
+
   TipoPerfilEnum tipoPerfil
+
+  // Perfil perfil
 
 ) {
 
@@ -20,7 +25,9 @@ public record UsuarioResponseDTO (
       usuarioModel.getCodigo(),
       usuarioModel.getNome(),
       usuarioModel.getEmail(),
+      usuarioModel.getSenha(),
       usuarioModel.getTipoPerfil()
+      // usuarioModel.getPerfil()
     );
   }
 }

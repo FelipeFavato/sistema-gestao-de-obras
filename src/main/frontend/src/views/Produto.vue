@@ -1,9 +1,13 @@
 <script>
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigo: '',
       nome: '',
@@ -12,58 +16,118 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatus = succesError;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
+    // Método para esvaziar os dados quando enviada/cancelada a requisição.
     cancel() {
       this.nome = '';
       this.tipoProduto = '';
     },
+    // Método para buscar os dados no Banco.
     fetchInfoDB () {
-      axios.get("/api/produto").then(
-        (res) => this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
+      axios.get("/api/produto",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
+    // Método para criar os dados no Banco.
     createInfoDB () {
       axios.post("/api/produto",
         {
           nome: this.nome,
           tipoProduto: this.tipoProduto
-        }).then(() => this.fetchInfoDB());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
+    // Método para preencher as informações da Modal.
     fillUpdateDeleteModal (codigo, nome, tipo) {
       this.codigo = codigo;
       this.nome = nome;
       this.tipoProduto = tipo;
     },
+    // Método para atualizar um Produto no Banco.
     updateInfoDB (codigo, nome, tipo) {
       axios.put("/api/produto",
         {
           codigo: Number(codigo),
           nome: nome,
           tipoProduto: tipo
-        }).then(() => this.fetchInfoDB());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
+    // Método para remover um produto do Banco.
     removeFromDB (codigo) {
       axios.delete("/api/produto",
         {
           headers: {
-            Authorization: ''
+            Authorization: this.localStorageToken
           },
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => this.fetchInfoDB());
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
+    // Método para ajustar a visualização da categoria.
     fixTaxasImpostos(tipo) {
-      const Tipo = tipo
-      if (Tipo === "TaxasImpostos") {
-        return "Taxas/Impostos"
-      }
-      return Tipo
+      return tipo === "TaxasImpostos" ? "Taxas/Impostos" : tipo;
     }
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }
@@ -130,6 +194,7 @@ export default {
                 id="name-input"
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
+                maxlength="30"
                 >
             </div>
 

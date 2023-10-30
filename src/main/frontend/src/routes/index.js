@@ -1,11 +1,12 @@
 // createWebHistory => view router production htaxis
 import { createRouter, createWebHashHistory } from 'vue-router';
-// import Home from '../views/Home.vue';
+import Compra from '../views/Compra.vue';
 
 const routes = [
+  { path: '/login', component: () => import ('../views/Login.vue') },
   { path: '/', component: () => import('../views/Home.vue') },
   { path: '/obra', name: 'obra', component: () => import('../views/Obra.vue') },
-  { path: '/compra', component: () => import('../views/Compra.vue') },
+  { path: '/compra', name: 'compra', component: Compra },
   { path: '/localuso', component: () => import('../views/LocalUso.vue') },
   { path: '/fornecedor', component: () => import('../views/Fornecedores.vue') },
   { path: '/produto', component: () => import('../views/Produto.vue') },
