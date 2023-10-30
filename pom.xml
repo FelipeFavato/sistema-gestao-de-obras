@@ -34,7 +34,7 @@
 		</dependency>
 
     <!-- Ao adicionar essa dependencia, ela ja cria uma camada de proteção,
-    impossibilitando realizar requisições. -->
+    impossibilitando realizar requisições -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
