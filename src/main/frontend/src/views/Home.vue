@@ -6,7 +6,7 @@ import axios from 'axios';
 export default {
   data () {
     return {
-      produtos: [],
+      usuarios: [],
       useRouter: useRouter(),
       httpStatus: '',
       localStorageToken: ''
@@ -14,51 +14,41 @@ export default {
   },
 
   methods: {
-    redirect (path) {
-      this.useRouter.push(path)
+    redirectToLogin () {
+      this.useRouter.push('/login')
     },
-    fetchProdutoInfoDB (callback) {
-      axios.get('/api/produto').then(
-        (res) => { 
-          console.log('res: ', res);
-          if (callback) callback();
-        }).catch(error => {
-          console.log('error: ', error.response.status);
-          this.httpStatus = error.response.status;
-          console.log('httpStatus: ', this.httpStatus);
-          if (callback) callback();
-        })
+    setHttpStatusCode (successError) {
+      this.httpStatus = successError
     },
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    fetchProduto (callback) {
-      axios.get("/api/produto",
-        {
-          headers: {
-            Authorization: this.localStorageToken
-          }
-        }).then((res) => { 
-          this.produtos = res.data
-          if (callback) callback();
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
+    fetchUsuarioInfoDB () {
+      axios.get('/api/usuario',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(({ data, status }) => {
+          this.usuarios = data;
+          this.setHttpStatusCode(status);
         }).catch(error => {
-          this.httpStatus = error.response.status;
-          if (callback) callback();
+          this.validateHttpStatus(error.response.status);
         })
     },
-    validateLogin () {
-      this.fetchProduto(() => {
-        if (this.httpStatus === 403) {
-          this.redirect('/login');
-        }
-      })
-    }
   },
 
   mounted () {
     this.getLocalStorageToken();
-    // this.fetchProdutoInfoDB();
     this.validateLogin();
+    this.fetchUsuarioInfoDB ();
   }
 }
 
@@ -68,7 +58,53 @@ export default {
 <template>
   <h2>Home</h2>
   <p>Home</p>
-  <p>{{ this.produtos }}</p>
+
+  <!-- Tabela -->
+  <!-- <main class="middle-margin table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Email</th>
+          <th scope="col">Senha</th>
+          <th scope="col">Perfil</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(usuario, i) in usuarios" :key="i">
+          <th scope="row">{{ usuario.codigo }}</th>
+          <td>{{ usuario.nome }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.senha }}</td>
+          <td>{{ usuario.tipoPerfil }}</td>
+          <td></td>
+          <td></td>
+          <td class="editar-excluir">
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Editar"
+              data-bs-toggle="modal"
+              data-bs-target="#updateModal"
+              @click=""
+            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Excluir"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              @click=""
+            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main> -->
 </template>
 
 <setup>

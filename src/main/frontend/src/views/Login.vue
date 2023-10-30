@@ -6,6 +6,11 @@
 // }
 
 // {
+//   "email": "pedrofavato@gmail.com",
+//   "senha": "12345"
+// }
+
+// {
 //   "email": "felipelopesfavato@gmail.com",
 //   "senha": "123456"
 // }
