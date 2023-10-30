@@ -41,7 +41,7 @@ export default {
       this.httpStatusCode = succesError;
     },
     // Método que recebe a requisição de login do usuário e trata o erro em caso de erro.
-    login (callback) {
+    login () {
       axios.post('/api/auth/login',
       {
         email: this.email,
