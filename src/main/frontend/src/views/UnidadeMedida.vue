@@ -27,6 +27,11 @@ export default {
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
@@ -45,7 +50,7 @@ export default {
       }).then(res => { 
         this.info = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade']))
       }).catch(error => {
-        this.setHttpStatusCode(error.response.code);
+        this.validateHttpStatus(error.response.status);
       });
     },
     // Método para criar dados no Banco.
@@ -62,7 +67,7 @@ export default {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status);
       }).catch(error => {
-        this.setHttpStatusCode(error.response.status);
+        this.validateHttpStatus(error.response.status);
       });
       this.cancel();
     },
@@ -86,7 +91,7 @@ export default {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status); // 200
       }).catch(error => {
-        this.setHttpStatusCode(error.response.status);
+        this.validateHttpStatus(error.response.status);
       });
       this.cancel();
     },
@@ -104,7 +109,7 @@ export default {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status);
       }).catch(error => {
-        this.setHttpStatusCode(error.response.status);
+        this.validateHttpStatus(error.response.status);
       });
       this.cancel();
     }

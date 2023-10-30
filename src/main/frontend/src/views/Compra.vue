@@ -53,6 +53,7 @@
 //   "valorTotal": 15
 // }
 
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
@@ -69,6 +70,8 @@ export default {
       selectedComprasByObra: [],
       selectedItensByCompra: [],
       // Variáveis auxiliares
+      useRouter: useRouter(),
+      httpStatus: '',
       selectedObraNome: '',
       selectedFornecedorNome: '',
       selectedProdutoNome: '',
@@ -81,6 +84,7 @@ export default {
       showItems: false,
       valueStatus: '',
       // Variáveis para requisição
+      localStorageToken: null,
       codigo: '',
       obra: {},
       fornecedor: {},
@@ -103,6 +107,27 @@ export default {
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatus = succesError;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
     // Método para apagar dados que foram preenchidos e enviados ou não enviados.
     cancel () {
       this.selectedFornecedorNome = '';
@@ -117,49 +142,108 @@ export default {
     },
     // Método GET - Compras.
     fetchComprasInfoDB (callback) {
-      axios.get("/api/compra").then(
-        (res) => {
-          this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
-          if (callback) callback();
-        })
+      axios.get("/api/compra",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
+        this.setHttpStatusCode(res.status);
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Método GET - Obras.
     fetchObrasInfoDB () {
-      axios.get("/api/obra").then(
-        (res) => this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo))
+      axios.get("/api/obra",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Método GET - Fornecedores.
     fetchFornecedoresInfoDB () {
-      axios.get("/api/fornecedor").then(
-        (res) => this.fornecedoresInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
+      axios.get("/api/fornecedor",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.fornecedoresInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
     },
     // Método GET - Itens das compras.
     fetchItensCompraInfoDB (callback) {
-      axios.get("/api/itemcompra").then(
-        (res) => {
-          this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
-          // 1. if (callback) callback(): Verifica se uma função de retorno de chamada foi
-          //    fornecida como argumento da função. Se uma 'callback' foi fornecida, ela é
-          //    chamada aqui. Permitindo que quem chame a função 'fetchItensCompraInfoDB'
-          //    especifique uma função a ser executada após a conclusa da busca e da
-          //    ordenação dos itens de compra.
-          if (callback) callback();
-        })
+      axios.get("/api/itemcompra",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.itensCompraInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
+        this.setHttpStatusCode(res.status);
+        // 1. if (callback) callback(): Verifica se uma função de retorno de chamada foi
+        //    fornecida como argumento da função. Se uma 'callback' foi fornecida, ela é
+        //    chamada aqui. Permitindo que quem chame a função 'fetchItensCompraInfoDB'
+        //    especifique uma função a ser executada após a conclusa da busca e da
+        //    ordenação dos itens de compra.
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Método GET - Produtos.
     fetchProdutosInfoDB() {
-      axios.get("/api/produto").then(
-        (res) => this.produtosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome'])))
+      axios.get("/api/produto",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.produtosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']))
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
     },
     // Método GET - LocalUso.
     fetchLocalUsoInfoDB () {
-      axios.get("/api/localuso").then(
-        (res) => this.localUsoInfo = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra'])))
+      axios.get("/api/localuso",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.localUsoInfo = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra']))
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
     },
     // Método GET - UnidadeMedida.
     fetchUnidadeMedidaInfoDB () {
-      axios.get("/api/unidademedida").then(
-        (res) => this.unidadeMedidaInfo = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade'])))
+      axios.get("/api/unidademedida",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.unidadeMedidaInfo = res.data.sort((s1, s2) => s1['unidade'].localeCompare(s2['unidade']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
@@ -228,7 +312,14 @@ export default {
           valorOriginal: this.valorOriginal,
           valorDesconto: this.valorDesconto,
           valorFinal: this.valorFinal
-        }).then(() => callback());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then(() => callback()).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
     },
     // Chama o método 'createCompra' e repopula a lista correta.
     createCompraInfoDB () {
@@ -248,12 +339,14 @@ export default {
       axios.delete("/api/compra",
         {
           headers: {
-            Authorization: ''
+            Authorization: this.localStorageToken
           },
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => callback());
+        }).then(() => callback()).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
     },
     // Chama o método 'removeCompra' e repopula a lista correta.
     removeCompraFromDB (codigo) {
@@ -280,7 +373,14 @@ export default {
         valorOriginal: valorO,
         valorDesconto: valorD,
         valorFinal: valorF
-      }).then(() => callback());
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(() => callback()).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Chama o método 'updateCompra' e repopula a lista corretamente.
     updateCompraInfoDB (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
@@ -427,7 +527,14 @@ export default {
           quantidade: this.quantidade,
           valorUnitario: this.valorUnitario,
           valorTotal: this.valorTotal
-        }).then(() => callback());
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then(() => callback()).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
     },
     // Método que chama o método 'createItem' e realiza a requisição.
     createItemInfoDB () {
@@ -468,12 +575,14 @@ export default {
       axios.delete("/api/itemcompra",
         {
           headers: {
-            Authorization: ''
+            Authorization: this.localStorageToken
           },
           data: {
             codigo: Number(cod)
           }
-        }).then(() => callback());
+        }).then(() => callback()).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
     },
     // Método que chama 'removeItem' e renderiza a lista.
     // Função organizada por ordem de execução usando callbacks.
@@ -500,7 +609,14 @@ export default {
         quantidade: qnt,
         valorUnitario: valorU,
         valorTotal: valorT
-      }).then(() => callback());
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(() => callback()).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     // Chama o método 'updateItem' e repopula a lista corretamente.
     updateItemInfoDB (cod, qnt, valorU, valorT) {
@@ -540,6 +656,8 @@ export default {
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchComprasInfoDB();
     this.fetchObrasInfoDB();
     this.fetchFornecedoresInfoDB();

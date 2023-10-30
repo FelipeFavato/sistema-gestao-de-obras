@@ -24,13 +24,18 @@ export default {
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
+    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
-      this.httpStatusCode = succesError;
+      this.httpStatus = succesError;
     },
     // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
     // Método para esvaziar os dados quando enviada/cancelada a requisição.
     cancel() {
@@ -48,7 +53,7 @@ export default {
         this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
         this.setHttpStatusCode(res.status);
       }).catch(error => {
-        this.setHttpStatusCode(error.response.status);
+        this.validateHttpStatus(error.response.status);
       });
     },
     // Método para criar os dados no Banco.
@@ -66,7 +71,7 @@ export default {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
-          this.setHttpStatusCode(error.response.status);
+          this.validateHttpStatus(error.response.status);
         });
       this.cancel();
     },
@@ -92,7 +97,7 @@ export default {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
-          this.setHttpStatusCode(error.response.status);
+          this.validateHttpStatus(error.response.status);
         });
       this.cancel();
     },
@@ -110,7 +115,7 @@ export default {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
-          this.setHttpStatusCode(error.response.status);
+          this.validateHttpStatus(error.response.status);
         });
       this.cancel();
     },
