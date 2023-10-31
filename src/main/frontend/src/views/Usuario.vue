@@ -145,6 +145,7 @@ export default {
   },
 
   mounted () {
+    this.cancel();
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();

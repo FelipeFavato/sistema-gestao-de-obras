@@ -7,8 +7,8 @@ export default {
   data () {
     return {
       useRouter: useRouter(),
-      email: '',
-      senha: '',
+      emailLogin: '',
+      senhaLogin: '',
       httpStatusCode: ''
     }
   },
@@ -33,8 +33,8 @@ export default {
     login () {
       axios.post('/api/auth/login',
       {
-        email: this.email,
-        senha: this.senha
+        email: this.emailLogin,
+        senha: this.senhaLogin
       }).then((res) => {
         this.saveTokenLocalStorage(res['data']['token']);
         this.saveEmailLocalStorage(this.email);
@@ -76,25 +76,25 @@ export default {
                 <div>
                   <!-- Email -->
                   <div class="mb-3">
-                    <label for="email-input" class="form-label bold">Email:</label>
+                    <label for="email-login-input" class="form-label bold">Email:</label>
                       <input
                         type="text"
                         class="form-control"
-                        id="email-input"
+                        id="email-login-input"
                         placeholder="usuario@email.com"
-                        v-model="email"
+                        v-model="emailLogin"
                         >
                   </div>
 
                 <!-- Senha -->
                 <div class="mb-3">
-                  <label for="senha-input" class="form-label bold">Senha:</label>
+                  <label for="senha-login-input" class="form-label bold">Senha:</label>
                     <input
                       type="password"
                       class="form-control"
-                      id="senha-input"
+                      id="senha-login-input"
                       placeholder="******"
-                      v-model="senha"
+                      v-model="senhaLogin"
                     >
                   </div>
                 </div>
