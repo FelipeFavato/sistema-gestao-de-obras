@@ -131,8 +131,8 @@ export default {
 <style setup>
 
 .darker-body{
-  /* background-color: rgb(171, 180, 178); */
-  background-color: #252925;
+  background-color: rgb(171, 180, 178);
+  /* background-color: #252925; */
 }
 
 .red-letter {
