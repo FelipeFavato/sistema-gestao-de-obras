@@ -83,19 +83,19 @@ export default {
                         id="email-login-input"
                         placeholder="usuario@email.com"
                         v-model="emailLogin"
-                        >
+                      >
                   </div>
 
-                <!-- Senha -->
-                <div class="mb-3">
-                  <label for="senha-login-input" class="form-label bold">Senha:</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="senha-login-input"
-                      placeholder="******"
-                      v-model="senhaLogin"
-                    >
+                  <!-- Senha -->
+                  <div class="mb-3">
+                    <label for="senha-login-input" class="form-label bold">Senha:</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="senha-login-input"
+                        placeholder="******"
+                        v-model="senhaLogin"
+                      >
                   </div>
                 </div>
                 <!-- Lembrar de mim? -->
