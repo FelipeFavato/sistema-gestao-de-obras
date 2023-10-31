@@ -36,8 +36,8 @@ import lombok.Setter;
 public class Usuario implements UserDetails {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_usuario")
-  @SequenceGenerator(name = "seq_gen_usuario", sequenceName = "SEQUENCIA_USUARIOS", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gener_usuario")
+  @SequenceGenerator(name = "seq_gener_usuario", sequenceName = "SEQ_USUARIO", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "nome", length = 100, unique = true)
@@ -50,14 +50,14 @@ public class Usuario implements UserDetails {
   private String senha;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "tipo_perfil", length = 15)
-  private TipoPerfilEnum tipoPerfil;
+  @Column(name = "role", length = 15)
+  private TipoPerfilEnum role;
 
-  public Usuario(String nome, String email, String senha, TipoPerfilEnum tipoPerfil) {
+  public Usuario(String nome, String email, String senha, TipoPerfilEnum role) {
     this.nome = nome;
     this.email = email;
     this.senha = senha;
-    this.tipoPerfil = tipoPerfil;
+    this.role = role;
   }
 
   // 1. public Collection<? extends GrantedAuthority> getAuthorities(): O método getAuthorities () retorna
@@ -71,10 +71,10 @@ public class Usuario implements UserDetails {
   //    dê a ele a 'SimpleGrantedAuthority' apenas de 'Operacional'.
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    if (this.tipoPerfil == TipoPerfilEnum.Gestor) {
-      return List.of(new SimpleGrantedAuthority("Gestor"), new SimpleGrantedAuthority("Operacional"));
+    if (this.role == TipoPerfilEnum.ADMIN) {
+      return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
     } else {
-      return List.of(new SimpleGrantedAuthority("Operacional"));
+      return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
   }
 

@@ -50,7 +50,7 @@ public class UsuarioController {
       usuario.setNome(data.nome());
       usuario.setEmail(data.email());
       usuario.setSenha(data.senha());
-      usuario.setTipoPerfil(data.tipoPerfil());
+      usuario.setRole(data.role());
       // usuario.setPerfil(data.perfil());
     
       return ResponseEntity.ok(usuario);

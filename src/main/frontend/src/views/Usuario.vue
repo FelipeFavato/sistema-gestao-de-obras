@@ -1,68 +1,152 @@
 <script>
+// Endpoint => http://localhost:8080/api/auth/registrar
+// {
+//   "nome": "Fabio Sussumu Komori",
+//   "email": "fabioskomori@gmail.com",
+//   "senha": "123456",
+//   "tipoPerfil": "Gestor"
+// }
+
+
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
       info: [],
       codigo: '',
       nome: '',
       email: '',
-      tipoPerfil: ''
+      senha: '',
+      role: ''
     };
   },
 
   methods: {
+    // Método para redirecionar para a página de login.
+    redirectToLogin () {
+      this.useRouter.push('/login');
+      this.clearLocalStorage();
+    },
+    // Método para limpar o localStorage.
+    clearLocalStorage () {
+      localStorage.clear();
+    },
+    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
+    setHttpStatusCode (succesError) {
+      this.httpStatus = succesError;
+    },
+    // Método para validar o login baseado no token.
+    validateLogin () {
+      !this.localStorageToken ? this.redirectToLogin() : null;
+    },
+    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    validateHttpStatus (status) {
+      this.setHttpStatusCode(status);
+      this.httpStatus === 403 ? this.redirectToLogin(): null;
+    },
+    // Método para mostrar na tabela de usuarios como 'Gestor' e 'operacional'.
+    adminToGestor (role) {
+      return role === "ADMIN" ? "Gestor" : "Operacional"
+    },
     cancel () {
       this.codigo = '';
       this.nome = '';
       this.email = '';
+      this.senha = '';
       this.tipoPerfil = '';
     },
     fetchInfoDB () {
-      axios.get("/api/usuario").then(
-        (res) => this.info = res.data)
+      axios.get("/api/usuario",
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.info = res.data;
+        this.setHttpStatusCode(res.status)
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
     },
     createInfoDB () {
-      axios.post("/api/usuario",
-      {
-        nome: this.nome,
-        email: this.email,
-        tipoPerfil: this.tipoPerfil
-      }).then(() => this.fetchInfoDB());
+      axios.post("/api/auth/registrar",
+        {
+          nome: this.nome,
+          email: this.email,
+          senha: this.senha,
+          role: this.role
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then(res => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
-    fillUpdateDeleteModal(cod, nome, email, tipoPerfil) {
+    fillUpdateDeleteModal(cod, nome, email, senha, role) {
       this.codigo = cod;
       this.nome = nome;
       this.email = email;
-      this.tipoPerfil = tipoPerfil;
+      this.senha = senha;
+      this.role = role;
     },
-    updateInfoDB (codigo, nome, email, tipo) {
+    updateInfoDB (codigo, nome, email, senha, role) {
       axios.put("/api/usuario",
         {
           codigo: Number(codigo),
           nome: nome,
           email: email,
-          tipoPerfil: tipo
-        }).then(() => this.fetchInfoDB());
+          senha: senha,
+          role: role
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then(res => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
     removeFromDB (codigo) {
       axios.delete("/api/usuario",
         {
           headers: {
-            Authorization: ''
+            Authorization: this.localStorageToken
           },
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => this.fetchInfoDB())
+        }).then(res => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
       this.cancel();
     },
   },
 
   mounted () {
+    this.getLocalStorageToken();
+    this.validateLogin();
     this.fetchInfoDB();
   }
 }
@@ -134,18 +218,6 @@ export default {
                 v-model="nome">
             </div>
 
-            <!-- Perfil -->
-            <div class="mb-3">
-              <label for="tipo-perfil-select" class="bold">Perfil:</label>
-              <select
-                class="form-select"
-                id="tipo-perfil-select"
-                v-model="tipoPerfil">
-                <option value="Gestor">Gestor</option>
-                <option value="Operacional">Operacional</option>
-              </select>
-            </div>
-
             <!-- Email -->
             <div class="mb-3">
               <label for="email-input" class="form-label bold">Email:</label>
@@ -153,8 +225,31 @@ export default {
                 type="text"
                 class="form-control"
                 id="email-input"
-                placeholder="perfil@gmail.com"
+                placeholder="usuario@gmail.com"
                 v-model="email">
+            </div>
+
+            <!-- Senha -->
+            <div class="mb-3">
+              <label for="senha-input" class="form-label bold">Senha:</label>
+              <input
+                type="password"
+                class="form-control"
+                id="senha-input"
+                placeholder="******"
+                v-model="senha">
+            </div>
+
+            <!-- Perfil -->
+            <div class="mb-3">
+              <label for="tipo-perfil-select" class="bold">Perfil:</label>
+              <select
+                class="form-select"
+                id="tipo-perfil-select"
+                v-model="role">
+                <option value="ADMIN">Gestor</option>
+                <option value="USER">Operacional</option>
+              </select>
             </div>
 
           </form>
@@ -213,28 +308,40 @@ export default {
                 disabled>
             </div>
 
-            <!-- Perfil -->
-            <div class="mb-3">
-              <label for="tipo-perfil-select" class="bold">Perfil:</label>
-              <select
-                class="form-select"
-                id="tipo-perfil-select"
-                v-model="tipoPerfil">
-                <option value="Gestor">Gestor</option>
-                <option value="Operacional">Operacional</option>
-              </select>
-            </div>
-
             <!-- Email -->
             <div class="mb-3">
-              <label for="email-input" class="form-label bold">Email:</label>
+              <label for="gmail-input" class="form-label bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="email-input"
+                id="gmail-input"
                 placeholder="usuario@gmail.com"
                 v-model="email">
             </div>
+
+            <!-- Senha -->
+            <div class="mb-3">
+              <label for="password-input" class="form-label bold">Senha:</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password-input"
+                placeholder="******"
+                v-model="senha">
+            </div>
+
+            <!-- Perfil -->
+            <div class="mb-3">
+              <label for="tipoPerfil-select" class="bold">Perfil:</label>
+              <select
+                class="form-select"
+                id="tipoPerfil-select"
+                v-model="role">
+                <option value="ADMIN">Gestor</option>
+                <option value="USER">Operacional</option>
+              </select>
+            </div>
+
           </form>
         </div>
 
@@ -244,7 +351,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.email, this.tipoPerfil)"
+            @click="updateInfoDB(this.codigo, this.nome, this.email, this.role)"
           >Salvar</button>
         </div>
       </div>
@@ -258,8 +365,8 @@ export default {
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Nome</th>
-          <th scope="col">Categoria</th>
           <th scope="col">Email</th>
+          <th scope="col">Perfil</th>
           <th></th>
           <th></th>
           <th></th>
@@ -270,8 +377,8 @@ export default {
         <tr v-for="(usuario, i) in info" :key="i">
           <th scope="row">{{ usuario.codigo }}</th>
           <td>{{ usuario.nome }}</td>
-          <td>{{ usuario.tipoPerfil }}</td>
           <td>{{ usuario.email }}</td>
+          <td>{{ adminToGestor(usuario.role) }}</td>
           <td></td>
           <td></td>
           <td></td>
@@ -282,7 +389,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(usuario.codigo, usuario.nome, usuario.email, usuario.tipoPerfil)"
+              @click="fillUpdateDeleteModal(usuario.codigo, usuario.nome, usuario.email, usuario.senha, usuario.role)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"

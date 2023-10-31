@@ -2,18 +2,18 @@ package com.gobra.sistemagestaodeobras.utils;
 
 public enum TipoPerfilEnum {
   
-  Gestor("Gestor"),
+  ADMIN("admin"),
 
-  Operacional("Operacional");
+  USER("user");
 
-  private String tipo;
+  private String role;
 
-  TipoPerfilEnum(String tipo) {
-    this.tipo = tipo;
+  TipoPerfilEnum(String role) {
+    this.role = role;
   }
 
-  public String getTipo () {
-    return this.tipo;
+  public String getRole () {
+    return this.role;
   }
 
 }

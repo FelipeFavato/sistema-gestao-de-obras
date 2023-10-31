@@ -1,15 +1,41 @@
 <script>
 
+import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
-      useRouter: useRouter()
+      usuariosInfo: [],
+      localStorageToken: null,
+      localStorageEmail: null,
+      sessionUser: {},
+      useRouter: useRouter(),
+      perfilGestor: false
     }
   },
 
   methods: {
+    // Método para buscar o 'this.localStorageToken'
+    getLocalStorageToken () {
+      this.localStorageToken = localStorage.getItem('token');
+    },
+    // Método para recuperar o 'this.localStorageEmail'
+    getLocalStorageEmail () {
+      this.localStorageEmail = localStorage.getItem('email');
+    },
+    // Recupera o usuario que logou.
+    getSessionUser () {
+      for (let user of this.usuariosInfo) {
+        if (user.email === this.localStorageEmail) {
+          this.sessionUser = user;
+        }
+      }
+    },
+    // Define as renderizações para cada tipo de perfil.
+    setUserRole () {
+      this.sessionUser.role === 'ADMIN' ? this.perfilGestor = true : this.perfilGestor = false;
+    },
     // Método para redirecionar para a tela de LOGIN após clicar em 'Sair'.
     redirectToLogin () {
       this.useRouter.push('/login');
@@ -18,7 +44,29 @@ export default {
     logout () {
       localStorage.removeItem('token');
       this.redirectToLogin();
+    },
+    fetchUsuarios (callback) {
+      axios.get('/api/usuario',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.usuariosInfo = res.data;
+        if (callback) callback();
+      }).catch((error) => {
+        console.log(`Restrição (código ${error.response.status}).`)
+      })
     }
+  },
+
+  mounted () {
+    this.getLocalStorageToken();
+    this.getLocalStorageEmail();
+    this.fetchUsuarios(() => {
+      this.getSessionUser();
+      this.setUserRole();
+    });
   }
 }
 
@@ -72,8 +120,8 @@ export default {
               <li><a class="dropdown-item" href="#obra">Obras</a></li>
               <li><a class="dropdown-item" href="#produto">Produtos</a></li>
               <li><a class="dropdown-item" href="#unidademedida">Unidades de medida</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#usuario">Usuários</a></li>
+              <li v-if="perfilGestor"><hr class="dropdown-divider"></li>
+              <li v-if="perfilGestor"><a class="dropdown-item" href="#usuario">Usuários</a></li>
             </ul>
           </li>
 

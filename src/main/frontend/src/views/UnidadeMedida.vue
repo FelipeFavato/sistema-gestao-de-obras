@@ -18,6 +18,11 @@ export default {
     // Método para redirecionar para a página de Login.
     redirectToLogin () {
       this.useRouter.push('/login');
+      this.clearLocalStorage();
+    },
+    // Método para excluir o token do localStorage.
+    clearLocalStorage () {
+      localStorage.clear();
     },
     // Método para recuperar o token do localStorage.
     getLocalStorageToken () {

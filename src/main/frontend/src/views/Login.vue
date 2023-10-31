@@ -1,19 +1,5 @@
 <script>
-// Requisições de login => http://localhost:8080/api/auth/login
-// {
-//   "email": "matheusfavato@gmail.com",
-//   "senha": "159753"
-// }
 
-// {
-//   "email": "pedrofavato@gmail.com",
-//   "senha": "12345"
-// }
-
-// {
-//   "email": "felipelopesfavato@gmail.com",
-//   "senha": "123456"
-// }
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -36,6 +22,9 @@ export default {
     saveTokenLocalStorage (token) {
       localStorage.setItem('token', token);
     },
+    saveEmailLocalStorage (email) {
+      localStorage.setItem('email', email);
+    },
     // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatusCode = succesError;
@@ -48,6 +37,7 @@ export default {
         senha: this.senha
       }).then((res) => {
         this.saveTokenLocalStorage(res['data']['token']);
+        this.saveEmailLocalStorage(this.email);
         this.redirectToHome();
       }).catch((error) => {
         this.setHttpStatusCode(error.response.status);
@@ -141,7 +131,8 @@ export default {
 <style setup>
 
 .darker-body{
-  background-color: rgb(171, 180, 178);
+  /* background-color: rgb(171, 180, 178); */
+  background-color: #252925;
 }
 
 .red-letter {

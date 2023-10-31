@@ -10,6 +10,6 @@ public record RegistroDTO (
 
   String senha,
 
-  TipoPerfilEnum tipoPerfil
+  TipoPerfilEnum role
 
 ) { }

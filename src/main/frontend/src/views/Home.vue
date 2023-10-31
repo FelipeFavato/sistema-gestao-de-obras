@@ -48,7 +48,7 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchUsuarioInfoDB ();
+    // this.fetchUsuarioInfoDB();
   }
 }
 

@@ -14,7 +14,7 @@ public record UsuarioResponseDTO (
 
   String senha,
 
-  TipoPerfilEnum tipoPerfil
+  TipoPerfilEnum role
 
   // Perfil perfil
 
@@ -26,7 +26,7 @@ public record UsuarioResponseDTO (
       usuarioModel.getNome(),
       usuarioModel.getEmail(),
       usuarioModel.getSenha(),
-      usuarioModel.getTipoPerfil()
+      usuarioModel.getRole()
       // usuarioModel.getPerfil()
     );
   }

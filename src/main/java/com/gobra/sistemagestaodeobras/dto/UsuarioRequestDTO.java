@@ -14,6 +14,6 @@ public record UsuarioRequestDTO (
 
   String senha,
 
-  TipoPerfilEnum tipoPerfil
+  TipoPerfilEnum role
 
 ) { }

@@ -48,6 +48,7 @@ public class AuthenticationController {
     var token = tokenService.generateToken((Usuario) auth.getPrincipal());
 
     return ResponseEntity.ok(new LoginResponseDTO(token));
+    // return ResponseEntity.ok().build();
   }
 
   @PostMapping("/registrar")
@@ -55,10 +56,11 @@ public class AuthenticationController {
     if (this.usuarioRepository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().build();
 
     String encryptedSenha = new BCryptPasswordEncoder().encode(data.senha());
-    Usuario newUsuario = new Usuario(data.nome(), data.email(), encryptedSenha, data.tipoPerfil());
+    Usuario newUsuario = new Usuario(data.nome(), data.email(), encryptedSenha, data.role());
 
     this.usuarioRepository.save(newUsuario);
 
     return ResponseEntity.ok(newUsuario);
+    // return ResponseEntity.ok().build();
   }
 }
