@@ -37,7 +37,7 @@ export default {
         senha: this.senhaLogin
       }).then((res) => {
         this.saveTokenLocalStorage(res['data']['token']);
-        this.saveEmailLocalStorage(this.email);
+        this.saveEmailLocalStorage(this.emailLogin);
         this.redirectToHome();
       }).catch((error) => {
         this.setHttpStatusCode(error.response.status);
