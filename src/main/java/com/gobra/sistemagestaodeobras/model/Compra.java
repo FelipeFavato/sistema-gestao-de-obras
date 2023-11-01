@@ -62,6 +62,11 @@ public class Compra {
   @JoinColumn(name = "id_fornecedor", referencedColumnName = "codigo")
   private Fornecedor fornecedor;
 
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "id_socio", referencedColumnName = "codigo")
+  private Socio socio;
+
   @Column(name = "data_compra", length = 30)
   @Temporal(TemporalType.DATE)
   private Date dataCompra;
@@ -96,6 +101,7 @@ public class Compra {
   public Compra(CompraRequestDTO data) {
     this.obra = data.obra();
     this.fornecedor = data.fornecedor();
+    this.socio = data.socio();
     this.dataCompra = data.dataCompra();
     this.dataEntrega = data.dataEntrega();
     this.dataPagamento = data.dataPagamento();

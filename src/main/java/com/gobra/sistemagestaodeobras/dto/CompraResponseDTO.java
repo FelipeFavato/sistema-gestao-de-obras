@@ -7,6 +7,7 @@ import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.Obra;
+import com.gobra.sistemagestaodeobras.model.Socio;
 
 public record CompraResponseDTO (
 
@@ -15,6 +16,8 @@ public record CompraResponseDTO (
   Obra obra,
 
   Fornecedor fornecedor,
+
+  Socio socio,
 
   Date dataCompra,
 
@@ -39,6 +42,7 @@ public record CompraResponseDTO (
       compraModel.getCodigo(),
       compraModel.getObra(),
       compraModel.getFornecedor(),
+      compraModel.getSocio(),
       compraModel.getDataCompra(),
       compraModel.getDataEntrega(),
       compraModel.getDataPagamento(),

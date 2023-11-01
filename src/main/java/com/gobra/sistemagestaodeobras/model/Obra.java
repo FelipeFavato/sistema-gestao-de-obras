@@ -2,11 +2,14 @@ package com.gobra.sistemagestaodeobras.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "obra")
@@ -38,6 +41,10 @@ public class Obra {
   @JsonIgnore
   @OneToMany(mappedBy = "obra")
   private List<Compra> compras;
+
+  @JsonIgnore
+  @ManyToMany(mappedBy = "obras", fetch = FetchType.LAZY)
+  private Set<Socio> socios;
 
   // Constructor => é necessário?
   // Teoricamente o codigo será gerado pelo Banco de Dados, então
@@ -130,6 +137,15 @@ public class Obra {
 
   public void setCompras(List<Compra> compras) {
     this.compras = compras;
+  }
+
+  // Lista de Sócios => Getter e Setter
+  public Set<Socio> getSocios() {
+    return socios;
+  }
+
+  public void setSocios(Set<Socio> socios) {
+    this.socios = socios;
   }
 
   // Método que fornece uma representação em formato de string legível

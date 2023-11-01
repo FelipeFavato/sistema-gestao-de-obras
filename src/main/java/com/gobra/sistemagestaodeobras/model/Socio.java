@@ -1,14 +1,21 @@
 package com.gobra.sistemagestaodeobras.model;
 
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gobra.sistemagestaodeobras.dto.SocioRequestDTO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -41,4 +48,22 @@ public class Socio {
   @JsonIgnore
   @OneToMany(mappedBy = "socio")
   private List<Compra> compras;
+
+  // Um sócio poderá participar de muitas obras.
+  // Uma obra poderá ter muitos sócios participando.
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinTable(name = "socios_obras",
+  joinColumns = {
+    @JoinColumn(name = "id_socio", referencedColumnName = "codigo")
+  },
+  inverseJoinColumns = {
+    @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
+  })
+  @JsonIgnore
+  private Set<Obra> obras;
+
+  public Socio(SocioRequestDTO data) {
+    this.nome = data.nome();
+    this.compras = data.compras();
+  }
 }

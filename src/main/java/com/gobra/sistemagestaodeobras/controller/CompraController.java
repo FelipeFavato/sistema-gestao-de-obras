@@ -53,6 +53,7 @@ public class CompraController {
       Compra compra = optionalCompra.get();
       compra.setObra(data.obra());
       compra.setFornecedor(data.fornecedor());
+      compra.setSocio(data.socio());
       compra.setDataCompra(data.dataCompra());
       compra.setDataEntrega(data.dataEntrega());
       compra.setDataPagamento(data.dataPagamento());

@@ -6,6 +6,7 @@ import java.util.List;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 import com.gobra.sistemagestaodeobras.model.Obra;
+import com.gobra.sistemagestaodeobras.model.Socio;
 
 public record CompraRequestDTO (
 
@@ -14,6 +15,8 @@ public record CompraRequestDTO (
   Obra obra,
 
   Fornecedor fornecedor,
+
+  Socio socio,
 
   Date dataCompra,
 

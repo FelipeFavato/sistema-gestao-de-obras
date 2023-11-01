@@ -37,6 +37,7 @@ public class ObraController {
     obraData.setDataRealFim(data.dataRealFim());
     obraData.setCustoPrevisto(data.custoPrevisto());
     obraData.setCompras(data.compras());
+    obraData.setSocios(data.socios());
     obraDAOJDBC.save(obraData);
   }
 
@@ -60,6 +61,7 @@ public class ObraController {
     returnedObra.setDataRealFim(data.dataRealFim());
     returnedObra.setCustoPrevisto(data.custoPrevisto());
     returnedObra.setCompras(data.compras());
+    returnedObra.setSocios(data.socios());
 
     obraDAOJDBC.update(returnedObra);
 
