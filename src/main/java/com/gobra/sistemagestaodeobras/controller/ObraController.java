@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,63 +14,60 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gobra.sistemagestaodeobras.dao.ObraDAOJDBCImplemented;
-import com.gobra.sistemagestaodeobras.dto.ObraReqResDTO;
+import com.gobra.sistemagestaodeobras.dto.ObraRequestDTO;
+import com.gobra.sistemagestaodeobras.dto.ObraResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Obra;
+import com.gobra.sistemagestaodeobras.repository.ObraRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 
 
 @RestController
 @RequestMapping("/api/obra")
 public class ObraController {
-
-  @Autowired
-  private ObraDAOJDBCImplemented obraDAOJDBC;
-
   
+  @Autowired
+  private ObraRepository repository;
+
   @PostMapping
-  public void saveObra(@RequestBody ObraReqResDTO data) {
-    Obra obraData = new Obra();
-    obraData.setCodigo(data.codigo());
-    obraData.setNome(data.nome());
-    obraData.setEndereco(data.endereco());
-    obraData.setDataInicio(data.dataInicio());
-    obraData.setDataPrevistaFim(data.dataPrevistaFim());
-    obraData.setDataRealFim(data.dataRealFim());
-    obraData.setCustoPrevisto(data.custoPrevisto());
-    obraData.setCompras(data.compras());
-    obraData.setSocios(data.socios());
-    obraDAOJDBC.save(obraData);
+  public void saveObra(@RequestBody ObraRequestDTO data) {
+    Obra obraData = new Obra(data);
+    
+    repository.save(obraData);
   }
 
+
   @GetMapping
-  public List<ObraReqResDTO> getAll() {
-    List<ObraReqResDTO> obraList = obraDAOJDBC.getAll().stream().map(ObraReqResDTO::new).toList();
-    return obraList;
+  public List<ObraResponseDTO> getAll() {
+    List<ObraResponseDTO> obrasList = repository.findAll().stream().map(ObraResponseDTO::new).toList();
+    return obrasList;
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<Obra> updateObra(@RequestBody ObraReqResDTO data) {
-    Obra returnedObra = obraDAOJDBC.getById(data.codigo());
+  public ResponseEntity<Obra> updateObra(@RequestBody ObraRequestDTO data) {
+    Optional<Obra> optionalObra = repository.findById(data.codigo());
 
-    // Obra updatedObra = returnedObra;
-    returnedObra.setCodigo(data.codigo());
-    returnedObra.setNome(data.nome());
-    returnedObra.setEndereco(data.endereco());
-    returnedObra.setDataInicio(data.dataInicio());
-    returnedObra.setDataPrevistaFim(data.dataPrevistaFim());
-    returnedObra.setDataRealFim(data.dataRealFim());
-    returnedObra.setCustoPrevisto(data.custoPrevisto());
-    returnedObra.setCompras(data.compras());
-    returnedObra.setSocios(data.socios());
+    if (optionalObra.isPresent()) {
+      Obra obra = optionalObra.get();
+      obra.setNome(data.nome());
+      obra.setEndereco(data.endereco());
+      obra.setDataInicio(data.dataInicio());
+      obra.setDataPrevistaFim(data.dataPrevistaFim());
+      obra.setDataRealFim(data.dataRealFim());
+      obra.setCustoPrevisto(data.custoPrevisto());
+      obra.setCompras(data.compras());
+      obra.setSocios(data.socios());
 
-    obraDAOJDBC.update(returnedObra);
-
-    return ResponseEntity.ok(returnedObra);
+      return ResponseEntity.ok(obra);
+    } else {
+      throw new EntityNotFoundException();
+    }
   }
 
   @DeleteMapping
-  public void deletaObra(@RequestBody Obra data) {
-    obraDAOJDBC.deleteById(data.getCodigo());
+  public void deletaCompra(@RequestBody Obra obra) {
+    repository.delete(obra);
   }
 }

@@ -1,37 +1,36 @@
 package com.gobra.sistemagestaodeobras.dto;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Obra;
 import com.gobra.sistemagestaodeobras.model.Socio;
 
 
-public record ObraReqResDTO (
+public record ObraResponseDTO (
 
-  int codigo,
+  Integer codigo,
 
   String nome,
 
   String endereco,
 
-  LocalDate dataInicio,
+  Date dataInicio,
 
-  LocalDate dataPrevistaFim,
+  Date dataPrevistaFim,
 
-  LocalDate dataRealFim,
+  Date dataRealFim,
 
   Integer custoPrevisto,
 
   List<Compra> compras,
 
-  Set<Socio> socios
+  List<Socio> socios
 
 ) {
 
-  public ObraReqResDTO(Obra obraModel) {
+  public ObraResponseDTO(Obra obraModel) {
     this(
       obraModel.getCodigo(),
       obraModel.getNome(),
@@ -44,4 +43,5 @@ public record ObraReqResDTO (
       obraModel.getSocios()
     );
   }
+
 }

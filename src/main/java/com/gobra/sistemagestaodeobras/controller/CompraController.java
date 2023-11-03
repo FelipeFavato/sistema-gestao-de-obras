@@ -38,7 +38,7 @@ public class CompraController {
     compraRepository.save(compraData);
   }
 
-   @GetMapping
+  @GetMapping
   public List<CompraResponseDTO> getAll() {
     List<CompraResponseDTO> comprasList = compraRepository.findAll().stream().map(CompraResponseDTO::new).toList();
     return comprasList;

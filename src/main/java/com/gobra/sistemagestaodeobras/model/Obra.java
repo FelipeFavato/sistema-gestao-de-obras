@@ -1,158 +1,100 @@
 package com.gobra.sistemagestaodeobras.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gobra.sistemagestaodeobras.dto.ObraRequestDTO;
 
+// import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Table(name = "obra")
 @Entity(name = "obra")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "codigo")
 public class Obra {
-  // private: Variável só pode ser acessada dentro da própria classe.
-  // static: Variável pertence a classe em vez de a instâncias individuais.
-  // final: O valor não pode ser alterado depois de ser atribuido.
-  // Long: Tipo de dado de numeros inteiros longos.
-  // serialVersionUID: Usada para controlar a versão da classe ao serializar
-  //      e desserializar objetos.
-  // 1L: O valor atribuido a variavel é 1L (um literal longo).
-  // private static final Long serialVersionUID = 1L;
-
+  
   @Id
-  private int codigo;
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_obra")
+  @SequenceGenerator(name = "seq_generator_obra", sequenceName = "SEQUENCIA_OBRA", initialValue = 1, allocationSize = 1)
+  private Integer codigo;
 
+  @Column(name = "nome", length = 70, unique = true)
   private String nome;
 
+  @Column(name = "endereco", length = 150)
   private String endereco;
 
-  private LocalDate dataInicio;
+  @Column(name = "data_inicio", length = 30)
+  @Temporal(TemporalType.DATE)
+  private Date dataInicio;
 
-  private LocalDate dataPrevistaFim;
+  @Column(name = "data_prevista_fim", length = 30)
+  @Temporal(TemporalType.DATE)
+  private Date dataPrevistaFim;
 
-  private LocalDate dataRealFim;
+  @Column(name = "data_real_fim", length = 30)
+  @Temporal(TemporalType.DATE)
+  private Date dataRealFim;
 
+  @Column(name = "custo_previsto", length = 50)
   private Integer custoPrevisto;
 
+  // Uma Obra pode ter muitas Compras.
   @JsonIgnore
   @OneToMany(mappedBy = "obra")
   private List<Compra> compras;
 
+  // Uma Obra pode ter muitos Socios.
+  // Um Socio pode participar de muitas Obras.
+  // Talvez alguma alteração aqui?
+  // @JsonIgnore
+  // @ManyToMany(mappedBy = "obras", fetch = FetchType.LAZY)
+  // private List<Socio> socios;
+  // , cascade = CascadeType.ALL
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "socios_obras",
+  joinColumns = {
+    @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
+  },
+  inverseJoinColumns = {
+    @JoinColumn(name = "id_socio", referencedColumnName = "codigo")
+  })
   @JsonIgnore
-  @ManyToMany(mappedBy = "obras", fetch = FetchType.LAZY)
-  private Set<Socio> socios;
+  private List<Socio> socios;
 
-  // Constructor => é necessário?
-  // Teoricamente o codigo será gerado pelo Banco de Dados, então
-  // não preciso receber no construtor. 
-  // public Obra(
-  //   // Integer codigo,
-  //   String nome,
-  //   String endereco,
-  //   LocalDate dataInicio,
-  //   LocalDate dataPrevistaFim,
-  //   LocalDate dataRealFim,
-  //   Integer custoPrevisto
-  //   ) {
-  //   // this.codigo = codigo;
-  //   this.nome = nome;
-  //   this.endereco = endereco;
-  //   this.dataInicio = dataInicio;
-  //   this.dataPrevistaFim = dataPrevistaFim;
-  //   this.dataRealFim = dataRealFim;
-  //   this.custoPrevisto = custoPrevisto;
-  // }
 
-  // codigo => Getter e Setter
-  public int getCodigo() {
-    return codigo;
+  public Obra(ObraRequestDTO data) {
+    this.nome = data.nome();
+    this.endereco = data.endereco();
+    this.dataInicio = data.dataInicio();
+    this.dataPrevistaFim = data.dataPrevistaFim();
+    this.dataRealFim = data.dataRealFim();
+    this.custoPrevisto = data.custoPrevisto();
+    this.compras = data.compras();
+    this.socios = data.socios();
   }
-
-  public void setCodigo(int codigo) {
-    this.codigo = codigo;
-  }
-
-  // nome => Getter e Setter
-  public String getNome() {
-    return nome;
-  }
-
-  public void setNome(String nome) {
-    this.nome = nome;
-  }
-
-  // endereco => Getter e Setter
-  public String getEndereco() {
-    return endereco;
-  }
-
-  public void setEndereco(String endereco) {
-    this.endereco = endereco;
-  }
-
-  // dataInicio => Getter e Setter
-  public LocalDate getDataInicio() {
-    return dataInicio;
-  }
-
-  public void setDataInicio(LocalDate dataInicio) {
-    this.dataInicio = dataInicio;
-  }
-
-  // dataPrevistaFim => Getter e Setter
-  public LocalDate getDataPrevistaFim() {
-    return dataPrevistaFim;
-  }
-
-  public void setDataPrevistaFim(LocalDate dataPrevistaFim) {
-    this.dataPrevistaFim = dataPrevistaFim;
-  }
- 
-  // dataRealFim => Getter e Setter
-  public LocalDate getDataRealFim() {
-    return dataRealFim;
-  }
-
-  public void setDataRealFim(LocalDate dataRealFim) {
-    this.dataRealFim = dataRealFim;
-  }
-
-  // custoPrevisto => Getter e Setter
-  public Integer getCustoPrevisto() {
-    return custoPrevisto;
-  }
-
-  public void setCustoPrevisto(Integer custoPrevisto) {
-    this.custoPrevisto = custoPrevisto;
-  }
-
-  // Lista de Obras => Getter e Setter
-  public List<Compra> getCompras() {
-    return compras;
-  }
-
-  public void setCompras(List<Compra> compras) {
-    this.compras = compras;
-  }
-
-  // Lista de Sócios => Getter e Setter
-  public Set<Socio> getSocios() {
-    return socios;
-  }
-
-  public void setSocios(Set<Socio> socios) {
-    this.socios = socios;
-  }
-
-  // Método que fornece uma representação em formato de string legível
-  // para objetos dessa classe
-  @Override  // Sobrecarga de método => Reescreve um método existente da superclasse
-	public String toString(){
-		return "{Codigo="+codigo+",Nome="+nome+",Endereço="+endereco+"}";
-	}
-
 }

@@ -1,0 +1,29 @@
+package com.gobra.sistemagestaodeobras.dto;
+
+import java.util.Date;
+import java.util.List;
+
+import com.gobra.sistemagestaodeobras.model.Compra;
+import com.gobra.sistemagestaodeobras.model.Socio;
+
+public record ObraRequestDTO (
+
+  Integer codigo,
+
+  String nome,
+
+  String endereco,
+
+  Date dataInicio,
+
+  Date dataPrevistaFim,
+
+  Date dataRealFim,
+
+  Integer custoPrevisto,
+
+  List<Compra> compras,
+
+  List<Socio> socios
+
+) { }

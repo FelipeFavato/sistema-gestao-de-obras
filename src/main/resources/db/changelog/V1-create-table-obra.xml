@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>   
+<!-- <?xml version="1.0" encoding="UTF-8"?>   
 <databaseChangeLog
    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,51 +6,51 @@
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
       http://www.liquibase.org/xml/ns/pro 
-      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd"> -->
 
     <!-- O id deve ser único -->
-   <changeSet  author="felipe.favato"  id="0">
-      <createTable tableName="obra">
+   <!-- <changeSet  author="felipe.favato"  id="0">
+      <createTable tableName="obra"> -->
         <!-- ID -->
-        <column  name="codigo"  autoIncrement="true" type="int">
+        <!-- <column  name="codigo"  autoIncrement="true" type="int">
           <constraints  nullable="false"  primaryKey="true"  unique="true"/>
-        </column>
+        </column> -->
 
         <!-- NOME -->
-        <column  name="nome"  type="VARCHAR(100)">
+        <!-- <column  name="nome"  type="VARCHAR(100)">
           <constraints  nullable="false"/>
-        </column>
+        </column> -->
 
         <!-- ENDERECO -->
-        <column  name="endereco"  type="VARCHAR(100)">
+        <!-- <column  name="endereco"  type="VARCHAR(100)">
           <constraints  nullable="true" />
-        </column>
+        </column> -->
 
         <!-- DATA INICIO -->
-        <column  name="data_inicio"  type="DATE">
+        <!-- <column  name="data_inicio"  type="DATE">
           <constraints  nullable="true" />
-        </column>
+        </column> -->
 
         <!-- DATA PREVISTA FIM -->
-        <column  name="data_prevista_fim"  type="DATE">
+        <!-- <column  name="data_prevista_fim"  type="DATE">
           <constraints  nullable="true" />
-        </column>
+        </column> -->
 
         <!-- DATA FIM -->
-        <column  name="data_real_fim"  type="DATE">
+        <!-- <column  name="data_real_fim"  type="DATE">
           <constraints  nullable="true" />
-        </column>
+        </column> -->
 
         <!-- CUSTO PREVISTO -->
-        <column  name="custo_previsto"  type="int">
+        <!-- <column  name="custo_previsto"  type="int">
           <constraints  nullable="true" />
-        </column>
+        </column> -->
 
-      </createTable>
+      <!-- </createTable>
    </changeSet>
 
    <changeSet id="1" author="felipe.favato">
     <createSequence sequenceName="sq_obra" incrementBy="1" startValue="1"/>
    </changeSet>
 
-</databaseChangeLog>
+</databaseChangeLog> -->
