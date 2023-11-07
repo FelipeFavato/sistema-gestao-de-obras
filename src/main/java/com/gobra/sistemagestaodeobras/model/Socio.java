@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,6 +44,7 @@ public class Socio {
   private String nome;
 
   @Column(name = "data_desativacao", length = 30)
+  @Temporal(TemporalType.DATE)
   private Date dataDesativacao;
 
   // Cada Sócio tera uma lista de compras atrelada a ele.

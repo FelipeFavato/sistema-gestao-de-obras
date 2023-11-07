@@ -67,6 +67,7 @@ export default {
       produtosInfo: [],
       localUsoInfo: [],
       unidadeMedidaInfo: [],
+      sociosInfo: [],
       selectedComprasByObra: [],
       selectedItensByCompra: [],
       // Variáveis auxiliares
@@ -77,6 +78,7 @@ export default {
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
       selectedUnidadeMedida: '',
+      selectedSocioNome: '',
       selectedCompraID: '',
       getCompraInfo: {}, // Apenas informações da compra para serem usadas na página.
       compraCodForne: '',
@@ -88,6 +90,7 @@ export default {
       codigo: '',
       obra: {},
       fornecedor: {},
+      socio: {},
       dataCompra: '',
       dataEntrega: '',
       dataPagamento: '',
@@ -131,7 +134,9 @@ export default {
     // Método para apagar dados que foram preenchidos e enviados ou não enviados.
     cancel () {
       this.selectedFornecedorNome = '';
+      this.selectedSocioNome = '';
       this.fornecedor = {};
+      this.socio = {};
       this.dataCompra = '';
       this.dataEntrega = '';
       this.dataPagamento = '';
@@ -245,6 +250,20 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
+    // Método GET - Sócios.
+    fetchSociosInfoDB () {
+      axios.get('/api/socio',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.sociosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
     // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
     emptySelectedComprasByObraArray () {
       this.selectedComprasByObra = [];
@@ -269,6 +288,14 @@ export default {
         }
       }
     },
+    // Método para preencher o objeto "this.socio" com o socio correto para a requisição.
+    fillSocioForRequest () {
+      for (let chosenSocio of this.sociosInfo) {
+        if (chosenSocio.nome === this.selectedSocioNome) {
+          this.socio = chosenSocio;
+        }
+      }
+    },
     // Método para popular o array "selectedComprasByObra".
     selectComprasByObra () {
       for (let chosenCompra of this.comprasInfo) {
@@ -285,11 +312,12 @@ export default {
       this.selectComprasByObra();
     },
     // Método para preencher a modal de DELETE e UPDATE.
-    fillUpdateDeleteModal (cod, obra, fornecedor, dataC, dataE, dataP,
-      dataV, valorO, valorD, valorF, selectedFornecedorNome) {
+    fillUpdateDeleteModal (cod, obra, fornecedor, socio, dataC, dataE, dataP,
+      dataV, valorO, valorD, valorF, selectedFornecedorNome, selectedSocioNome) {
       this.codigo = cod;
       this.obra = obra;
       this.fornecedor = fornecedor;
+      this.socio = socio;
       this.dataCompra = dataC;
       this.dataEntrega = dataE;
       this.dataPagamento = dataP;
@@ -298,6 +326,7 @@ export default {
       this.valorDesconto = valorD;
       this.valorFinal = valorF;
       this.selectedFornecedorNome = selectedFornecedorNome;
+      this.selectedSocioNome = selectedSocioNome;
     },
     // Método para inserir Nova Compra.
     createCompra (callback) {
@@ -305,6 +334,7 @@ export default {
         {
           obra: this.obra,
           fornecedor: this.fornecedor,
+          socio: this.socio,
           dataCompra: this.dataCompra,
           dataEntrega: this.dataEntrega,
           dataPagamento: this.dataPagamento,
@@ -326,6 +356,7 @@ export default {
       let self = this;
       this.fillObraForRequest();
       this.fillFornecedorForRequest();
+      this.fillSocioForRequest();
       this.createCompra(() => {
         self.fetchComprasInfoDB(() => {
           self.emptySelectedComprasByObraArray();
@@ -366,6 +397,7 @@ export default {
         codigo: Number(cod),
         obra: this.obra,
         fornecedor: this.fornecedor,
+        socio: this.socio,
         dataCompra: dataC,
         dataEntrega: dataE,
         dataPagamento: dataP,
@@ -387,6 +419,7 @@ export default {
       let self = this;
       this.fillObraForRequest();
       this.fillFornecedorForRequest();
+      this.fillSocioForRequest();
       this.updateCompra(cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF, () => {
         self.fetchComprasInfoDB(() => {
           self.emptySelectedComprasByObraArray();
@@ -665,9 +698,7 @@ export default {
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
     this.fetchUnidadeMedidaInfoDB();
-    // setTimeout(() => {
-    //   console.log(this.unidadeMedidaInfo);
-    // }, 1000);
+    this.fetchSociosInfoDB();
   }
 }
 </script>
@@ -818,6 +849,19 @@ export default {
                 v-model="selectedObraNome">
             </div>
 
+            <!-- Sócio pagador -->
+            <div class="mb-3">
+              <label for="socio-pagador-select" class="bold">Pagador:</label>
+              <select
+                class="form-select"
+                id="socio-pagador-select"
+                v-model="selectedSocioNome">
+                <option
+                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                  >{{ socio.nome }}</option>
+              </select>
+            </div>
+
             <!-- Fornecedor -->
             <div class="mb-3">
               <label for="fornecedor-select" class="bold">Fornecedor:</label>
@@ -964,6 +1008,19 @@ export default {
                 <option
                   v-for="(obra, i) in obrasInfo" :key="i" :value="obra.nome"
                   >{{ obra.nome }}</option>
+              </select>
+            </div>
+
+            <!-- Sócio pagador -->
+            <div class="mb-3">
+              <label for="socio-pagador-select" class="bold">Pagador:</label>
+              <select
+                class="form-select"
+                id="socio-pagador-select"
+                v-model="selectedSocioNome">
+                <option
+                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                  >{{ socio.nome }}</option>
               </select>
             </div>
 
@@ -1344,7 +1401,7 @@ export default {
       <thead>
         <tr>
           <th scope="col">Código</th>
-          <!-- <th scope="col">Obra</th> -->
+          <th scope="col">Sócio</th>
           <th scope="col">Fornecedor</th>
           <!-- <th scope="col">Data da compra</th> -->
           <!-- <th scope="col">Data da entrega</th> -->
@@ -1359,7 +1416,7 @@ export default {
       <tbody>
         <tr v-for="(compra, i) in selectedComprasByObra" :key="i">
           <th scope="row">{{ compra.codigo }}</th>
-          <!-- <td>{{ compra.obra.nome }}</td> -->
+          <td>{{ compra.socio.nome }}</td>
           <td>{{ compra.fornecedor.nome }}</td>
           <!-- <td>{{ brazilDate(compra.dataCompra) }}</td> -->
           <!-- <td>{{ brazilDate(compra.dataEntrega) }}</td> -->
@@ -1375,9 +1432,9 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(compra.codigo, compra.obra, compra.fornecedor,
+              @click="fillUpdateDeleteModal(compra.codigo, compra.obra, compra.fornecedor, compra.socio,
                 compra.dataCompra, compra.dataEntrega, compra.dataPagamento, compra.dataVencimento,
-                compra.valorOriginal, compra.valorDesconto, compra.valorFinal, compra.fornecedor.nome)"
+                compra.valorOriginal, compra.valorDesconto, compra.valorFinal, compra.fornecedor.nome, compra.socio.nome)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"

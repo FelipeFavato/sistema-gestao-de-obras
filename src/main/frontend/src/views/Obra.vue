@@ -1,21 +1,71 @@
 <script>
+// Requisição de atualização: Preciso reincluir na requisição os que ja estavam
+//  {
+//     "codigo": 7,
+//     "nome": "Obra Teste 5",
+//     "endereco": "Rua Obra Teste, 5000",
+//     "dataInicio": "2023-05-04",
+//     "dataPrevistaFim": "2023-05-09",
+//     "dataRealFim": "2023-05-14",
+//     "custoPrevisto": 100000,
+//     "compras": [],
+//     "socios": [{
+//       "codigo": 3,
+//       "nome": "Felipe",
+//       "dataDesativacao": null
+//     }]
+//   }
+
+//  {
+//     "codigo": 7,
+//     "nome": "Obra Teste 5",
+//     "endereco": "Rua Obra Teste, 5000",
+//     "dataInicio": "2023-05-03",
+//     "dataPrevistaFim": "2023-05-08",
+//     "dataRealFim": "2023-05-13",
+//     "custoPrevisto": 100000,
+//     "compras": [],
+//     "socios": [
+//       {
+//         "codigo": 11,
+//         "nome": "Carla",
+//         "dataDesativacao": null
+//       },
+//       {
+//         "codigo": 3,
+//         "nome": "Felipe",
+//         "dataDesativacao": null
+//       }
+//     ]
+//   }
+
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
+      // Arrays auxiliares
+      obrasInfo: [],
+      sociosInfo: [],
+      selectedSociosInfo: [],
+      selectedSocioByObra: [],
+      // Variaveis auxiliares
       useRouter: useRouter(),
-      localStorageToken: null,
       httpStatus: '',
-      info: [],
+      showSocios: false,
+      getObraInfo: {},
+      selectedSocio: '',
+      // Variáveis para requisição
+      localStorageToken: null,
       codigo: '',
       nome: '',
       endereco: '',
       dataInicio: '',
       dataPrevistaFim: '',
       dataRealFim: '',
-      custoPrevisto: ''
+      custoPrevisto: '',
+      obra: {},
     };
   },
 
@@ -41,6 +91,39 @@ export default {
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
+    // Método para alternar a renderização de Obras e Sócios.
+    switchObrasSocios () {
+      this.showSocios = !this.showSocios;
+      this.clearSelectedSocioByObra();
+      this.clearSelectedObra();
+    },
+    // Método para limpar a lista de sócios selecionados por obra.
+    clearSelectedSocioByObra () {
+      this.selectedSocioByObra = [];
+    },
+    // Método para limpar 'this.obra' ao clicar em voltar;
+    clearSelectedObra () {
+      this.obra = {};
+    },
+    // Recupera os sócios corretos para a obra selecionada
+    getSociosForThisObra (cod) {
+      this.switchObrasSocios();
+      this.fillObraForRequest(cod);
+    },
+    // Método para preencher a obra para a atribuição de sócios
+    fillObraForRequest (cod) {
+      for (let chosenObra of this.obrasInfo) {
+        if (chosenObra.codigo === cod) {
+          this.obra = chosenObra;
+          this.getObraInfo = chosenObra;
+          console.log(this.obra);
+        }
+      }
+    },
+    // Atribui um Socio a uma Obra.
+    assignSocio () {
+      axios.put()
+    },
     cancel () {
       this.codigo = '';
       this.nome = '';
@@ -50,14 +133,27 @@ export default {
       this.dataRealFim = '';
       this.custoPrevisto = '';
     },
-    fetchInfoDB () {
+    fetchSociosInfoDB () {
+      axios.get('/api/socio',
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        this.sociosInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
+    fetchObrasInfoDB () {
       axios.get("/api/obra",
       {
         headers: {
           Authorization: this.localStorageToken
         }
       }).then(res => {
-        this.info = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
+        this.obrasInfo = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
@@ -78,7 +174,7 @@ export default {
             Authorization: `Bearer ${this.localStorageToken}`
           }
         }).then((res) => {
-          this.fetchInfoDB();
+          this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
@@ -110,7 +206,7 @@ export default {
             Authorization: `Bearer ${this.localStorageToken}`
           }
         }).then((res) => {
-          this.fetchInfoDB();
+          this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
@@ -127,7 +223,7 @@ export default {
             codigo: Number(codigo)
           }
         }).then((res) => {
-          this.fetchInfoDB();
+          this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
@@ -141,11 +237,8 @@ export default {
 
       let partes = data.split("-");
 
-      if (partes.length === 3) {
-          return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      } else {
-          return null;
-      }
+      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
+
     },
     fixMoney (dinheiroInt) {
       if (dinheiroInt === null) {
@@ -166,15 +259,22 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchInfoDB();
+    this.fetchObrasInfoDB();
+    this.fetchSociosInfoDB();
+    // setTimeout(() => {
+    //   console.log(this.sociosInfo)
+    // }, 1500);
   }
 }
 </script>
 
 <template>
 
+  <!-- <p>{{ this.obrasInfo[1] }}</p>
+  <p>{{ this.sociosInfo[4] }}</p> -->
+
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-show="!this.showSocios" class="header middle-margin">
     <button
       type="button"
       class="btn btn-success light-green"
@@ -182,6 +282,43 @@ export default {
       data-bs-target="#insertModal"
     >+ Nova Obra</button>
   </header>
+
+  <!-- Botão 'Voltar' + botão '+ Atribuit sócio' -->
+  <div class="header middle-margin">
+    <!-- Botão 'Voltar' + botão '+ Novo Item' -->
+    <div v-show="this.showSocios" class="column">
+      <!-- Botão para voltar as compras -->
+      <button
+        type="button"
+        class="btn btn-dark margin-5px"
+        title="Voltar às obras"
+        @click="switchObrasSocios"
+      >
+        Voltar
+      </button>
+      <!-- Botão para atribuir socio a obra. -->
+      <button
+        @click=""
+        type="button"
+        class="btn btn-success light-green margin-5px"
+        data-bs-toggle="modal"
+        data-bs-target="#atribuirSocioModal"
+      >
+        + Atribuir sócio
+      </button>
+    </div>
+
+    <!-- Informações da compra  -->
+    <div v-if="this.showSocios" class="column">
+      <h5>
+        {{ getObraInfo.codigo }} - {{ getObraInfo.nome }}
+      </h5>
+    </div>
+
+    <!-- div's extras que ajustam a visibilidade -->
+    <div></div>
+    <div></div>
+  </div>
 
   <!-- DeleteModal -->
   <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -401,8 +538,72 @@ export default {
     </div>
   </div>
 
-  <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <!-- AtribuirSocioModal -->
+  <div class="modal fade" id="atribuirSocioModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="atribuirSocioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="atribuirSocioModalLabel">Atribuir Sócio</h1>
+          <button @click="" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="PUT">
+
+            <!-- Código - Obra -->
+            <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                disabled
+                v-model="obra.codigo">
+            </div>
+
+            <!-- Nome - Obra -->
+            <div class="mb-3">
+              <label for="name-input" class="form-label bold">Nome:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name-input"
+                placeholder="Nome da Obra"
+                disabled
+                v-model="obra.nome">
+            </div>
+
+            <!-- Sócios -->
+            <div class="mb-3">
+              <label for="socio-select" class="bold">Sócio:</label>
+              <select
+                class="form-select"
+                id="socio-select"
+                v-model="selectedSocio"
+                ><option
+                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                >{{ socio.nome }}</option>
+              </select>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancel"
+          >Fechar</button>
+
+          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+            @click="assignSocio(this.codigo, this.nome, this.endereco, this.dataInicio, this.dataPrevistaFim, this.dataRealFim, this.custoPrevisto)"
+          >Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela Obras -->
+  <main v-show="!showSocios" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
@@ -417,7 +618,7 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(obra, i) in info" :key="i">
+        <tr v-for="(obra, i) in obrasInfo" :key="i">
           <th scope="row">{{ obra.codigo }}</th>
           <td>{{ obra.nome }}</td>
           <td>{{ obra.endereco }}</td>
@@ -437,6 +638,12 @@ export default {
             <button
               type="button"
               class="btn btn-light btn-sm small"
+              title="Sócios"
+              @click="getSociosForThisObra(obra.codigo)"
+            ><img src="../assets/imagens/perfil-preto.jpg" alt="socios"></button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
@@ -447,6 +654,46 @@ export default {
       </tbody>
     </table>
   </main>
+
+  <!-- Tabela Sócios atribuidos -->
+  <main v-show="showSocios" class="middle-margin table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Código</th>
+          <th scope="col">Nome</th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(socio, i) in obra.socios" :key="i">
+          <th scope="row">{{ socio.codigo }}</th>
+          <td>{{ socio.nome }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="editar-excluir">
+            <button
+              type="button"
+              class="btn btn-light btn-sm small"
+              title="Excluir"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              @click="fillUpdateDeleteModal()"
+            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
 </template>
 
 <style scope>
@@ -456,6 +703,17 @@ export default {
   justify-content: space-between;
   padding-bottom: 5px;
   /* border-bottom: solid #212529 2px; */
+}
+
+.column {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 5px;
+}
+
+.margin-5px {
+  margin-bottom: 5px;
 }
 
 .light-green {
