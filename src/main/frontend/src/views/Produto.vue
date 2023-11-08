@@ -171,8 +171,6 @@ export default {
 </script>
 
 <template>
-  <p>{{ this.marcasInfo }}</p>
-  <p>{{ this.info }}</p>
 
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
