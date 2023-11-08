@@ -194,7 +194,7 @@ export default {
                 id="name-input"
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
-                maxlength="30"
+                maxlength="100"
                 >
             </div>
 

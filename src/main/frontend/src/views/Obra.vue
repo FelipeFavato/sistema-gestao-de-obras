@@ -367,7 +367,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Projeto: "
-                v-model="nome">
+                v-model="nome"
+                maxlength="70">
             </div>
 
             <div class="mb-3">
@@ -377,7 +378,8 @@ export default {
                 class="form-control"
                 id="address-input"
                 placeholder="Rua da Obra, 1000"
-                v-model="endereco">
+                v-model="endereco"
+                maxlength="150">
             </div>
 
             <div class="mb-3">
@@ -417,7 +419,8 @@ export default {
                 class="form-control"
                 id="custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"
-                v-model="custoPrevisto">
+                v-model="custoPrevisto"
+                maxlength="50">
             </div>
 
           </form>
@@ -470,7 +473,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Nome da Obra"
-                v-model="nome">
+                v-model="nome"
+                maxlength="70">
             </div>
 
             <div class="mb-3">
@@ -480,7 +484,8 @@ export default {
                 class="form-control"
                 id="address-input"
                 placeholder="Rua da Obra, 1000"
-                v-model="endereco">
+                v-model="endereco"
+                maxlength="150">
             </div>
 
             <div class="mb-3">
@@ -519,7 +524,8 @@ export default {
                 class="form-control"
                 id="custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"
-                v-model="custoPrevisto">
+                v-model="custoPrevisto"
+                maxlength="50">
             </div>
 
           </form>

@@ -192,7 +192,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Fundação, Hidráulica, etc..."
-                v-model="nomeLocalUsoObra">
+                v-model="nomeLocalUsoObra"
+                maxlength="30">
             </div>
 
           </form>
@@ -246,7 +247,8 @@ export default {
                 id="category-input"
                 placeholder="Alvenaria, Ferragens, etc..."
                 v-model="nomeLocalUsoObra"
-                disabled>
+                disabled
+                maxlength="30">
             </div>
 
             <div class="mb-3">

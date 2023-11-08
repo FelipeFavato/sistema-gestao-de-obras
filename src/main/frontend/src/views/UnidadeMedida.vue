@@ -188,7 +188,8 @@ export default {
                 class="form-control"
                 id="unidade-input"
                 placeholder="Gramas, quilos, metros..."
-                v-model="unidade">
+                v-model="unidade"
+                maxlength="30">
             </div>
 
           </form>

@@ -215,7 +215,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Nome do usuário"
-                v-model="nome">
+                v-model="nome"
+                maxlength="100">
             </div>
 
             <!-- Email -->
@@ -226,7 +227,8 @@ export default {
                 class="form-control"
                 id="email-input"
                 placeholder="usuario@gmail.com"
-                v-model="email">
+                v-model="email"
+                maxlength="70">
             </div>
 
             <!-- Senha -->
@@ -237,7 +239,8 @@ export default {
                 class="form-control"
                 id="senha-input"
                 placeholder="******"
-                v-model="senha">
+                v-model="senha"
+                maxlength="30">
             </div>
 
             <!-- Perfil -->
@@ -316,7 +319,8 @@ export default {
                 class="form-control"
                 id="gmail-input"
                 placeholder="usuario@gmail.com"
-                v-model="email">
+                v-model="email"
+                maxlength="70">
             </div>
 
             <!-- Senha -->
@@ -327,7 +331,8 @@ export default {
                 class="form-control"
                 id="password-input"
                 placeholder="******"
-                v-model="senha">
+                v-model="senha"
+                maxlength="30">
             </div>
 
             <!-- Perfil -->

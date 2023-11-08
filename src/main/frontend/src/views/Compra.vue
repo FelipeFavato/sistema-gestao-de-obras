@@ -925,7 +925,8 @@ export default {
                 class="form-control"
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorOriginal">
+                v-model="valorOriginal"
+                maxlength="30">
             </div>
 
             <!-- Valor Desconto -->
@@ -938,7 +939,8 @@ export default {
                 class="form-control"
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorDesconto">
+                v-model="valorDesconto"
+                maxlength="30">
             </div>
 
             <!-- Valor Final -->
@@ -951,7 +953,8 @@ export default {
                 class="form-control"
                 id="valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorFinal">
+                v-model="valorFinal"
+                maxlength="30">
             </div>
 
           </form>
@@ -1087,7 +1090,8 @@ export default {
                 class="form-control"
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorOriginal">
+                v-model="valorOriginal"
+                maxlength="30">
             </div>
 
             <!-- Valor Desconto -->
@@ -1100,7 +1104,8 @@ export default {
                 class="form-control"
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorDesconto">
+                v-model="valorDesconto"
+                maxlength="30">
             </div>
 
             <!-- Valor Final -->
@@ -1111,7 +1116,8 @@ export default {
                 class="form-control"
                 id="valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorFinal">
+                v-model="valorFinal"
+                maxlength="30">
             </div>
 
           </form>
@@ -1218,7 +1224,8 @@ export default {
                 class="form-control"
                 id="quantidade-input"
                 placeholder="(inserir apenas números)"
-                v-model="quantidade">
+                v-model="quantidade"
+                maxlength="30">
             </div>
 
             <!-- Unidade de medida -->
@@ -1244,7 +1251,8 @@ export default {
                 class="form-control"
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorUnitario">
+                v-model="valorUnitario"
+                maxlength="30">
             </div>
 
             <!-- Valor Total -->
@@ -1257,7 +1265,8 @@ export default {
                 class="form-control"
                 id="valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorTotal">
+                v-model="valorTotal"
+                maxlength="30">
             </div>
 
           </form>
@@ -1336,7 +1345,8 @@ export default {
                 class="form-control"
                 id="quantidade-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="quantidade">
+                v-model="quantidade"
+                maxlength="30">
             </div>
 
             <!-- Unidade de medida -->
@@ -1362,7 +1372,8 @@ export default {
                 class="form-control"
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorUnitario">
+                v-model="valorUnitario"
+                maxlength="30">
             </div>
 
             <!-- Valor Total -->
@@ -1375,7 +1386,8 @@ export default {
                 class="form-control"
                 id="valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
-                v-model="valorTotal">
+                v-model="valorTotal"
+                maxlength="30">
             </div>
 
           </form>

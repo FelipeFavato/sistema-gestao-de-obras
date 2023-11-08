@@ -244,11 +244,11 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Local:</label>
+              <label for="nome-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="category-input"
+                id="nome-input"
                 placeholder="Sócio"
                 v-model="nome"
                 disabled>

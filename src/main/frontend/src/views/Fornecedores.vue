@@ -217,7 +217,8 @@ export default {
                 class="form-control"
                 id="name-input"
                 placeholder="Nome do Fornecedor"
-                v-model="nome">
+                v-model="nome"
+                maxlength="70">
             </div>
 
             <!-- Categoria -->
@@ -241,7 +242,8 @@ export default {
                 class="form-control"
                 id="telefone-input"
                 placeholder="Telefone (com DDD)"
-                v-model="telefone">
+                v-model="telefone"
+                maxlength="20">
             </div>
 
             <!-- Endereço -->
@@ -252,7 +254,8 @@ export default {
                 class="form-control"
                 id="address-input"
                 placeholder="Avenida dos Fornecedores, 1000"
-                v-model="endereco">
+                v-model="endereco"
+                maxlength="150">
             </div>
 
             <!-- Email -->
@@ -263,7 +266,8 @@ export default {
                 class="form-control"
                 id="email-input"
                 placeholder="fornecedor@gmail.com"
-                v-model="email">
+                v-model="email"
+                maxlength="100">
             </div>
 
           </form>
@@ -318,7 +322,8 @@ export default {
                 class="form-control"
                 id="nome-input"
                 v-model="nome"
-                disabled>
+                disabled
+                maxlength="70">
             </div>
 
             <!-- Categoria -->
@@ -342,7 +347,8 @@ export default {
                 class="form-control"
                 id="telefone-input"
                 placeholder="Telefone (com DDD)"
-                v-model="telefone">
+                v-model="telefone"
+                maxlength="20">
             </div>
 
             <!-- Endereço -->
@@ -353,7 +359,8 @@ export default {
                 class="form-control"
                 id="endereco-input"
                 placeholder="Avenida dos Fornecedores, 1000"
-                v-model="endereco">
+                v-model="endereco"
+                maxlength="150">
             </div>
 
             <!-- Email -->
@@ -364,7 +371,8 @@ export default {
                 class="form-control"
                 id="email-input"
                 placeholder="fornecedor@gmail.com"
-                v-model="email">
+                v-model="email"
+                maxlength="100">
             </div>
           </form>
         </div>
