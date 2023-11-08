@@ -11,6 +11,7 @@ const routes = [
   { path: '/localuso', component: () => import('../views/LocalUso.vue') },
   { path: '/fornecedor', component: () => import('../views/Fornecedores.vue') },
   { path: '/produto', component: () => import('../views/Produto.vue') },
+  { path: '/marca', component: () => import('../views/Marca.vue') },
   { path: '/unidademedida', component: () => import('../views/UnidadeMedida.vue') },
   { path: '/usuario', component: () => import('../views/Usuario.vue') },
   { path: '/perfil', component: () => import('../views/Perfil.vue') },

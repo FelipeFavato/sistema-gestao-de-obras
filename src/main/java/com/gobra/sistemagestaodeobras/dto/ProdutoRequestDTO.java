@@ -3,6 +3,7 @@ package com.gobra.sistemagestaodeobras.dto;
 import java.util.List;
 
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
+import com.gobra.sistemagestaodeobras.model.Marca;
 import com.gobra.sistemagestaodeobras.utils.TipoProdutoEnum;
 
 public record ProdutoRequestDTO (
@@ -13,6 +14,8 @@ public record ProdutoRequestDTO (
 
   TipoProdutoEnum tipoProduto,
 
-  List<ItemCompra> itensCompra
+  List<ItemCompra> itensCompra,
+
+  Marca marca
 
 ) { }

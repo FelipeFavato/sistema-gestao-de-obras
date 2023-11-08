@@ -1,24 +1,15 @@
 <script>
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
   data () {
     return {
-      // Arrays auxiliares
       info: [],
-      marcasInfo: [],
-      // Variaveis auxiliares
-      useRouter: useRouter(),
-      httpStatus: '',
-      selectedMarcaNome: '',
-      // Variaveis para requisição
       localStorageToken: null,
-      codigo: '',
+      httpStatus: '',
       nome: '',
-      tipoProduto: '',
-      marca: {}
-    };
+      dataDesativacao: ''
+    }
   },
 
   methods: {
@@ -43,14 +34,12 @@ export default {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
-    // Método para esvaziar os dados quando enviada/cancelada a requisição.
-    cancel() {
+    cancel () {
       this.nome = '';
-      this.tipoProduto = '';
+      this.dataDesativacao = '';
     },
-    // Método para buscar os dados no Banco.
     fetchInfoDB () {
-      axios.get("/api/produto",
+      axios.get('/api/marca',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -62,63 +51,50 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método para criar os dados no Banco.
-    createProduto () {
-      axios.post("/api/produto",
-        {
-          nome: this.nome,
-          tipoProduto: this.tipoProduto,
-          marca: this.marca
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
-          }
-        }).then((res) => {
-          this.fetchInfoDB();
-          this.setHttpStatusCode(res.status);
-        }).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
+    createInfoDB () {
+      axios.post('/api/marca',
+      {
+        nome: this.nome,
+        dataDesativacao: null
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
       this.cancel();
     },
-    createProdutoInfoDB () {
-      this.fillMarcaForRequest();
-      this.createProduto();
-    },
-    // Método para preencher as informações da Modal.
-    fillUpdateDeleteModal (codigo, nome, tipo, marca) {
+    fillUpdateDeleteModal (codigo, nome, dataDesativacao) {
       this.codigo = codigo;
       this.nome = nome;
-      this.tipoProduto = tipo;
-      this.marca = marca;
-      this.selectedMarcaNome = marca.nome;
+      this.dataDesativacao = dataDesativacao;
     },
-    // Método para atualizar um Produto no Banco.
-    updateInfoDB (codigo, nome, tipo) {
-      this.fillMarcaForRequest();
-      axios.put("/api/produto",
-        {
-          codigo: Number(codigo),
-          nome: nome,
-          tipoProduto: tipo,
-          marca: this.marca
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
-          }
-        }).then((res) => {
-          this.fetchInfoDB();
-          this.setHttpStatusCode(res.status);
-        }).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
+    updateInfoDB (codigo, nome, dataD) {
+      axios.put('/api/marca',
+      {
+       codigo: Number(codigo),
+       nome: nome,
+       dataDesativacao: dataD 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        this.fetchInfoDB();
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
       this.cancel();
     },
-    // Método para remover um produto do Banco.
     removeFromDB (codigo) {
-      axios.delete("/api/produto",
+      axios.delete("/api/marca",
         {
           headers: {
             Authorization: this.localStorageToken
@@ -126,7 +102,7 @@ export default {
           data: {
             codigo: Number(codigo)
           }
-        }).then((res) => {
+        }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
@@ -134,30 +110,14 @@ export default {
         });
       this.cancel();
     },
-    // Método para ajustar a visualização da categoria.
-    fixTaxasImpostos(tipo) {
-      return tipo === "TaxasImpostos" ? "Taxas/Impostos" : tipo;
-    },
-    // Método GET - Marcas
-    fetchMarcasInfoDB () {
-      axios.get('/api/marca',
-      {
-        headers: {
-          Authorization: this.localStorageToken
-        }
-      }).then(res => {
-        this.marcasInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
-        this.setHttpStatusCode(res.status);
-      }).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      });
-    },
-    fillMarcaForRequest () {
-      for (let chosenMarca of this.marcasInfo) {
-        if (chosenMarca.nome === this.selectedMarcaNome) {
-          this.marca = chosenMarca;
-        }
+    brazilDate (data) {
+      if (data === null) {
+        return null
       }
+
+      let partes = data.split("-");
+
+      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
     }
   },
 
@@ -165,14 +125,12 @@ export default {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
-    this.fetchMarcasInfoDB();
   }
 }
+
 </script>
 
 <template>
-  <p>{{ this.marcasInfo }}</p>
-  <p>{{ this.info }}</p>
 
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
@@ -181,7 +139,7 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
-    >+ Novo Produto</button>
+    >+ Nova Marca</button>
   </header>
 
   <!-- DeleteModal -->
@@ -217,7 +175,7 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="insertModalLabel">Novo Produto</h1>
+          <h1 class="modal-title fs-5" id="insertModalLabel">Nova Marca</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -225,43 +183,16 @@ export default {
 
           <form action="POST">
 
-            <!-- Nome -->
             <div class="mb-3">
               <label for="name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
                 id="name-input"
-                placeholder="Produto, mão de obra, etc..."
+                placeholder="Amanco, Krona, CMC..."
                 v-model="nome"
-                maxlength="100"
+                maxlength="80"
                 >
-            </div>
-
-            <!-- Marca -->
-            <div class="mb-3">
-              <label for="marca-empresa-select" class="bold">Marca/Empresa:</label>
-              <select
-                class="form-select"
-                id="marca-empresa-select"
-                v-model="selectedMarcaNome">
-                <option
-                  v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
-                  >{{ marca.nome }}</option>
-              </select>
-            </div>
-
-            <!-- Categoria -->
-            <div class="mb-3">
-              <label for="tipoProduto-select" class="bold">Categoria:</label>
-              <select
-                class="form-select"
-                id="tipoProduto-select"
-                v-model="tipoProduto">
-                <option value="Material">Material</option>
-                <option value="Serviço">Serviço</option>
-                <option value="TaxasImpostos">Taxas/Impostos</option>
-              </select>
             </div>
 
           </form>
@@ -278,7 +209,7 @@ export default {
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
-            @click="createProdutoInfoDB"
+            @click="createInfoDB"
           >Salvar</button>
         </div>
       </div>
@@ -290,15 +221,13 @@ export default {
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Produto</h1>
+          <h1 class="modal-title fs-5" id="updateModalLabel">Editar Marca</h1>
           <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
-
           <form action="PUT">
 
-            <!-- Codigo -->
             <div class="mb-3">
               <label for="id-input" class="form-label bold">Código:</label>
               <input
@@ -309,46 +238,27 @@ export default {
                 v-model="codigo">
             </div>
 
-            <!-- nome -->
             <div class="mb-3">
               <label for="nome-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
                 id="nome-input"
-                placeholder="Produto, mão de obra, etc..."
+                placeholder=""
                 v-model="nome"
                 disabled>
             </div>
 
-            <!-- Marca -->
             <div class="mb-3">
-              <label for="marca-empresa-select" class="bold">Marca/Empresa:</label>
-              <select
-                class="form-select"
-                id="marca-empresa-select"
-                v-model="selectedMarcaNome">
-                <option
-                  v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
-                  >{{ marca.nome }}</option>
-              </select>
-            </div>
-
-            <!-- Categoria -->
-            <div class="mb-3">
-              <label for="tipoProduto-select" class="bold">Categoria:</label>
-              <select
-                class="form-select"
-                id="tipoProduto-select"
-                v-model="tipoProduto">
-                <option value="Material">Material</option>
-                <option value="Serviço">Serviço</option>
-                <option value="TaxasImpostos">Taxas/Impostos</option>
-              </select>
+              <label for="dataDesativacao-input" class="form-label bold">Data desativação:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dataDesativacao-input"
+                v-model="dataDesativacao">
             </div>
 
           </form>
-
         </div>
 
         <div class="modal-footer">
@@ -357,7 +267,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.tipoProduto)"
+            @click="updateInfoDB(this.codigo, this.nome, this.dataDesativacao)"
           >Salvar</button>
         </div>
       </div>
@@ -371,8 +281,8 @@ export default {
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Nome</th>
-          <th scope="col">Categoria</th>
-          <th scope="col">Marca/Empresa</th>
+          <th scope="col">Data desativação</th>
+          <th></th>
           <th></th>
           <th></th>
           <th></th>
@@ -380,11 +290,11 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(produto, i) in info" :key="i">
-          <th scope="row">{{ produto.codigo }}</th>
-          <td>{{ produto.nome }}</td>
-          <td>{{ fixTaxasImpostos(produto.tipoProduto) }}</td>
-          <td>{{ produto.marca ? produto.marca.nome : null }}</td>
+        <tr v-for="(marca, i) in info" :key="i">
+          <th scope="row">{{ marca.codigo }}</th>
+          <td>{{ marca.nome }}</td>
+          <td>{{ this.brazilDate(marca.dataDesativacao) }}</td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -395,8 +305,8 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(produto.codigo, produto.nome,
-              produto.tipoProduto, produto.marca)"
+              @click="fillUpdateDeleteModal(marca.codigo, marca.nome,
+              marca.dataDesativacao)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
@@ -404,7 +314,7 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(produto.codigo)"
+              @click="fillUpdateDeleteModal(marca.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>

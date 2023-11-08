@@ -13,6 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -48,9 +50,16 @@ public class Produto {
   @OneToMany(mappedBy = "produto")
   private List<ItemCompra> itensCompra;
 
+  // São muitos produtos podendo ser de uma marca.
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "id_marca", referencedColumnName = "codigo")
+  private Marca marca;
+
   public Produto(ProdutoRequestDTO data) {
     this.nome = data.nome();
     this.tipoProduto = data.tipoProduto();
     this.itensCompra = data.itensCompra();
+    this.marca = data.marca();
   }
 }

@@ -3,6 +3,7 @@ package com.gobra.sistemagestaodeobras.dto;
 import java.util.List;
 
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
+import com.gobra.sistemagestaodeobras.model.Marca;
 import com.gobra.sistemagestaodeobras.model.Produto;
 import com.gobra.sistemagestaodeobras.utils.TipoProdutoEnum;
 
@@ -14,7 +15,9 @@ public record ProdutoResponseDTO (
 
   TipoProdutoEnum tipoProduto,
 
-  List<ItemCompra> itensCompra
+  List<ItemCompra> itensCompra,
+
+  Marca marca
 
 ) {
 
@@ -23,7 +26,8 @@ public record ProdutoResponseDTO (
       produtoModel.getCodigo(),
       produtoModel.getNome(),
       produtoModel.getTipoProduto(),
-      produtoModel.getItensCompra()
+      produtoModel.getItensCompra(),
+      produtoModel.getMarca()
     );
   }
 }

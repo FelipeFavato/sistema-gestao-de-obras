@@ -52,6 +52,7 @@ public class ProdutoController {
       Produto produto = optionalProduto.get();
       produto.setNome(data.nome());
       produto.setTipoProduto(data.tipoProduto());
+      produto.setMarca(data.marca());
 
       return ResponseEntity.ok(produto);
     } else {

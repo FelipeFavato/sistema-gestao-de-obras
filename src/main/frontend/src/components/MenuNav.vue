@@ -119,6 +119,7 @@ export default {
               <li><a class="dropdown-item" href="#localuso">Local de uso</a></li>
               <li><a class="dropdown-item" href="#obra">Obras</a></li>
               <li><a class="dropdown-item" href="#produto">Produtos</a></li>
+              <li><a class="dropdown-item" href="#marca">Marcas</a></li>
               <li><a class="dropdown-item" href="#socio">Sócios</a></li>
               <li><a class="dropdown-item" href="#unidademedida">Unidades de medida</a></li>
               <li v-if="perfilGestor"><hr class="dropdown-divider"></li>

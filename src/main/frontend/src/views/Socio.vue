@@ -70,7 +70,8 @@ export default {
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
-      })
+      });
+      this.cancel();
     },  
     fillUpdateDeleteModal (codigo, nome, dataDesativacao) {
       this.codigo = codigo;
@@ -108,7 +109,6 @@ export default {
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
-          console.log(this.httpStatus);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
         });
