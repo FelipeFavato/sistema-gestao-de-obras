@@ -47,6 +47,8 @@ export default {
     cancel() {
       this.nome = '';
       this.tipoProduto = '';
+      this.marca = {};
+      this.selectedMarcaNome = '';
     },
     // Método para buscar os dados no Banco.
     fetchInfoDB () {
