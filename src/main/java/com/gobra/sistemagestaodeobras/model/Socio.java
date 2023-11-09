@@ -36,8 +36,8 @@ import lombok.Setter;
 public class Socio {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_socio")
-  @SequenceGenerator(name = "seq_generator_socio", sequenceName = "SEQUENCIA_SOCIO", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_socio")
+  @SequenceGenerator(name = "seq_gen_socio", sequenceName = "SEQ_SOCIO", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "nome", length = 100, unique = true)

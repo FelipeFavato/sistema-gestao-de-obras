@@ -37,8 +37,8 @@ import lombok.Setter;
 public class Obra {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_obra")
-  @SequenceGenerator(name = "seq_generator_obra", sequenceName = "SEQUENCIA_OBRA", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_obra")
+  @SequenceGenerator(name = "seq_gen_obra", sequenceName = "SEQ_OBRA", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "nome", length = 70, unique = true)

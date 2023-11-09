@@ -29,8 +29,8 @@ public class ItemCompra {
   
   @Id
   @Column(name = "codigo")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_compra_seq_generator")
-  @SequenceGenerator(name = "item_compra_seq_generator", sequenceName = "ITEM_COMPRA_SEQUENCIA", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_compra_seq_gen")
+  @SequenceGenerator(name = "item_compra_seq_gen", sequenceName = "ITEM_COMPRA_SEQU", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   // 1. ManyToOne: Muitos itens pertencem a 1 compra.

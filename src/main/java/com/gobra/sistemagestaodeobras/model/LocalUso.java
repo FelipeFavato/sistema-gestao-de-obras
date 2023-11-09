@@ -41,8 +41,8 @@ public class LocalUso {
   // @GeneratedValue(strategy = GenerationType.AUTO) // Toda vez que reinicio a aplicação, adiciona 50 na geração (AllocationSize)
   @Id
   @Column(name = "codigo_local_uso_obra")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sua_seq_generator")
-  @SequenceGenerator(name = "sua_seq_generator", sequenceName = "NOME_DA_SUA_SEQUENCIA", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "local_uso_seq_gen")
+  @SequenceGenerator(name = "local_uso_seq_gen", sequenceName = "LOCAL_USO_SEQ", initialValue = 1, allocationSize = 1)
   private Integer codigoLocalUsoObra;
 
   // @column => Especifica o nome da coluna na tabela

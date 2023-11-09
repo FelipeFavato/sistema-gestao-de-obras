@@ -34,8 +34,8 @@ import lombok.Setter;
 public class Produto {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_produto")
-  @SequenceGenerator(name = "seq_generator_produto", sequenceName = "SEQUENCIA_PRODUTO", initialValue = 1, allocationSize = 1)  
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_produto")
+  @SequenceGenerator(name = "seq_gen_produto", sequenceName = "SEQ_PRODUTO", initialValue = 1, allocationSize = 1)  
   private Integer codigo;
 
   @Column(name = "nome", length = 100, unique = true)

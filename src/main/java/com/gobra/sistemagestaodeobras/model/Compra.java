@@ -39,8 +39,8 @@ public class Compra {
 
   @Id
   @Column(name = "codigo")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "compra_seq_generator")
-  @SequenceGenerator(name = "compra_seq_generator", sequenceName = "COMPRA_SEQUENCIA", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "compra_seq_gen")
+  @SequenceGenerator(name = "compra_seq_gen", sequenceName = "COMPRA_SEQ", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   // 1.1 ManyToOne: MUITAS compras para UMA obra.

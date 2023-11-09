@@ -36,8 +36,8 @@ import lombok.Setter;
 public class Usuario implements UserDetails {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gener_usuario")
-  @SequenceGenerator(name = "seq_gener_usuario", sequenceName = "SEQ_USUARIO", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_usuario")
+  @SequenceGenerator(name = "seq_gen_usuario", sequenceName = "SEQ_USUARIO", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "nome", length = 100, unique = true)

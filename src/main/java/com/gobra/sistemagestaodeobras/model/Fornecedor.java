@@ -32,8 +32,8 @@ import lombok.Setter;
 public class Fornecedor {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_fornecedor")
-  @SequenceGenerator(name = "seq_generator_fornecedor", sequenceName = "SEQUENCIA_FORNECEDOR", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_fornecedor")
+  @SequenceGenerator(name = "seq_gen_fornecedor", sequenceName = "SEQ_FORNECEDOR", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "nome", length = 70, unique = true)

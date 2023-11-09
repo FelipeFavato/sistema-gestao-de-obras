@@ -29,8 +29,8 @@ import lombok.Setter;
 public class UnidadeMedida {
   
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator_unidade_medida")
-  @SequenceGenerator(name = "seq_generator_unidade_medida", sequenceName = "SEQUENCIA_UNIDADE_MEDIDA", initialValue = 1, allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen_unidade_medida")
+  @SequenceGenerator(name = "seq_gen_unidade_medida", sequenceName = "SEQ_UNIDADE_MEDIDA", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
   @Column(name = "unidade", length = 30, unique = true)
