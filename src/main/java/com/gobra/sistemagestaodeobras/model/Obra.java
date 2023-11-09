@@ -59,6 +59,9 @@ public class Obra {
   @Temporal(TemporalType.DATE)
   private Date dataRealFim;
 
+  @Column(name = "custo_mao_de_obra", length = 50)
+  private Integer custoMaoDeObra;
+
   @Column(name = "custo_previsto", length = 50)
   private Integer custoPrevisto;
 
@@ -93,6 +96,7 @@ public class Obra {
     this.dataInicio = data.dataInicio();
     this.dataPrevistaFim = data.dataPrevistaFim();
     this.dataRealFim = data.dataRealFim();
+    this.custoMaoDeObra = data.custoMaoDeObra();
     this.custoPrevisto = data.custoPrevisto();
     this.compras = data.compras();
     this.socios = data.socios();

@@ -64,6 +64,7 @@ export default {
       dataInicio: '',
       dataPrevistaFim: '',
       dataRealFim: '',
+      custoMaoDeObra: '',
       custoPrevisto: '',
       obra: {},
     };
@@ -167,6 +168,7 @@ export default {
           dataInicio: this.dataInicio,
           dataPrevistaFim: this.dataPrevistaFim,
           dataRealFim: this.dataRealFim,
+          custoMaoDeObra: this.custoMaoDeObra,
           custoPrevisto: this.custoPrevisto
         },
         {
@@ -181,25 +183,27 @@ export default {
         });
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoPrevisto) {
+    fillUpdateDeleteModal (codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoMaoDeObra, custoPrevisto) {
       this.codigo = codigo;
       this.nome = nome;
       this.endereco = endereco;
       this.dataInicio = dataInicio;
       this.dataPrevistaFim = dataPrevistaFim;
       this.dataRealFim = dataRealFim;
+      this.custoMaoDeObra = custoMaoDeObra;
       this.custoPrevisto = custoPrevisto;
     },
-    updateInfoDB (cod, no, end, dataIni, dataPrFim, dataRFim, custoPrev) {
+    updateInfoDB () {
       axios.put("/api/obra",
         {
-          codigo: cod,
-          nome: no,
-          endereco: end,
-          dataInicio: dataIni,
-          dataPrevistaFim: dataPrFim,
-          dataRealFim: dataRFim,
-          custoPrevisto: custoPrev
+          codigo: this.codigo,
+          nome: this.nome,
+          endereco: this.endereco,
+          dataInicio: this.dataInicio,
+          dataPrevistaFim: this.dataPrevistaFim,
+          dataRealFim: this.dataRealFim,
+          custoMaoDeObra: this.custoMaoDeObra,
+          custoPrevisto: this.custoPrevisto
         },
         {
           headers: {
@@ -413,6 +417,17 @@ export default {
             </div>
 
             <div class="mb-3">
+              <label for="custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
+              <input
+                type="number"
+                class="form-control"
+                id="custo-mao-de-obra-input"
+                placeholder="R$... (inserir apenas números)"
+                v-model="custoMaoDeObra"
+                maxlength="50">
+            </div>
+
+            <div class="mb-3">
               <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="number"
@@ -518,6 +533,17 @@ export default {
             </div>
 
             <div class="mb-3">
+              <label for="custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
+              <input
+                type="number"
+                class="form-control"
+                id="custo-mao-de-obra-input"
+                placeholder="R$... (inserir apenas números)"
+                v-model="custoMaoDeObra"
+                maxlength="50">
+            </div>
+          
+            <div class="mb-3">
               <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="number"
@@ -537,7 +563,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.endereco, this.dataInicio, this.dataPrevistaFim, this.dataRealFim, this.custoPrevisto)"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>
@@ -619,6 +645,7 @@ export default {
           <th scope="col">Data início</th>
           <th scope="col">Data entrega prevista</th>
           <th scope="col">Data entrega</th>
+          <th scope="col">Custo mão de obra</th>
           <th scope="col">Custo previsto</th>
           <th></th>
         </tr>
@@ -631,6 +658,7 @@ export default {
           <td>{{ brazilDate(obra.dataInicio) }}</td>
           <td>{{ brazilDate(obra.dataPrevistaFim) }}</td>
           <td>{{ brazilDate(obra.dataRealFim) }}</td>
+          <td>{{ fixMoney(obra.custoMaoDeObra) }}</td>
           <td>{{ fixMoney(obra.custoPrevisto) }}</td>
           <td class="editar-excluir">
             <button
@@ -639,7 +667,8 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(obra.codigo, obra.nome, obra.endereco, obra.dataInicio, obra.dataPrevistaFim, obra.dataRealFim, obra.custoPrevisto)"
+              @click="fillUpdateDeleteModal(obra.codigo, obra.nome, obra.endereco, obra.dataInicio,
+                obra.dataPrevistaFim, obra.dataRealFim, obra.custoMaoDeObra, obra.custoPrevisto)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"

@@ -22,6 +22,8 @@ public record ObraResponseDTO (
 
   Date dataRealFim,
 
+  Integer custoMaoDeObra,
+
   Integer custoPrevisto,
 
   List<Compra> compras,
@@ -38,6 +40,7 @@ public record ObraResponseDTO (
       obraModel.getDataInicio(),
       obraModel.getDataPrevistaFim(),
       obraModel.getDataRealFim(),
+      obraModel.getCustoMaoDeObra(),
       obraModel.getCustoPrevisto(),
       obraModel.getCompras(),
       obraModel.getSocios()

@@ -20,6 +20,8 @@ public record ObraRequestDTO (
 
   Date dataRealFim,
 
+  Integer custoMaoDeObra,
+
   Integer custoPrevisto,
 
   List<Compra> compras,

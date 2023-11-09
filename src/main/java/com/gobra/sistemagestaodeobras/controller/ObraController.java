@@ -56,6 +56,7 @@ public class ObraController {
       obra.setDataInicio(data.dataInicio());
       obra.setDataPrevistaFim(data.dataPrevistaFim());
       obra.setDataRealFim(data.dataRealFim());
+      obra.setCustoMaoDeObra(data.custoMaoDeObra());
       obra.setCustoPrevisto(data.custoPrevisto());
       obra.setCompras(data.compras());
       obra.setSocios(data.socios());
