@@ -13,26 +13,23 @@
   export default {
     data () {
       return {
-        data: [{
-          x: [1, 2, 3, 4],
-          y: [10, 15, 13, 17],
-          type: 'scatter'
-        }],
-        layout: {
-          title: 'My graph'
-        }
       }
     },
     
-    components: {
-      Plotly
-    },
-
     methods: {
 
     },
 
     mounted () {
+      Plotly.newPlot("tester", [ {
+        x: [1, 2, 3, 4],
+        y: [10, 15, 13, 17],
+        type: 'scatter'
+      }, {
+        x: [1, 2, 3, 4],
+        y: [16, 5, 11, 9],
+        type: 'scatter'
+      }]);
     }
   }
 
@@ -41,9 +38,7 @@
 <template>
   <h2>Configurações </h2>
 
-  <!-- <div id="tester" style="width:600px;height:250px;"></div> -->
-
-  <Plotly :data="data" :layout="layout" :display-mode-bar="true"/>
+  <div id="tester" style="width:600px;height:250px;"></div>
 
 </template>
 
