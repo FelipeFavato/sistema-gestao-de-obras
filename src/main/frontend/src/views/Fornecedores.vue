@@ -143,6 +143,12 @@ export default {
       if (numeroLimpo.length === 10) {
         return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`
       }
+      if (numeroLimpo.length === 9) {
+        return (`${numeroLimpo.slice(0, 5)}-${numeroLimpo.slice(5)}`)
+      }
+      if (numeroLimpo.length === 8) {
+        return (`${numeroLimpo.slice(0, 4)}-${numeroLimpo.slice(4)}`)
+      }
     },
   },
 
