@@ -66,7 +66,6 @@ export default {
         }
         this.processedCompraData.push(somaMes);
       }
-      console.log(this.processedCompraData)
     },
     genGraph () {
       const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Maio', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
