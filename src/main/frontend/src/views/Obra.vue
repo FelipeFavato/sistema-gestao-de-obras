@@ -670,12 +670,12 @@ export default {
               @click="fillUpdateDeleteModal(obra.codigo, obra.nome, obra.endereco, obra.dataInicio,
                 obra.dataPrevistaFim, obra.dataRealFim, obra.custoMaoDeObra, obra.custoPrevisto)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
-            <button
+            <!-- <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Sócios"
               @click="getSociosForThisObra(obra.codigo)"
-            ><img src="../assets/imagens/perfil-preto.jpg" alt="socios"></button>
+            ><img src="../assets/imagens/perfil-preto.jpg" alt="socios"></button> -->
             <button
               type="button"
               class="btn btn-light btn-sm small"
