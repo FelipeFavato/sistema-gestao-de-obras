@@ -11,6 +11,7 @@ export default {
       httpStatus: '',
       localStorageToken: null,
       comprasInfo: [],
+      custoLocalUsoInfo: [],
       processedCompraData: []
     }
   },
@@ -114,16 +115,69 @@ export default {
       };
 
       Plotly.newPlot("tester", data, layout, config);
+    },
+    fetchCustoLocalUsoInfoDB (callback) {
+      axios.get('/api/dashboard/valorlocaluso',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.custoLocalUsoInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+
+      })
+    },
+    fixCurrency (dinheiroDouble) {
+      if (dinheiroDouble === null) {
+        return null
+      } else {
+        const valorFormatado = dinheiroDouble.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+
+        return valorFormatado;
+      }
+    },
+    genCustoLocalUsoGraph () {
+      const locais = [];
+      const valores = [];
+      const par = [];
+      const text = [];
+
+      for (let obj of this.custoLocalUsoInfo) {
+        locais.push(obj['nomeLocalUsoObra']);
+        valores.push(obj['valorTotal']);
+        par.push('')
+        text.push(this.fixCurrency(obj['valorTotal']))
+      }
+
+      const data = [{
+        type: "treemap",
+        labels: locais,
+        values: valores,
+        parents: par,
+        text: text,
+        textinfo: "label+text+percent parent",
+        hoverinfo: "label+text"
+      }];
+
+      Plotly.newPlot('custoLocalUso', data)
     }
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchComprasInfoDB(() => {
-      this.processComprasData();
-      this.genGraph();
-    });
+    // this.fetchComprasInfoDB(() => {
+    //   this.processComprasData();
+    //   this.genGraph();
+    // });
+    // this.fetchCustoLocalUsoInfoDB(() => {
+    //   this.genCustoLocalUsoGraph();
+    // });
   }
 }
 
@@ -138,7 +192,9 @@ export default {
     </p>
   </div> -->
 
-  <div id="tester" style="width:800px;height:400px;"></div>
+  <!-- <div id="tester" style="width:800px;height:400px;"></div> -->
+
+  <!-- <div id="custoLocalUso" style="width:800px;height:400px;"></div> -->
 
 </template>
 
