@@ -43,12 +43,90 @@ export default {
           this.validateHttpStatus(error.response.status);
         })
     },
+    fetchCustoLocalUsoInfoDB (callback) {
+      axios.get('/api/dashboard/valorlocaluso',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.custoLocalUsoInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+
+      })
+    },
+    fixCurrency (dinheiroDouble) {
+      if (dinheiroDouble === null) {
+        return null
+      } else {
+        const valorFormatado = dinheiroDouble.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+
+        return valorFormatado;
+      }
+    },
+    genCustoLocalUsoGraph () {
+      const locais = [];
+      const valores = [];
+      const par = [];
+      const text = [];
+
+      for (let obj of this.custoLocalUsoInfo) {
+        locais.push(obj['nomeLocalUsoObra']);
+        valores.push(obj['valorTotal']);
+        par.push('')
+        text.push(this.fixCurrency(obj['valorTotal']))
+      }
+
+      const data = [{
+        type: "treemap",
+        labels: locais,
+        values: valores,
+        parents: par,
+        text: text,
+        textinfo: "label+text+percent parent",
+        hoverinfo: "label+text"
+      }];
+
+      const layout = {
+        paper_bgcolor: "#f0f0f0",
+        width: 600,
+        height: 400,
+        margin: {
+          t: 40,
+          l: 15,
+          b: 15,
+          r: 15
+        },
+        title: {
+          text: "Custo por local",
+          font: {
+            color: 'black',
+            size: 22
+          },
+          pad: {
+            t: 10
+          }
+        },
+      };
+
+      const config = {
+        displayModeBar: false
+      };
+
+      Plotly.newPlot('custoLocalUso', data, layout, config)
+    }
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    // this.fetchUsuarioInfoDB();
+    this.fetchCustoLocalUsoInfoDB(() => {
+      this.genCustoLocalUsoGraph();
+    });
   }
 }
 
@@ -56,56 +134,30 @@ export default {
 </script>
 
 <template>
-  <h2>Home</h2>
-  <p>Home</p>
 
-  <!-- Tabela -->
-  <!-- <main class="middle-margin table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Nome</th>
-          <th scope="col">Email</th>
-          <th scope="col">Senha</th>
-          <th scope="col">Perfil</th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(usuario, i) in usuarios" :key="i">
-          <th scope="row">{{ usuario.codigo }}</th>
-          <td>{{ usuario.nome }}</td>
-          <td>{{ usuario.email }}</td>
-          <td>{{ usuario.senha }}</td>
-          <td>{{ usuario.tipoPerfil }}</td>
-          <td></td>
-          <td></td>
-          <td class="editar-excluir">
-            <button
-              type="button"
-              class="btn btn-light btn-sm small"
-              title="Editar"
-              data-bs-toggle="modal"
-              data-bs-target="#updateModal"
-              @click=""
-            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
-            <button
-              type="button"
-              class="btn btn-light btn-sm small"
-              title="Excluir"
-              data-bs-toggle="modal"
-              data-bs-target="#deleteModal"
-              @click=""
-            ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </main> -->
+<main class="graficos">
+
+  <div id="custoLocalUso" class="graph"></div>
+
+  <div id="gastoAcumulado" class="graph"></div>
+
+</main>
+
 </template>
 
-<setup>
-</setup>
+<style setup>
+
+.graficos {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.graph {
+  border: 1px solid rgba(153, 153, 153, 1);
+  width: 602px;
+  /* border-radius: 20px; */
+  margin-top: 15px;
+  margin-left: 15px;
+}
+
+</style>
