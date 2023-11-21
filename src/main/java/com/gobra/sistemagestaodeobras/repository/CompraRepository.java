@@ -8,10 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjection;
 import com.gobra.sistemagestaodeobras.model.Compra;
 
-// SELECT date_trunc('month', data_vencimento)::date as dataVencimento,
-// 	id_obra as idObra, SUM(valor_final) as valorFinal
-// FROM public.compra
-// GROUP BY date_trunc('month', data_vencimento)::date, id_obra
+// SELECT
+// 	date_trunc('month', t1.data_vencimento) as dataVencimento,
+// 	SUM (t1.valor_final) as valorFinal,
+// 	t1.id_obra as idObra,
+// 	t2.custo_mao_de_obra as custoMaoDeObra
+// FROM public.compra as t1
+// LEFT JOIN public.obra as t2
+// ON t1.id_obra = t2.codigo
+// GROUP BY
+// 	date_trunc('month', t1.data_vencimento),
+// 	t1.id_obra,
+// 	t2.custo_mao_de_obra;
 
 
 

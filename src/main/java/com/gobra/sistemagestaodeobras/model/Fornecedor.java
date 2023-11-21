@@ -39,10 +39,10 @@ public class Fornecedor {
   @Column(name = "nome", length = 70, unique = true)
   private String nome;
 
-  @Column(name = "telefone", length = 20, unique = true) 
+  @Column(name = "telefone", length = 20)
   private String telefone;
 
-  @Column(name = "endereço", length = 150, unique = true)
+  @Column(name = "endereço", length = 150)
   private String endereco;
 
   @Column(name = "email", length = 100)

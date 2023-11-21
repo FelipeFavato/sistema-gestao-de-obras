@@ -685,6 +685,12 @@ export default {
       } else {
         this.valueStatus = 'green-letter';
       }
+    },
+    // Método para renderizar apenas o primeiro e ultimo nome do sócio.
+    firstLastName (nomeSocio) {
+      const partes = nomeSocio.split(' ');
+
+      return `${partes[0]} ${partes[partes.length - 1]}`
     }
   },
 
@@ -1428,7 +1434,7 @@ export default {
       <tbody>
         <tr v-for="(compra, i) in selectedComprasByObra" :key="i">
           <th scope="row">{{ compra.codigo }}</th>
-          <td>{{ compra.socio.nome }}</td>
+          <td>{{ this.firstLastName(compra.socio.nome) }}</td>
           <td>{{ compra.fornecedor.nome }}</td>
           <!-- <td>{{ brazilDate(compra.dataCompra) }}</td> -->
           <!-- <td>{{ brazilDate(compra.dataEntrega) }}</td> -->
