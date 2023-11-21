@@ -11,6 +11,7 @@ export default {
       custoLocalUsoInfo: [],
       gastoAcumuladoInfo: [],
       gastoPorSocioInfo: [],
+      gastoPorFornecedor: [],
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
@@ -83,6 +84,19 @@ export default {
         }
       }).then(res => {
         this.gastoPorSocioInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
+    fetchGastoPorFornecedorInfo (callback) {
+      axios.get('/api/dashboard/gastofornecedor',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.gastoPorFornecedor = res.data;
         if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
@@ -177,6 +191,57 @@ export default {
 
       Plotly.newPlot('gastoPorSocio', data, layout, config);
     },
+    genGastoPorFornecedorGraph () {
+      const locais = [];
+      const valores = [];
+      const par = [];
+      const text = [];
+
+      for (let obj of this.gastoPorFornecedor) {
+        locais.push(obj['nomeFornecedor']);
+        valores.push(obj['valorFinal']);
+        par.push('')
+        text.push(this.fixCurrency(obj['valorFinal']))
+      }
+
+      const data = [{
+        type: "treemap",
+        labels: locais,
+        values: valores,
+        parents: par,
+        text: text,
+        textinfo: "label+text+percent parent",
+        hoverinfo: "label+text"
+      }];
+
+      const layout = {
+        // paper_bgcolor: "#f0f0f0",
+        width: 600,
+        height: 400,
+        margin: {
+          t: 0,
+          l: 5,
+          b: 5,
+          r: 5
+        },
+        // title: {
+        //   text: "Custo por local",
+        //   font: {
+        //     color: 'black',
+        //     size: 22
+        //   },
+        //   pad: {
+        //     t: 10
+        //   }
+        // },
+      };
+
+      const config = {
+        displayModeBar: false
+      };
+
+      Plotly.newPlot('gastoPorFornecedor', data, layout, config)
+    },
     fixCurrency (dinheiroDouble) {
       if (dinheiroDouble === null) {
         return null
@@ -199,6 +264,9 @@ export default {
     });
     this.fetchGastoPorSocioInfo(() => {
       this.genGastoPorSocioGraph();
+    });
+    this.fetchGastoPorFornecedorInfo(() => {
+      this.genGastoPorFornecedorGraph();
     })
   }
 }

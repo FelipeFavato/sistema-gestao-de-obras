@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gobra.sistemagestaodeobras.dashboard.dto.AcumuladoGastosDTO;
+import com.gobra.sistemagestaodeobras.dashboard.dto.GastoFornecedorDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.GastoSocioDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.ItemLocalDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
@@ -43,6 +44,12 @@ public class DashBoardController {
   public List<GastoSocioDTO> getAllGastoSocio () {
     List<GastoSocioDTO> gastoSocioList = socioRepository.obterValorGastoPorSocio().stream().map(GastoSocioDTO::new).toList();
     return gastoSocioList;
+  }
+
+  @GetMapping("/gastofornecedor")
+  public List<GastoFornecedorDTO> getAllGastoFornecedor () {
+    List<GastoFornecedorDTO> gastoFornecedorList = compraRepository.obterValorGastoPorFornecedor().stream().map(GastoFornecedorDTO::new).toList();
+    return gastoFornecedorList;
   }
 
 }
