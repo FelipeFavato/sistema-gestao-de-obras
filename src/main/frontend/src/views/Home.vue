@@ -12,6 +12,7 @@ export default {
       gastoAcumuladoInfo: [],
       gastoPorSocioInfo: [],
       gastoPorFornecedor: [],
+      mdoOrcamentoInfo: [],
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
@@ -102,6 +103,19 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
+    fetchMDOOrcamentoInfo (callback) {
+      axios.get('/api/dashboard/mdogastoorcamento',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.mdoOrcamentoInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
     genCustoLocalUsoGraph () {
       const locais = [];
       const valores = [];
@@ -127,8 +141,8 @@ export default {
 
       const layout = {
         // paper_bgcolor: "#f0f0f0",
-        width: 600,
-        height: 400,
+        // width: 600,
+        // height: 400,
         margin: {
           t: 0,
           l: 5,
@@ -148,6 +162,7 @@ export default {
       };
 
       const config = {
+        responsive: true,
         displayModeBar: false
       };
 
@@ -174,8 +189,8 @@ export default {
       }];
 
       const layout = {
-        width: 600,
-        height: 400,
+        // width: 600,
+        // height: 400,
         showlegend: false,
         margin: {
           "t": 20,
@@ -186,6 +201,7 @@ export default {
       };
 
       const config = {
+        responsive: true,
         displayModeBar: false
       };
 
@@ -216,8 +232,8 @@ export default {
 
       const layout = {
         // paper_bgcolor: "#f0f0f0",
-        width: 600,
-        height: 400,
+        // width: 600,
+        // height: 400,
         margin: {
           t: 0,
           l: 5,
@@ -237,10 +253,66 @@ export default {
       };
 
       const config = {
+        responsive: true,
         displayModeBar: false
       };
 
       Plotly.newPlot('gastoPorFornecedor', data, layout, config)
+    },
+    genMDOOrcamentoGraph () {
+      const dadosOrcamento = this.mdoOrcamentoInfo[0];
+      const custoPrevisto = dadosOrcamento.custoPrevisto;
+      const custoMaoDeObra = dadosOrcamento.custoMaoDeObra;
+      const orcamentoMaoDeObra = dadosOrcamento.orcamentoMaoDeObra;
+      const valorGastos = dadosOrcamento.valorTotal;
+      const comprometido = orcamentoMaoDeObra + valorGastos;
+      const disponivel = custoPrevisto - comprometido;
+
+      const trace1 = {
+        x: ['Custo previsto'],
+        y: [orcamentoMaoDeObra],
+        name: 'Orçamento mão de obra',
+        type: 'bar',
+        text: [this.fixCurrency(orcamentoMaoDeObra)],
+        hoverinfo: "name+text+percent",
+        textinfo: "name+text",
+        // marker: {
+        //   color: 'black'
+        // }
+      };
+
+      const trace2 = {
+        x: ['Custo previsto'],
+        y: [valorGastos],
+        name: 'Gastos',
+        type: 'bar',
+        text: [this.fixCurrency(valorGastos)],
+        hoverinfo: "name+text",
+      };
+
+      const trace3 = {
+        x: ['Custo previsto'],
+        y: [disponivel],
+        name: 'Disponivel',
+        type: 'bar',
+        text: [this.fixCurrency(disponivel)],
+        hoverinfo: "name+text",
+      }
+
+      const data = [trace1, trace2, trace3];
+
+      const layout = {
+        barmode: 'stack',
+        // showlegend: false
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: false
+      }
+
+      Plotly.newPlot('orcamento', data, layout, config);
+
     },
     fixCurrency (dinheiroDouble) {
       if (dinheiroDouble === null) {
@@ -267,7 +339,10 @@ export default {
     });
     this.fetchGastoPorFornecedorInfo(() => {
       this.genGastoPorFornecedorGraph();
-    })
+    });
+    this.fetchMDOOrcamentoInfo(() => {
+      this.genMDOOrcamentoGraph();
+    });
   }
 }
 
@@ -281,11 +356,20 @@ export default {
       <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
         <div class="card">
           <div class="card-header title">
-            Custo por local
+            Orçamento
           </div>
-          <div class="card-body">
-            <div id="custoLocalUso"></div>
+          <!-- <div class="card-body border">
+            <p>Custo previsto: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto) }}</p>
+            <p>Orçamento da mão de obra: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra) }}</p>
+            <p>Gastos: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].valorTotal) }}</p>
+            <p>Comprometido: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra) }} + {{ this.fixCurrency(this.mdoOrcamentoInfo[0].valorTotal) }} = {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal) }}</p>
+            <p>Disponível: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto) }} - {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal) }} = {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto - (this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal)) }}</p>
+            <div id="orcamento"></div>
+          </div> -->
+          <div class="card-body border">
+            <div id="orcamento"></div>
           </div>
+
         </div>
       </div>
       <div class="col-sm-6 pad-10">
@@ -304,7 +388,17 @@ export default {
       <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
         <div class="card">
           <div class="card-header title">
-            Gasto por fornecedor
+            Custo por local
+          </div>
+          <div class="card-body">
+            <div id="custoLocalUso"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 pad-10">
+        <div class="card">
+          <div class="card-header title">
+            Custo por fornecedor
           </div>
           <div class="card-body">
             <div id="gastoPorFornecedor"></div>
@@ -346,6 +440,13 @@ export default {
   /* border-radius: 20px; */
   margin-top: 15px;
   margin-left: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  .graphics {
+    width: 300px;
+    height: 200px;
+  }
 }
 
 </style>

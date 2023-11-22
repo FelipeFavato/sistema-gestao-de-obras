@@ -11,6 +11,7 @@ import com.gobra.sistemagestaodeobras.dashboard.dto.AcumuladoGastosDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.GastoFornecedorDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.GastoSocioDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.ItemLocalDTO;
+import com.gobra.sistemagestaodeobras.dashboard.dto.MDOOrcamentoDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 import com.gobra.sistemagestaodeobras.repository.ItemCompraRepository;
 import com.gobra.sistemagestaodeobras.repository.SocioRepository;
@@ -50,6 +51,12 @@ public class DashBoardController {
   public List<GastoFornecedorDTO> getAllGastoFornecedor () {
     List<GastoFornecedorDTO> gastoFornecedorList = compraRepository.obterValorGastoPorFornecedor().stream().map(GastoFornecedorDTO::new).toList();
     return gastoFornecedorList;
+  }
+
+  @GetMapping("/mdogastoorcamento")
+  public List<MDOOrcamentoDTO> getAllMDOorcamento () {
+    List<MDOOrcamentoDTO> mdoOrcamentoList = itemCompraRepository.obterMDOGastoComprasOrcamento().stream().map(MDOOrcamentoDTO::new).toList();
+    return mdoOrcamentoList;
   }
 
 }
