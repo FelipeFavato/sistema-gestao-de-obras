@@ -7,6 +7,7 @@ export default {
   data () {
     return {
       // Arrays auxiliares
+      obrasInfo: [],
       usuarios: [],
       custoLocalUsoInfo: [],
       gastoAcumuladoInfo: [],
@@ -16,12 +17,15 @@ export default {
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
+      selectedObraNome: '',
+      selectedObraID: '',
       // Variaveis de requisição
       localStorageToken: null,
     }
   },
 
   methods: {
+    // Métodos de validação e login
     redirectToLogin () {
       this.useRouter.push('/login')
     },
@@ -38,6 +42,52 @@ export default {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
+    fillObraForRequest () {
+      for (let obra of this.obrasInfo) {
+        if (obra.nome === this.selectedObraNome) {
+          this.selectedObraID = obra.codigo;
+        }
+      }
+    },
+    // Métodos de comportamento da página
+    graphGenerator () {
+      const self = this;
+      // this.fillObraForRequest();
+      this.fetchCustoLocalUsoInfoDB(() => {
+        self.genCustoLocalUsoGraph();
+      });
+      this.fetchGastoPorSocioInfo(() => {
+        self.genGastoPorSocioGraph();
+      });
+      this.fetchGastoPorFornecedorInfo(() => {
+        self.genGastoPorFornecedorGraph();
+      });
+      this.fetchMDOOrcamentoInfo(() => {
+        self.genMDOOrcamentoGraph();
+      });
+    },
+    selectObraNome(nomeObra) {
+      this.selectedObraNome = nomeObra;
+    },
+    ObraDropDownActions(nomeObra) {
+      this.selectObraNome(nomeObra);
+      this.fillObraForRequest();
+      this.graphGenerator();
+    },
+    // Métodos de BUSCA e GERAÇÂO de dados.
+    fetchObrasInfoDB (callback) {
+      axios.get('/api/dashboard/obracodnome',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.obrasInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+
+      });
+    },
     fetchUsuarioInfoDB () {
       axios.get('/api/usuario',
       {
@@ -52,10 +102,10 @@ export default {
         })
     },
     fetchCustoLocalUsoInfoDB (callback) {
-      axios.get('/api/dashboard/valorlocaluso',
+      axios.get(`/api/dashboard/valorlocaluso?codigo=${this.selectedObraID}`,
       {
         headers: {
-          Authorization: this.localStorageToken
+          Authorization: `Bearer ${this.localStorageToken}`
         }
       }).then(res => {
         this.custoLocalUsoInfo = res.data;
@@ -78,7 +128,7 @@ export default {
       })
     },
     fetchGastoPorSocioInfo (callback) {
-      axios.get('/api/dashboard/gastosocio',
+      axios.get(`/api/dashboard/gastosocio?codigo=${this.selectedObraID}`,
       {
         headers: {
           Authorization: this.localStorageToken
@@ -91,7 +141,7 @@ export default {
       })
     },
     fetchGastoPorFornecedorInfo (callback) {
-      axios.get('/api/dashboard/gastofornecedor',
+      axios.get(`/api/dashboard/gastofornecedor?codigo=${this.selectedObraID}`,
       {
         headers: {
           Authorization: this.localStorageToken
@@ -104,16 +154,16 @@ export default {
       })
     },
     fetchMDOOrcamentoInfo (callback) {
-      axios.get('/api/dashboard/mdogastoorcamento',
+      axios.get(`/api/dashboard/mdogastoorcamento?codigo=${this.selectedObraID}`,
       {
         headers: {
           Authorization: this.localStorageToken
-        }
+        },
       }).then(res => {
         this.mdoOrcamentoInfo = res.data;
         if (callback) callback();
       }).catch(error => {
-        this.validateHttpStatus(error.response.status);
+        this.validateHttpStatus(error.response);
       })
     },
     genCustoLocalUsoGraph () {
@@ -331,18 +381,19 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchCustoLocalUsoInfoDB(() => {
-      this.genCustoLocalUsoGraph();
-    });
-    this.fetchGastoPorSocioInfo(() => {
-      this.genGastoPorSocioGraph();
-    });
-    this.fetchGastoPorFornecedorInfo(() => {
-      this.genGastoPorFornecedorGraph();
-    });
-    this.fetchMDOOrcamentoInfo(() => {
-      this.genMDOOrcamentoGraph();
-    });
+    this.fetchObrasInfoDB();
+    // this.fetchCustoLocalUsoInfoDB(() => {
+    //   this.genCustoLocalUsoGraph();
+    // });
+    // this.fetchGastoPorSocioInfo(() => {
+    //   this.genGastoPorSocioGraph();
+    // });
+    // this.fetchGastoPorFornecedorInfo(() => {
+    //   this.genGastoPorFornecedorGraph();
+    // });
+    // this.fetchMDOOrcamentoInfo(() => {
+    //   this.genMDOOrcamentoGraph();
+    // });
   }
 }
 
@@ -352,56 +403,68 @@ export default {
 <template>
 
   <main>
-    <div class="row">
-      <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
-        <div class="card">
-          <div class="card-header title">
-            Orçamento
-          </div>
-          <!-- <div class="card-body border">
-            <p>Custo previsto: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto) }}</p>
-            <p>Orçamento da mão de obra: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra) }}</p>
-            <p>Gastos: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].valorTotal) }}</p>
-            <p>Comprometido: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra) }} + {{ this.fixCurrency(this.mdoOrcamentoInfo[0].valorTotal) }} = {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal) }}</p>
-            <p>Disponível: {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto) }} - {{ this.fixCurrency(this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal) }} = {{ this.fixCurrency(this.mdoOrcamentoInfo[0].custoPrevisto - (this.mdoOrcamentoInfo[0].orcamentoMaoDeObra + this.mdoOrcamentoInfo[0].valorTotal)) }}</p>
-            <div id="orcamento"></div>
-          </div> -->
-          <div class="card-body border">
-            <div id="orcamento"></div>
-          </div>
 
-        </div>
+    <!-- DropDown com as opções de Obra para selecionar e renderizar os gráficos relativos aquela obra -->
+    <header class="header middle-margin">
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ selectedObraNome ? selectedObraNome : 'Obras' }}
+        </button>
+        <ul class="dropdown-menu">
+          <li v-for="(obra, i) in obrasInfo" :key="i">
+            <button
+              class="dropdown-item"
+              type="button"
+              @click="ObraDropDownActions(obra.nome)"
+            >{{ obra.nome }}</button>
+          </li>
+        </ul>
       </div>
-      <div class="col-sm-6 pad-10">
-        <div class="card">
-          <div class="card-header title">
-            Gasto por sócio
-          </div>
-          <div class="card-body">
-            <div id="gastoPorSocio"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </header>
 
-    <div class="row">
-      <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
-        <div class="card">
-          <div class="card-header title">
-            Custo por local
+    <div v-if="this.selectedObraNome">
+      <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
+          <div class="card">
+            <div class="card-header title">
+              Orçamento
+            </div>
+            <div class="card-body border">
+              <div id="orcamento"></div>
+            </div>
           </div>
-          <div class="card-body">
-            <div id="custoLocalUso"></div>
+        </div>
+        <div class="col-sm-6 pad-10">
+          <div class="card">
+            <div class="card-header title">
+              Gasto por sócio
+            </div>
+            <div class="card-body">
+              <div id="gastoPorSocio"></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-6 pad-10">
-        <div class="card">
-          <div class="card-header title">
-            Custo por fornecedor
+
+      <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
+          <div class="card">
+            <div class="card-header title">
+              Custo por local
+            </div>
+            <div class="card-body">
+              <div id="custoLocalUso"></div>
+            </div>
           </div>
-          <div class="card-body">
-            <div id="gastoPorFornecedor"></div>
+        </div>
+        <div class="col-sm-6 pad-10">
+          <div class="card">
+            <div class="card-header title">
+              Custo por fornecedor
+            </div>
+            <div class="card-body">
+              <div id="gastoPorFornecedor"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -447,6 +510,61 @@ export default {
     width: 300px;
     height: 200px;
   }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
+  /* width: 100%; */
+  /* border-bottom: solid #212529 2px; */
+}
+
+.column {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 5px;
+}
+
+.light-green {
+  /* background-color: #006400; */
+  /* background-color: #003300; */
+  background-color: #3D8B37;
+}
+
+.dark-grey {
+  background-color: #333333;
+}
+
+.editar-excluir {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.small img {
+  height: 15px;
+  width: 15px;
+}
+
+.middle-margin {
+  margin: 10px 15px 10px 15px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.red-letter {
+  color: red;
+}
+
+.green-letter {
+  color:green;
+}
+
+.grey-letter {
+  color: #212529;
 }
 
 </style>

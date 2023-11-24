@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorFornecedorProjection;
@@ -46,8 +47,9 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
       + "FROM public.compra as t1 "
       + "LEFT JOIN public.fornecedor as t2 "
       + "ON t1.id_fornecedor = t2.codigo "
+      + "WHERE t1.id_obra = :codigo "
       + "GROUP BY t2.nome"
   )
-  List<GastoPorFornecedorProjection>obterValorGastoPorFornecedor();
+  List<GastoPorFornecedorProjection> obterValorGastoPorFornecedor(@Param("codigo") Integer codigo);
 
 }
