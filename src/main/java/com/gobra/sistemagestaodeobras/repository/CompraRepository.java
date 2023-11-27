@@ -11,35 +11,39 @@ import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorFornecedorPro
 import com.gobra.sistemagestaodeobras.model.Compra;
 
 // SELECT
-// 	date_trunc('month', t1.data_vencimento) as dataVencimento,
-// 	SUM (t1.valor_final) as valorFinal,
-// 	t1.id_obra as idObra,
-// 	t2.custo_mao_de_obra as custoMaoDeObra
+// 	DATE(date_trunc('month', t1.data_vencimento)) as dataVencimento,
+// 	SUM(CASE WHEN t2.id_local_uso = 38
+// 		THEN t1.valor_final ELSE 0 END) as gastoMaoDeObra,
+// 	SUM(CASE WHEN t2.id_local_uso != 38
+// 		THEN t1.valor_final ELSE 0 END) as gastos,
+// 	SUM (t1.valor_final) as gastoTotal
 // FROM public.compra as t1
-// LEFT JOIN public.obra as t2
-// ON t1.id_obra = t2.codigo
-// GROUP BY
-// 	date_trunc('month', t1.data_vencimento),
-// 	t1.id_obra,
-// 	t2.custo_mao_de_obra;
-
-// SELECT t2.nome as nomeFornecedor, SUM(t1.valor_final) as valorFinal	
-// FROM public.compra as t1
-// LEFT JOIN public.fornecedor as t2
-// ON t1.id_fornecedor = t2.codigo
-// GROUP BY t2.nome;
+// LEFT JOIN public.item_compra as t2
+// ON t1.codigo = t2.id_compra	
+// WHERE id_obra = 1
+// GROUP BY DATE(date_trunc('month', data_vencimento))
+// ORDER BY DATE(date_trunc('month', data_vencimento))
 
 
 public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
   @Query(
     nativeQuery = true,
-    value = "SELECT date_trunc('month', data_vencimento) as dataVencimento, "
-      + "id_obra as idObra, SUM(valor_final) as valorFinal "
-      + "FROM public.compra "
-      + "GROUP BY date_trunc('month', data_vencimento), id_obra"
+    value = "SELECT "
+      + "DATE(date_trunc('month', t1.data_vencimento)) as dataVencimento, "
+      + "SUM(CASE WHEN t2.id_local_uso = 38 "
+      + "THEN t1.valor_final ELSE 0 END) as gastoMaoDeObra, "
+      + "SUM(CASE WHEN t2.id_local_uso != 38 "
+      + "THEN t1.valor_final ELSE 0 END) as gastos, "
+      + "SUM (t1.valor_final) as gastoTotal "
+      + "FROM public.compra as t1 "
+      + "LEFT JOIN public.item_compra as t2 "
+      + " ON t1.codigo = t2.id_compra "
+      + "WHERE id_obra = :codigo "
+      + "GROUP BY DATE(date_trunc('month', data_vencimento)) "
+      + "ORDER BY DATE(date_trunc('month', data_vencimento))"
   )
-  List<AcumuladoGastosProjection> obterValorAcumuladoGastos ();
+  List<AcumuladoGastosProjection> obterValorAcumuladoGastos(@Param("codigo") Integer codigo);
 
   @Query(
     nativeQuery = true,

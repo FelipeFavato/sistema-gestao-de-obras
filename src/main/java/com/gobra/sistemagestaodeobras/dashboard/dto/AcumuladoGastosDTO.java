@@ -6,37 +6,33 @@ import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjec
 
 public class AcumuladoGastosDTO {
   
-  private Integer idObra;
-
   private Date dataVencimento;
 
-  private double valorFinal;
+  private double gastoMaoDeObra;
+
+  private double gastos;
+
+  private double gastoTotal;
 
   public AcumuladoGastosDTO() {
 
   }
 
-  public AcumuladoGastosDTO(Integer idObra, Date dataVencimento, double valorFinal) {
-    this.idObra = idObra;
+  public AcumuladoGastosDTO(Date dataVencimento, double gastoMDO, double gastos, double gastoTotal) {
     this.dataVencimento = dataVencimento;
-    this.valorFinal = valorFinal;
+    this.gastoMaoDeObra = gastoMDO;
+    this.gastos = gastos;
+    this.gastoTotal = gastoTotal;
   }
 
   public AcumuladoGastosDTO(AcumuladoGastosProjection projection) {
-    idObra = projection.getIdObra();
     dataVencimento = projection.getDataVencimento();
-    valorFinal = projection.getValorFinal();
+    gastoMaoDeObra = projection.getGastoMaoDeObra();
+    gastos = projection.getGastos();
+    gastoTotal = projection.getGastoTotal();
   }
 
   // Getters e Setters
-  public Integer getIdObra() {
-    return idObra;
-  }
-
-  public void setIdObra(Integer idObra) {
-    this.idObra = idObra;
-  }
-
   public Date getDataVencimento() {
     return dataVencimento; 
   }
@@ -45,12 +41,28 @@ public class AcumuladoGastosDTO {
     this.dataVencimento = dataVencimento;
   }
 
-  public double getValorFinal () {
-    return valorFinal;
+  public double getGastoMaoDeObra () {
+    return gastoMaoDeObra;
   }
 
-  public void setValorFinal (double valorFinal) {
-    this.valorFinal = valorFinal;
+  public void setGastoMaoDeObra (double gastoMaoDeObra) {
+    this.gastoMaoDeObra = gastoMaoDeObra;
+  }
+
+  public double getGastos () {
+    return gastos;
+  }
+
+  public void setGastos (double gastos) {
+    this.gastos = gastos;
+  }
+
+  public double getGastoTotal () {
+    return gastoTotal;
+  }
+
+  public void setGastoTotal (double gastoTotal) {
+    this.gastoTotal = gastoTotal;
   }
 
 }

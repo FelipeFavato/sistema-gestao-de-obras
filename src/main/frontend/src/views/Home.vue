@@ -65,6 +65,10 @@ export default {
       this.fetchMDOOrcamentoInfo(() => {
         self.genMDOOrcamentoGraph();
       });
+      this.fetchGastoAcumuladoInfo(() => {
+        this.genGastoAcumuladoGraph();
+        this.genGastoMensalGraph();
+      })
     },
     selectObraNome(nomeObra) {
       this.selectedObraNome = nomeObra;
@@ -115,7 +119,7 @@ export default {
       })
     },
     fetchGastoAcumuladoInfo (callback) {
-      axios.get('/api/dashboard/acumuladogastos',
+      axios.get(`/api/dashboard/acumuladogastos?codigo=${this.selectedObraID}`,
       {
         headers: {
           Authorization: this.localStorageToken
@@ -124,7 +128,7 @@ export default {
         this.gastoAcumuladoInfo = res.data;
         if (callback) callback();
       }).catch(error => {
-
+        this.validateHttpStatus(error.response.status);
       })
     },
     fetchGastoPorSocioInfo (callback) {
@@ -359,7 +363,7 @@ export default {
       const trace4 = {
         x: ['Custo previsto'],
         y: [disponivel],
-        name: 'Saldo Investimento',
+        name: 'Saldo investimento',
         type: 'bar',
         text: [this.fixCurrency(disponivel)],
         hoverinfo: "name+text",
@@ -383,6 +387,141 @@ export default {
       Plotly.newPlot('orcamento', data, layout, config);
 
     },
+    genGastoAcumuladoGraph () {
+      const mesesVisualizacao = [];
+      let meses = [];
+      let somaGasMes = 0;
+      let gas = [];
+      let gasText = [];
+      let somaMaoDeObraMes = 0;
+      let maoDeObra = [];
+      let maoDeObraText = [];
+      let somaGasTMes = 0;
+      let gasT = [];
+      let gasTText = [];
+
+      for (let obj of this.gastoAcumuladoInfo) {
+        meses.push(obj['dataVencimento']);
+        mesesVisualizacao.push(this.fixDateAxis(obj['dataVencimento']))
+      }
+            
+      for (let mes of meses) {
+        for (let objeto of this.gastoAcumuladoInfo) {
+          if (objeto['dataVencimento'] === mes) {
+            somaGasMes += objeto['gastos'];
+            somaMaoDeObraMes += objeto['gastoMaoDeObra'];
+            somaGasTMes += objeto['gastoTotal']
+          }
+        }
+        gas.push(somaGasMes);
+        gasText.push(`${this.fixDate(mes)} - ${this.fixCurrency(somaGasMes)}`);
+        maoDeObra.push(somaMaoDeObraMes);
+        maoDeObraText.push(`${this.fixDate(mes)} - ${this.fixCurrency(somaMaoDeObraMes)}`);
+        gasT.push(somaGasTMes)
+        gasTText.push(`${this.fixDate(mes)} - ${this.fixCurrency(somaGasTMes)}`);
+      }
+
+      const gastos = {
+        x: mesesVisualizacao,
+        y: gas,
+        type: 'bar',
+        name: 'Gastos',
+        text: gasText,
+        hoverinfo: 'name+text'
+      };
+
+      const MDO = {
+        x: mesesVisualizacao,
+        y: maoDeObra,
+        type: 'bar',
+        name: 'Gasto mão de obra',
+        text: maoDeObraText,
+        hoverinfo: 'name+text'
+      };
+
+      const total = {
+        x: mesesVisualizacao,
+        y: gasT,
+        type: 'scatter',
+        name: 'Gasto total',
+        text: gasTText,
+        hoverinfo: 'name+text'
+      }
+
+      const data = [gastos, MDO, total];
+
+      const layout = {
+        barmode: 'group',
+        // showlegend: false
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: false
+      };
+
+      Plotly.newPlot('gastoacumulado', data, layout, config);
+    },
+    genGastoMensalGraph() {
+      const meses = [];
+      const gas = [];
+      const gasText = [];
+      const maoDeObra = [];
+      const maoDeObraText = [];
+      const gasT = [];
+      const gasTText = [];
+
+      for (let obj of this.gastoAcumuladoInfo) {
+        meses.push(this.fixDateAxis(obj['dataVencimento']));
+        gas.push(obj['gastos']);
+        gasText.push(`${this.fixDate(obj['dataVencimento'])} - ${this.fixCurrency(obj['gastos'])}`);
+        maoDeObra.push(obj['gastoMaoDeObra']);
+        maoDeObraText.push(`${this.fixDate(obj['dataVencimento'])} - ${this.fixCurrency(obj['gastoMaoDeObra'])}`);
+        gasT.push(obj['gastoTotal']);
+        gasTText.push(`${this.fixDate(obj['dataVencimento'])} - ${this.fixCurrency(obj['gastoTotal'])}`);
+      }
+
+      const gastos = {
+        x: meses,
+        y: gas,
+        type: 'bar',
+        name: 'Gastos',
+        text: gasText,
+        hoverinfo: 'name+text'
+      };
+
+      const MDO = {
+        x: meses,
+        y: maoDeObra,
+        type: 'bar',
+        name: 'Gasto mão de obra',
+        text: maoDeObraText,
+        hoverinfo: 'name+text'
+      };
+
+      const total = {
+        x: meses,
+        y: gasT,
+        type: 'scatter',
+        name: 'Gasto total',
+        text: gasTText,
+        hoverinfo: 'name+text'
+      }
+
+      const data = [gastos, MDO, total];
+
+      const layout = {
+        barmode: 'group',
+        // showlegend: false
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: false
+      };
+
+      Plotly.newPlot('gastomensal', data, layout, config);
+    },
     fixCurrency (dinheiroDouble) {
       if (dinheiroDouble === null) {
         return null
@@ -394,6 +533,67 @@ export default {
 
         return valorFormatado;
       }
+    },
+    fixDate (date) {
+      const partes = date.split('-');
+
+      switch (partes[1]) {
+        case '01':
+          return `Jan/${partes[0]}`;
+        case '02':
+          return `Fev/${partes[0]}`;
+        case '03':
+          return `Abr/${partes[0]}`;
+        case '04':
+          return `Mar/${partes[0]}`;
+        case '05':
+          return `Mai/${partes[0]}`;
+        case '06':
+          return `Jun/${partes[0]}`;
+        case '07':
+          return `Jul/${partes[0]}`;
+        case '08':
+          return `Ago/${partes[0]}`;
+        case '09':
+          return `Set/${partes[0]}`;
+        case '10':
+          return `Out/${partes[0]}`;
+        case '11':
+          return `Nov/${partes[0]}`;
+        case '12':
+          return `Dez/${partes[0]}`;
+        }
+    },
+    fixDateAxis (date) {
+      const partes = date.split('-');
+      const year = partes[0].split('');
+
+      switch (partes[1]) {
+        case '01':
+          return `Jan/${year[2]}${year[3]}`;
+        case '02':
+          return `Fev/${year[2]}${year[3]}`;
+        case '03':
+          return `Abr/${year[2]}${year[3]}`;
+        case '04':
+          return `Mar/${year[2]}${year[3]}`;
+        case '05':
+          return `Mai/${year[2]}${year[3]}`;
+        case '06':
+          return `Jun/${year[2]}${year[3]}`;
+        case '07':
+          return `Jul/${year[2]}${year[3]}`;
+        case '08':
+          return `Ago/${year[2]}${year[3]}`;
+        case '09':
+          return `Set/${year[2]}${year[3]}`;
+        case '10':
+          return `Out/${year[2]}${year[3]}`;
+        case '11':
+          return `Nov/${year[2]}${year[3]}`;
+        case '12':
+          return `Dez/${year[2]}${year[3]}`;
+        }
     }
   },
 
@@ -401,18 +601,6 @@ export default {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchObrasInfoDB();
-    // this.fetchCustoLocalUsoInfoDB(() => {
-    //   this.genCustoLocalUsoGraph();
-    // });
-    // this.fetchGastoPorSocioInfo(() => {
-    //   this.genGastoPorSocioGraph();
-    // });
-    // this.fetchGastoPorFornecedorInfo(() => {
-    //   this.genGastoPorFornecedorGraph();
-    // });
-    // this.fetchMDOOrcamentoInfo(() => {
-    //   this.genMDOOrcamentoGraph();
-    // });
   }
 }
 
@@ -469,6 +657,29 @@ export default {
         <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
           <div class="card">
             <div class="card-header title">
+              Gasto acumulado
+            </div>
+            <div class="card-body">
+              <div id="gastoacumulado"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 pad-10">
+          <div class="card">
+            <div class="card-header title">
+              Gasto mensal
+            </div>
+            <div class="card-body">
+              <div id="gastomensal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
+          <div class="card">
+            <div class="card-header title">
               Custo por local
             </div>
             <div class="card-body">
@@ -487,7 +698,9 @@ export default {
           </div>
         </div>
       </div>
+
     </div>
+
   </main>
   
 </template>

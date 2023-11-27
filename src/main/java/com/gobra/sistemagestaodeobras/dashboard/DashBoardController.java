@@ -44,8 +44,8 @@ public class DashBoardController {
   }
 
   @GetMapping("/acumuladogastos")
-  public List<AcumuladoGastosDTO> getAllAcumulado () {
-    List<AcumuladoGastosDTO> acumuladoList = compraRepository.obterValorAcumuladoGastos().stream().map(AcumuladoGastosDTO::new).toList();
+  public List<AcumuladoGastosDTO> getAllAcumulado (@RequestParam Integer codigo) {
+    List<AcumuladoGastosDTO> acumuladoList = compraRepository.obterValorAcumuladoGastos(codigo).stream().map(AcumuladoGastosDTO::new).toList();
     return acumuladoList;
   }
 
