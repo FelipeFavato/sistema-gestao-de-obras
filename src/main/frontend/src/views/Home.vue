@@ -42,6 +42,7 @@ export default {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
+    // Métodos de comportamento da página
     fillObraForRequest () {
       for (let obra of this.obrasInfo) {
         if (obra.nome === this.selectedObraNome) {
@@ -49,7 +50,6 @@ export default {
         }
       }
     },
-    // Métodos de comportamento da página
     graphGenerator () {
       const self = this;
       // this.fillObraForRequest();
@@ -74,7 +74,7 @@ export default {
       this.fillObraForRequest();
       this.graphGenerator();
     },
-    // Métodos de BUSCA e GERAÇÂO de dados.
+    // Métodos de BUSCA e GERAÇÃO de dados.
     fetchObrasInfoDB (callback) {
       axios.get('/api/dashboard/obracodnome',
       {
@@ -314,42 +314,61 @@ export default {
       const custoPrevisto = dadosOrcamento.custoPrevisto;
       const custoMaoDeObra = dadosOrcamento.custoMaoDeObra;
       const orcamentoMaoDeObra = dadosOrcamento.orcamentoMaoDeObra;
+      const faltaPagarMaoDeObra = orcamentoMaoDeObra - custoMaoDeObra;
       const valorGastos = dadosOrcamento.valorTotal;
       const comprometido = orcamentoMaoDeObra + valorGastos;
       const disponivel = custoPrevisto - comprometido;
 
       const trace1 = {
         x: ['Custo previsto'],
-        y: [orcamentoMaoDeObra],
-        name: 'Orçamento mão de obra',
+        y: [custoMaoDeObra],
+        name: 'Gasto com mão de obra',
         type: 'bar',
-        text: [this.fixCurrency(orcamentoMaoDeObra)],
+        text: [this.fixCurrency(custoMaoDeObra)],
+        hoverinfo: "name+text",
+        marker: {
+          color: '#1f77b4'
+        }
+      };
+      
+      const trace2 = {
+        x: ['Custo previsto'],
+        y: [faltaPagarMaoDeObra],
+        name: 'Comprometido mão de obra',
+        type: 'bar',
+        text: [this.fixCurrency(faltaPagarMaoDeObra)],
         hoverinfo: "name+text+percent",
         textinfo: "name+text",
-        // marker: {
-        //   color: 'black'
-        // }
+        marker: {
+          color: 'lightblue'
+        }
       };
 
-      const trace2 = {
+      const trace3 = {
         x: ['Custo previsto'],
         y: [valorGastos],
         name: 'Gastos',
         type: 'bar',
         text: [this.fixCurrency(valorGastos)],
         hoverinfo: "name+text",
+        marker: {
+          color: '#ff7f0e'
+        }
       };
 
-      const trace3 = {
+      const trace4 = {
         x: ['Custo previsto'],
         y: [disponivel],
-        name: 'Disponivel',
+        name: 'Saldo Investimento',
         type: 'bar',
         text: [this.fixCurrency(disponivel)],
         hoverinfo: "name+text",
-      }
+        marker: {
+          color: '#2ca02c'
+        }
+      };
 
-      const data = [trace1, trace2, trace3];
+      const data = [trace1, trace2, trace3, trace4];
 
       const layout = {
         barmode: 'stack',

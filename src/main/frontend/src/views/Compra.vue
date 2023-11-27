@@ -153,7 +153,7 @@ export default {
           Authorization: this.localStorageToken
         }
       }).then(res => {
-        this.comprasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
+        this.comprasInfo = res.data.sort((s1, s2) => s2.codigo - s1.codigo);
         this.setHttpStatusCode(res.status);
         if (callback) callback();
       }).catch(error => {
