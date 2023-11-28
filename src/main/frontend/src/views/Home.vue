@@ -55,6 +55,7 @@ export default {
       // this.fillObraForRequest();
       this.fetchCustoLocalUsoInfoDB(() => {
         self.genCustoLocalUsoGraph();
+        // console.log(this.custoLocalUsoInfo)
       });
       this.fetchGastoPorSocioInfo(() => {
         self.genGastoPorSocioGraph();
@@ -66,8 +67,8 @@ export default {
         self.genMDOOrcamentoGraph();
       });
       this.fetchGastoAcumuladoInfo(() => {
-        this.genGastoAcumuladoGraph();
-        this.genGastoMensalGraph();
+        self.genGastoAcumuladoGraph();
+        self.genGastoMensalGraph();
       })
     },
     selectObraNome(nomeObra) {
@@ -177,10 +178,32 @@ export default {
       const text = [];
 
       for (let obj of this.custoLocalUsoInfo) {
-        locais.push(obj['nomeLocalUsoObra']);
+        locais.push(`${obj['nomeLocalUsoObra']} - ${obj['nomeFornecedor']}`);
         valores.push(obj['valorTotal']);
-        par.push('')
+        par.push(obj['nomeLocalUsoObra']);
         text.push(this.fixCurrency(obj['valorTotal']))
+      }
+
+      const resultado = this.custoLocalUsoInfo.reduce((acc, item) => {
+        let found = acc.find(element => element.nomeLocalUsoObra === item.nomeLocalUsoObra);
+
+        if (found) {
+            found.valorTotal += item.valorTotal;
+        } else {
+            acc.push({
+                nomeLocalUsoObra: item.nomeLocalUsoObra,
+                valorTotal: item.valorTotal
+            });
+        }
+
+        return acc;
+      }, []);
+
+      for (let object of resultado) {
+        locais.push(object['nomeLocalUsoObra']);
+        valores.push(0);
+        par.push('');
+        text.push(this.fixCurrency(object['valorTotal']));
       }
 
       const data = [{
@@ -326,7 +349,7 @@ export default {
       const trace1 = {
         x: ['Custo previsto'],
         y: [custoMaoDeObra],
-        name: 'Gasto com mão de obra',
+        name: 'Pago - Mão de obra',
         type: 'bar',
         text: [this.fixCurrency(custoMaoDeObra)],
         hoverinfo: "name+text",
@@ -338,7 +361,7 @@ export default {
       const trace2 = {
         x: ['Custo previsto'],
         y: [faltaPagarMaoDeObra],
-        name: 'Comprometido mão de obra',
+        name: 'Comprometido - Mão de obra',
         type: 'bar',
         text: [this.fixCurrency(faltaPagarMaoDeObra)],
         hoverinfo: "name+text+percent",
@@ -351,7 +374,7 @@ export default {
       const trace3 = {
         x: ['Custo previsto'],
         y: [valorGastos],
-        name: 'Gastos',
+        name: 'Custos - Material/Serviço',
         type: 'bar',
         text: [this.fixCurrency(valorGastos)],
         hoverinfo: "name+text",
@@ -363,7 +386,7 @@ export default {
       const trace4 = {
         x: ['Custo previsto'],
         y: [disponivel],
-        name: 'Saldo investimento',
+        name: 'Saldo - Investimento',
         type: 'bar',
         text: [this.fixCurrency(disponivel)],
         hoverinfo: "name+text",
@@ -376,12 +399,15 @@ export default {
 
       const layout = {
         barmode: 'stack',
+        legend: {
+          orientation: 'h'
+        }
         // showlegend: false
       };
 
       const config = {
         responsive: true,
-        displayModeBar: false
+        displayModeBar: false,
       }
 
       Plotly.newPlot('orcamento', data, layout, config);
@@ -426,7 +452,7 @@ export default {
         y: gas,
         type: 'bar',
         name: 'Gastos',
-        text: gasText,
+        hovertext: gasText,
         hoverinfo: 'name+text'
       };
 
@@ -435,7 +461,7 @@ export default {
         y: maoDeObra,
         type: 'bar',
         name: 'Gasto mão de obra',
-        text: maoDeObraText,
+        hovertext: maoDeObraText,
         hoverinfo: 'name+text'
       };
 
@@ -444,7 +470,7 @@ export default {
         y: gasT,
         type: 'scatter',
         name: 'Gasto total',
-        text: gasTText,
+        hovertext: gasTText,
         hoverinfo: 'name+text'
       }
 
@@ -452,6 +478,9 @@ export default {
 
       const layout = {
         barmode: 'group',
+        legend: {
+          orientation: 'h'
+        }
         // showlegend: false
       };
 
@@ -486,7 +515,7 @@ export default {
         y: gas,
         type: 'bar',
         name: 'Gastos',
-        text: gasText,
+        hovertext: gasText,
         hoverinfo: 'name+text'
       };
 
@@ -495,7 +524,7 @@ export default {
         y: maoDeObra,
         type: 'bar',
         name: 'Gasto mão de obra',
-        text: maoDeObraText,
+        hovertext: maoDeObraText,
         hoverinfo: 'name+text'
       };
 
@@ -504,7 +533,7 @@ export default {
         y: gasT,
         type: 'scatter',
         name: 'Gasto total',
-        text: gasTText,
+        hovertext: gasTText,
         hoverinfo: 'name+text'
       }
 
@@ -512,6 +541,9 @@ export default {
 
       const layout = {
         barmode: 'group',
+        legend: {
+          orientation: 'h'
+        }
         // showlegend: false
       };
 

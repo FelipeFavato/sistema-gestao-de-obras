@@ -12,14 +12,17 @@ import com.gobra.sistemagestaodeobras.model.ItemCompra;
 
 // SELECT
 // 	t2.nome_local_uso_obra as nomeLocalUsoObra,
+// 	t4.nome as nomeFornecedor,
 // 	SUM (t1.valor_total) as valorTotal
 // FROM public.item_compra as t1
 // LEFT JOIN public.localuso as t2
 // ON t1.id_local_uso = t2.codigo_local_uso_obra
 // LEFT JOIN public.compra as t3
 // ON t1.id_compra = t3.codigo
-// WHERE t3.id_obra = 7
-// GROUP BY t2.nome_local_uso_obra;
+// LEFT JOIN public.fornecedor as t4
+// ON t3.id_fornecedor = t4.codigo
+// WHERE t3.id_obra = :codigo
+// GROUP BY t2.nome_local_uso_obra, t4.nome
 
 public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer> {
   
@@ -28,14 +31,18 @@ public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer>
     nativeQuery = true,
     value = "SELECT "
       + "t2.nome_local_uso_obra as nomeLocalUsoObra, "
+      + "t4.nome as nomeFornecedor, "
       + "SUM (t1.valor_total) as valorTotal "
       + "FROM public.item_compra as t1 "
       + "LEFT JOIN public.localuso as t2 "
       + "ON t1.id_local_uso = t2.codigo_local_uso_obra "
       + "LEFT JOIN public.compra as t3 "
       + "ON t1.id_compra = t3.codigo "
+      + "LEFT JOIN public.fornecedor as t4 "
+      + "ON t3.id_fornecedor = t4.codigo "
       + "WHERE t3.id_obra = :codigo "
-      + "GROUP BY t2.nome_local_uso_obra"
+      + "GROUP BY t2.nome_local_uso_obra, t4.nome "
+      + "ORDER BY t2.nome_local_uso_obra"
   )
   List<ItemLocalProjection> obterSomaValorPorLocalUso(@Param("codigo") Integer codigo);
 

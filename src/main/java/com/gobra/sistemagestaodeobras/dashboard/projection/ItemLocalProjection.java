@@ -4,6 +4,8 @@ public interface ItemLocalProjection {
   
   String getNomeLocalUsoObra();
 
+  String getNomeFornecedor();
+
   double getValorTotal();
 
 }
