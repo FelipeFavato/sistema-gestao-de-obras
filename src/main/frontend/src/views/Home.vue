@@ -415,7 +415,7 @@ export default {
       const trace5 = {
         x: ['Custo previsto'],
         y: [disponivel],
-        name: 'Saldo - Investimento',
+        name: 'Saldo para investimento',
         type: 'bar',
         text: [this.fixCurrency(disponivel)],
         hoverinfo: "name+text",
