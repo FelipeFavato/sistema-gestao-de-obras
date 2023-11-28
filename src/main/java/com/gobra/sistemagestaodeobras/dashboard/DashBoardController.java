@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gobra.sistemagestaodeobras.dashboard.dto.AcumuladoGastosDTO;
+import com.gobra.sistemagestaodeobras.dashboard.dto.DescontoDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.GastoFornecedorDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.GastoSocioDTO;
 import com.gobra.sistemagestaodeobras.dashboard.dto.ItemLocalDTO;
@@ -71,6 +72,12 @@ public class DashBoardController {
   public List<ObraCodNomeDTO> getAllObraCodNome () {
     List<ObraCodNomeDTO> obraCodNomeList = obraRepository.obterCodigoNomeObras().stream().map(ObraCodNomeDTO::new).toList();
     return obraCodNomeList;
+  }
+
+  @GetMapping("/somadesconto")
+  public List<DescontoDTO> getAllDesconto (@RequestParam Integer codigo) {
+    List<DescontoDTO> descontoList = compraRepository.obterSomaDescontos(codigo).stream().map(DescontoDTO::new).toList();
+    return descontoList;
   }
 
 }
