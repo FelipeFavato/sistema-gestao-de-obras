@@ -4,89 +4,77 @@ import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcame
 
 public class MDOOrcamentoDTO {
   
-  private Integer idObra;
-
-  private String nomeObra;
-
-  private double custoMaoDeObra;
-
-  private Integer orcamentoMaoDeObra;
-
-  private double valorTotal;
+  private Integer custoMaoDeObra;
 
   private Integer custoPrevisto;
+
+  private double pagoMaoDeObra;
+
+  private double valorDesconto;
+
+  private double valorGastos;
 
 
   public MDOOrcamentoDTO() {
 
   }
 
-  public MDOOrcamentoDTO(Integer idObra, String nomeObra, double custoMaoDeObra,
-  Integer orcamentoMaoDeObra, double valorTotal, Integer custoPrevisto) {
-    this.idObra = idObra;
-    this.nomeObra = nomeObra;
-    this.custoMaoDeObra = custoMaoDeObra;
-    this.orcamentoMaoDeObra = orcamentoMaoDeObra;
-    this.valorTotal = valorTotal;
-    this.custoPrevisto = custoPrevisto;
+  public MDOOrcamentoDTO(Integer custoMDO, Integer custoP, double pagoMDO,
+  double valorD, double valorG) {
+    this.custoMaoDeObra = custoMDO;
+    this.custoPrevisto = custoP;
+    this.pagoMaoDeObra = pagoMDO;
+    this.valorDesconto = valorD;
+    this.valorGastos = valorG;
   }
 
   public MDOOrcamentoDTO(MDOGastoComprasOrcamentoProjection projection) {
-    idObra = projection.getIdObra();
-    nomeObra = projection.getNomeObra();
     custoMaoDeObra = projection.getCustoMaoDeObra();
-    orcamentoMaoDeObra = projection.getOrcamentoMaoDeObra();
-    valorTotal = projection.getValorTotal();
     custoPrevisto = projection.getCustoPrevisto();
+    pagoMaoDeObra = projection.getPagoMaoDeObra();
+    valorDesconto = projection.getValorDesconto();
+    valorGastos = projection.getValorGastos();
   }
 
   // Getters e Setters
-  public Integer getIdObra () {
-    return idObra;
-  }
-
-  public void setIdObra (Integer idObra) {
-    this.idObra = idObra;
-  }
-
-  public String getNomeObra () {
-    return nomeObra;
-  }
-
-  public void setNomeObra (String nomeObra) {
-    this.nomeObra = nomeObra;
-  }
-
-  public double getCustoMaoDeObra () {
+  public Integer getCustoMaoDeObra () {
     return custoMaoDeObra;
   }
 
-  public void setCustoMaoDeObra (double custoMaoDeObra) {
-    this.custoMaoDeObra = custoMaoDeObra;
-  }
-
-  public Integer getOrcamentoMaoDeObra () {
-    return orcamentoMaoDeObra;
-  }
-
-  public void setOrcamentoMaoDeObra (Integer orcamentoMaoDeObra) {
-    this.orcamentoMaoDeObra = orcamentoMaoDeObra;
-  }
-
-  public double getValorTotal () {
-    return valorTotal;
-  }
-
-  public void getValorTotal (double valorTotal) {
-    this.valorTotal = valorTotal;
+  public void setCustoMaoDeObra(Integer custoP) {
+    this.custoMaoDeObra = custoP;
   }
 
   public Integer getCustoPrevisto () {
     return custoPrevisto;
   }
 
-  public void setCustoPrevisto (Integer custoPrevisto) {
-    this.custoPrevisto = custoPrevisto;
+  public void setCustoPrevisto(Integer custoP) {
+    this.custoPrevisto = custoP;
+  }
+
+  public double getPagoMaoDeObra () {
+    return pagoMaoDeObra;
+  }
+
+  public void setPagoMaoDeObra (double pagoMDO) {
+    this.pagoMaoDeObra = pagoMDO;
+  }
+
+  public double getValorDesconto () {
+    return valorDesconto;
+  }
+
+  public void setValorDesconto (double valorD) {
+    this.valorDesconto = valorD;
+  }
+
+  public double getValorGastos () {
+    return valorGastos;
+  }
+
+  public void setValorGastos (double valorG) {
+    this.valorGastos = valorG;
   }
 
 }

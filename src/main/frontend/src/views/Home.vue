@@ -56,7 +56,6 @@ export default {
       // this.fillObraForRequest();
       this.fetchCustoLocalUsoInfoDB(() => {
         self.genCustoLocalUsoGraph();
-        // console.log(this.custoLocalUsoInfo)
       });
       this.fetchGastoPorSocioInfo(() => {
         self.genGastoPorSocioGraph();
@@ -65,9 +64,7 @@ export default {
         self.genGastoPorFornecedorGraph();
       });
       this.fetchMDOOrcamentoInfo(() => {
-        self.fetchDesconto(() => {
-          self.genMDOOrcamentoGraph();
-        })
+        self.genMDOOrcamentoGraph();
       });
       this.fetchGastoAcumuladoInfo(() => {
         self.genGastoAcumuladoGraph();
@@ -375,22 +372,21 @@ export default {
       Plotly.newPlot('gastoPorFornecedor', data, layout, config)
     },
     genMDOOrcamentoGraph () {
-      const desconto = this.descontoInfo[0]['desconto'];
       const dadosOrcamento = this.mdoOrcamentoInfo[0];
-      const custoPrevisto = dadosOrcamento.custoPrevisto;
-      const custoMaoDeObra = dadosOrcamento.custoMaoDeObra;
-      const orcamentoMaoDeObra = dadosOrcamento.orcamentoMaoDeObra;
-      const faltaPagarMaoDeObra = orcamentoMaoDeObra - custoMaoDeObra;
-      const valorGastos = dadosOrcamento.valorTotal - desconto;
-      const comprometido = orcamentoMaoDeObra + valorGastos;
-      const disponivel = custoPrevisto - comprometido;
+      const custoMDO = dadosOrcamento.custoMaoDeObra;
+      const custoP = dadosOrcamento.custoPrevisto;
+      const pagoMDO = dadosOrcamento.pagoMaoDeObra;
+      const valorD = dadosOrcamento.valorDesconto;
+      const valorG = dadosOrcamento.valorGastos;
+      const comprometidoMDO = custoMDO - pagoMDO;
+      const disponivel = custoP - (valorG + custoMDO - valorD);
 
       const trace1 = {
         x: ['Custo previsto'],
-        y: [custoMaoDeObra],
+        y: [pagoMDO],
         name: 'Pago - Mão de obra',
         type: 'bar',
-        text: [this.fixCurrency(custoMaoDeObra)],
+        text: [this.fixCurrency(pagoMDO)],
         hoverinfo: "name+text",
         marker: {
           color: '#1f77b4'
@@ -399,10 +395,10 @@ export default {
       
       const trace2 = {
         x: ['Custo previsto'],
-        y: [faltaPagarMaoDeObra],
+        y: [comprometidoMDO],
         name: 'Comprometido - Mão de obra',
         type: 'bar',
-        text: [this.fixCurrency(faltaPagarMaoDeObra)],
+        text: [this.fixCurrency(comprometidoMDO)],
         hoverinfo: "name+text+percent",
         textinfo: "name+text",
         marker: {
@@ -412,10 +408,10 @@ export default {
 
       const trace3 = {
         x: ['Custo previsto'],
-        y: [desconto],
+        y: [valorD],
         name: 'Desconto',
         type: 'bar',
-        text: [this.fixCurrency(desconto)],
+        text: [this.fixCurrency(valorD)],
         hoverinfo: "name+text",
         marker: {
           color: '#d62728'
@@ -424,10 +420,10 @@ export default {
 
       const trace4 = {
         x: ['Custo previsto'],
-        y: [valorGastos],
+        y: [valorG],
         name: 'Custos - Material/Serviço',
         type: 'bar',
-        text: [this.fixCurrency(valorGastos)],
+        text: [this.fixCurrency(valorG)],
         hoverinfo: "name+text",
         marker: {
           color: '#ff7f0e'

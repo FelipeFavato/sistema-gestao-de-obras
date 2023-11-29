@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjection;
-import com.gobra.sistemagestaodeobras.dashboard.projection.DescontoProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorFornecedorProjection;
 import com.gobra.sistemagestaodeobras.model.Compra;
 
@@ -79,12 +78,4 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
   )
   List<GastoPorFornecedorProjection> obterValorGastoPorFornecedor(@Param("codigo") Integer codigo);
 
-  @Query(
-    nativeQuery = true,
-    value = "SELECT "
-      + "SUM(valor_desconto) as desconto "
-      + "FROM public.compra "
-      + "WHERE id_obra = :codigo"
-  )
-  List<DescontoProjection> obterSomaDescontos(@Param("codigo") Integer codigo);
 }
