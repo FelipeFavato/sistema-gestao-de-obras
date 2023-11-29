@@ -678,9 +678,9 @@ export default {
     },
     // Método para verificar se a soma dos itens passa do total da compra.
     checkValueStatus () {
-      if (this.getCompraInfo.valorOriginal > this.valorTotalCompra) {
+      if (this.getCompraInfo.valorOriginal.toFixed(2) > this.valorTotalCompra.toFixed(2)) {
         this.valueStatus = 'grey-letter';
-      } else if (this.getCompraInfo.valorOriginal < this.valorTotalCompra) {
+      } else if (this.getCompraInfo.valorOriginal.toFixed(2) < this.valorTotalCompra.toFixed(2)) {
         this.valueStatus = 'red-letter';
       } else {
         this.valueStatus = 'green-letter';
