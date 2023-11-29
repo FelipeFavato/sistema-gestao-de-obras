@@ -307,10 +307,32 @@ export default {
       const text = [];
 
       for (let obj of this.gastoPorFornecedor) {
-        locais.push(obj['nomeFornecedor']);
-        valores.push(obj['valorFinal']);
-        par.push('')
-        text.push(this.fixCurrency(obj['valorFinal']))
+        locais.push(`${obj['nomeFornecedor']} - ${obj['nomeProduto']}`);
+        valores.push(obj['valorTotal']);
+        par.push(obj['nomeFornecedor'])
+        text.push(this.fixCurrency(obj['valorTotal']))
+      }
+
+      const resultado = this.gastoPorFornecedor.reduce((acc, item) => {
+        let found = acc.find(element => element.nomeFornecedor === item.nomeFornecedor);
+
+        if (found) {
+            found.valorTotal += item.valorTotal;
+        } else {
+            acc.push({
+                nomeFornecedor: item.nomeFornecedor,
+                valorTotal: item.valorTotal
+            });
+        }
+
+        return acc;
+      }, []);
+
+      for (let object of resultado) {
+        locais.push(object['nomeFornecedor']);
+        valores.push(0);
+        par.push('');
+        text.push(this.fixCurrency(object['valorTotal']));
       }
 
       const data = [{

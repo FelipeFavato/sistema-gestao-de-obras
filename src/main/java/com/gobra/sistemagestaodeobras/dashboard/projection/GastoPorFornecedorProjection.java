@@ -4,6 +4,8 @@ public interface GastoPorFornecedorProjection {
   
   String getNomeFornecedor();
 
-  double getValorFinal();
+  String getNomeProduto();
+
+  double getValorTotal();
 
 }

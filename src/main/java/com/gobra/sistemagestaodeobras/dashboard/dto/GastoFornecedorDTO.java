@@ -6,20 +6,24 @@ public class GastoFornecedorDTO {
   
   private String nomeFornecedor;
 
-  private double valorFinal;
+  private String nomeProduto;
+
+  private double valorTotal;
 
   public GastoFornecedorDTO() {
 
   }
 
-  public GastoFornecedorDTO(String nome, double valor) {
-    this.nomeFornecedor = nome;
-    this.valorFinal = valor;
+  public GastoFornecedorDTO(String nomeF, String nomeP, double valor) {
+    this.nomeFornecedor = nomeF;
+    this.nomeProduto = nomeP;
+    this.valorTotal = valor;
   }
 
   public GastoFornecedorDTO(GastoPorFornecedorProjection projection) {
     nomeFornecedor = projection.getNomeFornecedor();
-    valorFinal = projection.getValorFinal();
+    nomeProduto = projection.getNomeProduto();
+    valorTotal = projection.getValorTotal();
   }
 
   // Getter e setters
@@ -31,12 +35,20 @@ public class GastoFornecedorDTO {
     this.nomeFornecedor = nome;
   }
 
-  public double getValorFinal () {
-    return valorFinal;
+  public String getNomeProduto () {
+    return nomeProduto;
   }
 
-  public void setValorFinal (double valor) {
-    this.valorFinal = valor;
+  public void setNomeProduto (String nome) {
+    this.nomeProduto = nome;
+  }
+
+  public double getValorTotal () {
+    return valorTotal;
+  }
+
+  public void setValorTotal (double valor) {
+    this.valorTotal = valor;
   }
 
 }

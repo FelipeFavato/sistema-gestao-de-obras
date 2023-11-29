@@ -24,6 +24,21 @@ import com.gobra.sistemagestaodeobras.model.Compra;
 // LEFT JOIN public.fornecedor as t2
 // ON t1.id_fornecedor = t2.codigo
 
+// SELECT
+// 	t2.nome as nomeFornecedor,
+// 	t4.nome as nomeProduto,
+// 	SUM(t3.valor_total) as valorTotal
+// FROM public.compra as t1
+// LEFT JOIN public.fornecedor as t2
+// ON t1.id_fornecedor = t2.codigo
+// LEFT JOIN public.item_compra as t3
+// ON t1.codigo = t3.id_compra
+// LEFT JOIN public.produto as t4
+// ON t3.id_produto = t4.codigo
+// WHERE t1.id_obra = 1
+// GROUP BY t2.nome, t4.nome
+// ORDER BY t2.nome ASC
+
 
 public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
@@ -47,12 +62,20 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
   @Query(
     nativeQuery = true,
-    value = "SELECT t2.nome as nomeFornecedor, SUM(t1.valor_final) as valorFinal "
+    value = "SELECT "
+      + "t2.nome as nomeFornecedor, "
+      + "t4.nome as nomeProduto, "
+      + "SUM(t3.valor_total) as valorTotal "
       + "FROM public.compra as t1 "
       + "LEFT JOIN public.fornecedor as t2 "
       + "ON t1.id_fornecedor = t2.codigo "
+      + "LEFT JOIN public.item_compra as t3 "
+      + "ON t1.codigo = t3.id_compra "
+      + "LEFT JOIN public.produto as t4 "
+      + "ON t3.id_produto = t4.codigo "
       + "WHERE t1.id_obra = :codigo "
-      + "GROUP BY t2.nome"
+      + "GROUP BY t2.nome, t4.nome "
+      + "ORDER BY t2.nome ASC"
   )
   List<GastoPorFornecedorProjection> obterValorGastoPorFornecedor(@Param("codigo") Integer codigo);
 
