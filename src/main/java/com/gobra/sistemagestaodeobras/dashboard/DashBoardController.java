@@ -63,7 +63,7 @@ public class DashBoardController {
 
   @GetMapping("/mdogastoorcamento")
   public List<MDOOrcamentoDTO> getAllMDOorcamento (@RequestParam Integer codigo) {
-    List<MDOOrcamentoDTO> mdoOrcamentoList = itemCompraRepository.obterMDOGastoComprasOrcamento(codigo).stream().map(MDOOrcamentoDTO::new).toList();
+    List<MDOOrcamentoDTO> mdoOrcamentoList = compraRepository.obterMDOGastoComprasOrcamento(codigo).stream().map(MDOOrcamentoDTO::new).toList();
     return mdoOrcamentoList;
   }
 

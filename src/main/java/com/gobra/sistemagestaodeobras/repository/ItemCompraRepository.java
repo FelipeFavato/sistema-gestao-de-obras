@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.ItemLocalProjection;
-import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcamentoProjection;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 
 // SELECT
@@ -46,24 +45,5 @@ public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer>
       + "ORDER BY t2.nome_local_uso_obra"
   )
   List<ItemLocalProjection> obterSomaValorPorLocalUso(@Param("codigo") Integer codigo);
-
-  @Query(
-    nativeQuery = true,
-    value = "SELECT "
-      + "t2.custo_mao_de_obra as custoMaoDeObra, "
-      + "t2.custo_previsto as custoPrevisto, "
-      + "SUM(CASE WHEN t1.id_fornecedor = 43 "
-      + "THEN t1.valor_final END) as pagoMaoDeObra, "
-      + "SUM(CASE WHEN t1.id_fornecedor != 43 "
-      + "THEN t1.valor_desconto END) as valorDesconto, "
-      + "SUM(CASE WHEN t1.id_fornecedor != 43 "
-      + "THEN t1.valor_final END) as valorGastos "
-      + "FROM public.compra as t1 "
-      + "LEFT JOIN public.obra as t2 "
-      + "ON t1.id_obra = t2.codigo "
-      + "WHERE t1.id_obra = :codigo "
-      + "GROUP BY t2.custo_mao_de_obra, t2.custo_previsto"
-  )
-  List<MDOGastoComprasOrcamentoProjection> obterMDOGastoComprasOrcamento (@Param("codigo") Integer codigo);
 
 }
