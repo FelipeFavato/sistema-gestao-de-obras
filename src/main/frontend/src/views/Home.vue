@@ -53,7 +53,6 @@ export default {
     },
     graphGenerator () {
       const self = this;
-      // this.fillObraForRequest();
       this.fetchCustoLocalUsoInfoDB(() => {
         self.genCustoLocalUsoGraph();
       });
