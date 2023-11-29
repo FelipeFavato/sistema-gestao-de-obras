@@ -502,7 +502,7 @@ export default {
         x: mesesVisualizacao,
         y: gas,
         type: 'bar',
-        name: 'Gastos',
+        name: 'Custo - Material/Serviço',
         hovertext: gasText,
         hoverinfo: 'name+text'
       };
@@ -511,7 +511,7 @@ export default {
         x: mesesVisualizacao,
         y: maoDeObra,
         type: 'bar',
-        name: 'Gasto mão de obra',
+        name: 'Pago - Mão de obra',
         hovertext: maoDeObraText,
         hoverinfo: 'name+text'
       };
@@ -565,7 +565,7 @@ export default {
         x: meses,
         y: gas,
         type: 'bar',
-        name: 'Gastos',
+        name: 'Custo - Material/Serviço',
         hovertext: gasText,
         hoverinfo: 'name+text'
       };
@@ -574,7 +574,7 @@ export default {
         x: meses,
         y: maoDeObra,
         type: 'bar',
-        name: 'Gasto mão de obra',
+        name: 'Pago - Mão de obra',
         hovertext: maoDeObraText,
         hoverinfo: 'name+text'
       };
