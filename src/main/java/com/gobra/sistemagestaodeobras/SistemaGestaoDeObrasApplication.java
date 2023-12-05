@@ -3,6 +3,11 @@ package com.gobra.sistemagestaodeobras;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+// import org.telegram.telegrambots.meta.TelegramBotsApi;
+// import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+// import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+// import com.gobra.sistemagestaodeobras.bot.Bot;
 
 
 // Essa notação indica que essa classe é o começo de tudo
@@ -11,6 +16,10 @@ public class SistemaGestaoDeObrasApplication {
 
 	// metodo main = ponto de start da aplicação
 	public static void main(String[] args) {
+		// Registrando o BOT na API:
+		// TelegramBotsApi botsAPI = new TelegramBotsApi(DefaultBotSession.class);
+		// botsAPI.registerBot(new Bot()); 
+		
 		// Chama a SpringApplication e da um run na aplicação
 		SpringApplication.run(SistemaGestaoDeObrasApplication.class, args);
 	}
