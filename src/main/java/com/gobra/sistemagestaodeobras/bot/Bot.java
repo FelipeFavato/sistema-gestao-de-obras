@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 // telegram.token = 6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA
 // telegram.chatId = 5986351015
 
+// Web Hook: Quando o fornecedor chama algo do usuario.
 
 @RestController
 @RequestMapping("consulta-bot")

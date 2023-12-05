@@ -125,6 +125,7 @@ export default {
           this.setHttpStatusCode(res.status);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          console.log(error)
         });
       this.cancel();
     },
