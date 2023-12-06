@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.dashboard.dto;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcamentoProjection;
+import com.gobra.sistemagestaodeobras.utils.FormatadorMoeda;
 
 public class MDOOrcamentoDTO {
   
@@ -34,6 +35,15 @@ public class MDOOrcamentoDTO {
     pagoMaoDeObra = projection.getPagoMaoDeObra();
     valorDesconto = projection.getValorDesconto();
     valorGastos = projection.getValorGastos();
+  }
+
+  public String toString() {
+    return  "Custo total previsto: " + FormatadorMoeda.formatarMoeda(custoPrevisto) +
+            "\n Comprometido mão de obra: " + FormatadorMoeda.formatarMoeda(custoMaoDeObra - pagoMaoDeObra) +
+            "\n Gasto atual - Material/Serviço: " + FormatadorMoeda.formatarMoeda(valorGastos) +
+            "\n Gasto atual - Mão de obra: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) +
+            "\n Total de descontos: " + FormatadorMoeda.formatarMoeda(valorDesconto) +
+            "\n Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos));
   }
 
   // Getters e Setters

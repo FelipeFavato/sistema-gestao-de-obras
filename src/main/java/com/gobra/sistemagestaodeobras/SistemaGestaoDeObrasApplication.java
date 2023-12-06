@@ -1,154 +1,163 @@
 // Arquivo de start da aplicação
 package com.gobra.sistemagestaodeobras;
 
-import java.io.FileOutputStream;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-// import org.telegram.telegrambots.meta.TelegramBotsApi;
-// import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-// import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gobra.sistemagestaodeobras.dashboard.DashBoardController;
 import com.gobra.sistemagestaodeobras.dashboard.dto.MDOOrcamentoDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 
 import jakarta.annotation.PostConstruct;
 
-// import com.gobra.sistemagestaodeobras.bot.Bot;
-
 // Saber os endpoints, outputs e inputs.
 
-// Essa notação indica que essa classe é o começo de tudo
+// 1. @@SpringBootApplication: Essa notação indica que essa classe é o começo de tudo.
 @SpringBootApplication
 public class SistemaGestaoDeObrasApplication {
 
-	@Autowired
+	// Injeta os repositórios em que estão os serviços.
+  @Autowired
 	CompraRepository compraRepository;
+
+	@Autowired
+	DashBoardController dashBoardController;
 
 	// metodo main = ponto de start da aplicação
 	public static void main(String[] args) {
-		// Registrando o BOT na API:
-		// TelegramBotsApi botsAPI = new TelegramBotsApi(DefaultBotSession.class);
-		// botsAPI.registerBot(new Bot());
-		
 		// Chama a SpringApplication e da um run na aplicação
 		SpringApplication.run(SistemaGestaoDeObrasApplication.class, args);
 	}
 
+	// 1. "@PostConstruct": A anotação @PostConstruct em Java é usada em métodos de uma classe para indicar
+	//    que o método deve ser executado uma vez que a inicialização da instância da classe esteja completa.
+	//    Este método é chamado automaticamente pelo contêiner de inversão de controle (IoC) após a construção
+	//    do bean e antes que qualquer chamada de método seja feita ou antes que a instância seja
+	//    disponibilizada para o uso.
+	// 2. "public void configuraTelegram () {...}": Método com retorno void (vazio) com nome "ConfiguraTelegram".
 	@PostConstruct
 	public void configuraTelegram () {
-		new Thread(new Runnable() {
+		// 1. "new Thread(new Runnable()) {...}": Inicia uma nova thread (linha de execução paralela) usando a
+		//    classe 'Thread' e implementando a interface 'Runnable'. Este bloco de código é uma maneira de
+		// 		executar operações em paralelo para melhorar a eficiência.
+	  new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                int maxUpdateId = 0;
-                while (true) {
-                    try {
-                        JsonNode jn = new ObjectMapper().readTree(new RestTemplate().
-                                getForEntity("https://api.telegram.org/bot6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA/getUpdates?timeout=60" + (maxUpdateId != 0 ? "&offset=" + (maxUpdateId + 1) : ""), String.class).getBody());
-                        for (JsonNode mensagem : jn.get("result")) {
-                            if (mensagem.get("update_id").asInt() > maxUpdateId) {
-                                maxUpdateId = mensagem.get("update_id").asInt();
-                            }
-                            new Thread(new Runnable() {
+      @Override
+			// 1. "public void run() {...}": Método com retorno void (vazio) com nome "run".
+      public void run() {
+				// Token necessário para fazer a requisição à API do Telegram.
+				String token = "6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA";
+				// Variável auxiliar 'maxUpdateId'.
+        int maxUpdateId = 0;
 
-                                public void run() {
-                                    try {
-                                        HttpHeaders headers = new HttpHeaders();
-                                        headers.setContentType(MediaType.APPLICATION_JSON);
-																				MDOOrcamentoDTO mdoOrcamento = compraRepository.obterMDOGastoComprasOrcamento(Integer codigo);
-                                        System.out.println("\n" + mensagem.toString());
-                                        System.out.println("=> " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + " [" + mensagem.get("message").get("chat").get("id").asText() + "] " + mensagem.get("message").get("from").get("first_name").asText() + /*" " + mensagem.get("message").get("from").get("last_name").asText() +*/ " (" + mensagem.get("message").get("from").get("id").asInt() + "): " + mensagem.get("message").get("text").asText());  
-																				String resposta = "Respondendo: " + mensagem.toString();
-																				String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
-																								put("chat_id", mensagem.get("message").get("chat").get("id").asText()).
-																								put("text", resposta).
-																								put("parse_mode", "html"));
-																				System.out.println("<= " + resposta);
-																				new RestTemplate().postForEntity("https://api.telegram.org/bot6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA/sendMessage",
-																								new HttpEntity(json, headers), String.class);
-																				
-																				// String retorno = "Usuário sem permissão!";
-                                        // HttpHeaders headers = new HttpHeaders();
-                                        // headers.setContentType(MediaType.APPLICATION_JSON);
+				// 1. while (true): Enquanto 'true === true' vai rodar o código abaixo (loop infinito).
+        while (true) {
+          try {
+						// 1. "JsonNode jn": 'JsonNode' é uma Representação de nó em uma árvore JSON. 'jn' é uma variável
+						// 		que armazena a árvode de nós que representa as atualizações do Telegram.
+						// 2. "new ObjectMapper().readTree(...)": 'new ObjectMapper()' cria uma instância do ObjectMapper,
+						// 		que é uma classe da biblioteca Jackson para mapeamento de JSON para objetos JAVA.
+						//    'readTree(...)' lê o JSON fornecido e o converte para uma arvore de nós do tipo JsonNode.
+						// 3. "new RestTemplate().getForEntity(...)": 'RestTemplate()'' é uma classe que faz parte do
+						//    framework do Spring e fornece método convenientes para interagir com API's REST externas.
+						// 		'new RestTemplate()' cria uma instância de 'RestTemplate' e o método 'getForEntity' é
+						// 		chamado para realizar uma requisição GET à URL do Telegram.
+						// 4. "https://api.telegram.org/bot" + token + "/getUpdates?timeout=60": URL da API do Telegram.
+						// 		Possui o método getUpdates que é usado para obter as atualizações recentes do bot.
+						// 5. "+ (maxUpdateId != 0 ? "&offset=" + (maxUpdateId + 1) : "")": O parametro 'maxUpdateId' é
+						//    opcional e, se não for zero, é adicionado à URL como o parametro 'offset', indicando para a
+						// 		API do telegram que deve começar a buscar atualizações a partir do 'ID especificado + 1'.
+						// 6. "String.class": Este é o tipo de resposta esperada. Neste caso, espera-se uma resposta no
+						//    formato de string; 
+						// 7. "getBody()": Este método é chamado na resposta da requisição para obter o corpo da resposta,
+						//    que, no caso, é um JSON contendo as informações de atualizações do bot.
+            JsonNode jn = new ObjectMapper().readTree(new RestTemplate().getForEntity(
+							"https://api.telegram.org/bot" + token + "/getUpdates?timeout=60" + (maxUpdateId != 0 ? "&offset=" + (maxUpdateId + 1) : ""),
+							String.class).getBody());
 
-                                        // if (Arrays.asList("663437082" /*sussumu*/, "765070396" /*favato*/, ).contains(mensagem.get("message").get("from").get("id").asInt() + "")) {
-                                        //     String entrada = Normalizer.normalize(mensagem.get("message").get("text").asText().toUpperCase(), Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-                                        //     String modo = "proc";
-                                           
-                                        //     if ("proc".equals(modo)) {
-                                        //         System.out.println(new RestTemplate().postForEntity("https://uspdigital.usp.br/uspproc/listar/jupiterweb/pubMVItesteChatbot",
-                                        //                 new HttpEntity(new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
-                                        //                         put("entrada", entrada)), headers), String.class));
-                                        //         retorno = new ObjectMapper().readTree(new RestTemplate().postForEntity("https://uspdigital.usp.br/uspproc/listar/jupiterweb/pubMVItesteChatbot",
-                                        //                 new HttpEntity(new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
-                                        //                         put("entrada", entrada)), headers), String.class).getBody()).get(0).get("saida").asText();
-                                        //     }
-                                        //     if ("graf".equals(modo)) {
-                                        //         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                                        //         String titulo = "", eixoX = "", eixoY = "", conjunto = "";
-                                        //         int altura = 400;
-                                        //         for (JsonNode par : new ObjectMapper().readTree(new RestTemplate().postForEntity("https://uspdigital.usp.br/uspproc/listar/jupiterweb/pubMVItesteChatbot",
-                                        //                 new HttpEntity(new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
-                                        //                         put("entrada", entrada)), headers), String.class).getBody())) {
-                                        //             titulo = par.get("titulo").asText();
-                                        //             eixoX = par.get("eixo_x").asText();
-                                        //             eixoY = par.get("eixo_y").asText();
-                                        //             altura = par.get("altura").asInt();
-                                        //             conjunto = par.get("conjunto").asText();
-                                        //             dataset.addValue(par.get("y").asDouble(), conjunto, par.get("x").asText());
-                                        //         }
-                                        //         JFreeChart chart = ChartFactory.createStackedBarChart(titulo, eixoX, eixoY, dataset, PlotOrientation.HORIZONTAL, true, true, false);
-                                        //         File temp = new File(new Random().nextInt(1000 * 1000 * 1000) + ".jpg");
-                                        //         ChartUtilities.writeChartAsJPEG(new FileOutputStream(temp), chart, 400, altura);    
-                                        //         MultiValueMap<String, Object> params = new LinkedMultiValueMap();
-                                        //         params.add("photo", new FileSystemResource(temp));
-                                        //         params.add("chat_id", mensagem.get("message").get("chat").get("id").asText());
-                                        //         HttpHeaders headers2 = new HttpHeaders();
-                                        //         headers2.setContentType(MediaType.MULTIPART_FORM_DATA);
-                                        //         new RestTemplate().postForEntity("https://api.telegram.org/bot709125466:/sendPhoto",
-                                        //                 new HttpEntity(params, headers2), String.class);
-                                        //         temp.delete();
-                                        //     }
-                                        // }
-                                        // if (!retorno.isEmpty()) {
-                                        //     String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
-                                        //             put("chat_id", mensagem.get("message").get("chat").get("id").asText()).
-                                        //             put("text", retorno).
-                                        //             put("parse_mode", "html"));
-                                        //     System.out.println("<= " + retorno);
-                                        //     new RestTemplate().postForEntity("https://api.telegram.org/bot709125466:/sendMessage",
-                                        //             new HttpEntity(json, headers), String.class);
-                                        // }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).start();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+						// 1. "for (JsonNode mensagem : jn.get("result"))": Inicia um loop for que itera sobre cada elemento
+						// 		do ARRAY "result" em um objeto JsonNode chamado 'jn'. Então existe um array chamado 'result' e
+						//    dentro desse array tem varios objetos chamados 'jn' e ai o loop for declara uma variável chamada
+						//    'mensagem' do tipo 'JsonNode' que são cada 'jn' presente no array.
+						// 2. "if (mensagem.get("update_id").asInt() > maxUpdateId)": Verifica se o valor associado a chave
+						//    'update_id' no objeto JsonNode 'mensagem' é maior do que o valor atual de 'maxUpdateId'. Ou seja,
+						// 		verifica o valor do chave 'update_id' de cada mensagem e compara com o valor de 'maxUpdateId' do
+						// 		programa. Se o valor dessa chave do objeto mensagem for de fato maior, executa o código 3 abaixo.
+						// 3. "maxUpdateId = mensagem.get("update_id").asInt()": Atualiza o valor de 'maxUpdateId' para o mesmo
+						//    valor presente no objeto 'mensagem'.
+						for (JsonNode mensagem : jn.get("result")) {
+              if (mensagem.get("update_id").asInt() > maxUpdateId) {
+                maxUpdateId = mensagem.get("update_id").asInt();
+              }
+              
+							// 1. "new Thread(new Runnable()) {...}": Inicia uma nova thread (linha de execução paralela) usando a
+							//    classe 'Thread' e implementando a interface 'Runnable'. Este bloco de código é uma maneira de
+							// 		executar operações em paralelo para melhorar a eficiência.
+							// 2. "public void run () {...}": Implementa o método 'run' da interface 'Runnable', que contém o
+							//    código que sera executado na nova thread.
+							// 3. "HttpHeaders headers = new HttpHeaders()": Cria um objeto do tipo 'HttpHeaders' para configurar
+							//    os cabeçalhos HTTP.
+							// 4. "headers.setContentType(MediaType.APPLICATION_JSON)": Define o tipo de conteúdo do cabeçalho
+							// 		como JSON.
+							// 5. 
+							new Thread(new Runnable() {
+
+              	public void run() {
+                  try {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+
+										// if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"5986351015"/*felipe */).contains(
+										// 	mensagem.get("message").get("from").get("id").asInt() + "")) {
+
+											String entrada = Normalizer.normalize(
+												mensagem.get("message").get("text").asText().toUpperCase(),
+												Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]",
+												"");
+											String modo = "proc";
+											String retorno = "";
+
+											if (entrada.matches(".*ORC.*")) {
+												Integer codigo = 0;
+												if (entrada.endsWith("1")) {
+													codigo = 1;
+													List<MDOOrcamentoDTO> listaMdoOrcamentoDTOs = dashBoardController.getAllMDOorcamento(codigo);
+													retorno = entrada.toString() + "\n" + listaMdoOrcamentoDTOs.toString();
+												}
+											}
+
+                    	String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
+                              put("chat_id", mensagem.get("message").get("chat").get("id").asText()).
+                              put("text", retorno).
+                              put("parse_mode", "html"));
+                    	new RestTemplate().postForEntity(
+												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity(json, headers),
+												String.class);
+										// }
+
+									} catch (Exception e) {
+                    e.printStackTrace();
+										}
+								}
+              }).start();
             }
-        }).start();
+          } catch (Exception e) {
+            e.printStackTrace();
+            }
+      	}
+      }
+    }).start();
 	}
-
 
 }
 
