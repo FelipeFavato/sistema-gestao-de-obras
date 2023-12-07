@@ -1,10 +1,12 @@
-package com.gobra.sistemagestaodeobras.dashboard.dto;
+package com.gobra.sistemagestaodeobras.bot.dto;
 
-import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcamentoProjection;
+import com.gobra.sistemagestaodeobras.bot.projection.OrcamentoBotProjection;
 import com.gobra.sistemagestaodeobras.utils.FormatadorMoeda;
 
-public class MDOOrcamentoDTO {
-  
+public class OrcamentoBotDTO {
+
+  private String nomeObra;
+
   private Integer custoMaoDeObra;
 
   private Integer custoPrevisto;
@@ -16,12 +18,13 @@ public class MDOOrcamentoDTO {
   private double valorGastos;
 
 
-  public MDOOrcamentoDTO() {
+  public OrcamentoBotDTO() {
 
   }
 
-  public MDOOrcamentoDTO(Integer custoMDO, Integer custoP, double pagoMDO,
+  public OrcamentoBotDTO(String nome, Integer custoMDO, Integer custoP, double pagoMDO,
   double valorD, double valorG) {
+    this.nomeObra = nome;
     this.custoMaoDeObra = custoMDO;
     this.custoPrevisto = custoP;
     this.pagoMaoDeObra = pagoMDO;
@@ -29,7 +32,8 @@ public class MDOOrcamentoDTO {
     this.valorGastos = valorG;
   }
 
-  public MDOOrcamentoDTO(MDOGastoComprasOrcamentoProjection projection) {
+  public OrcamentoBotDTO(OrcamentoBotProjection projection) {
+    nomeObra = projection.getNomeObra();
     custoMaoDeObra = projection.getCustoMaoDeObra();
     custoPrevisto = projection.getCustoPrevisto();
     pagoMaoDeObra = projection.getPagoMaoDeObra();
@@ -38,15 +42,27 @@ public class MDOOrcamentoDTO {
   }
 
   public String toString() {
-    return  "Custo total previsto: " + FormatadorMoeda.formatarMoeda(custoPrevisto) +
-            "\n Comprometido mão de obra: " + FormatadorMoeda.formatarMoeda(custoMaoDeObra - pagoMaoDeObra) +
-            "\n Gasto atual - Material/Serviço: " + FormatadorMoeda.formatarMoeda(valorGastos) +
-            "\n Gasto atual - Mão de obra: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) +
-            "\n Total de descontos: " + FormatadorMoeda.formatarMoeda(valorDesconto) +
-            "\n Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos));
+    return "Obra: " + nomeObra + "\n" +
+           "\n" +
+           "Custo total previsto da obra: " + FormatadorMoeda.formatarMoeda(custoPrevisto) + "\n" +
+           "Custo previsto mão de obra: " + FormatadorMoeda.formatarMoeda(custoMaoDeObra) + "\n" +
+           "Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) + "\n" +
+           "\n" +
+           "Gasto atual - Material/Serviço: " + FormatadorMoeda.formatarMoeda(valorGastos) + "\n" +
+           "Gasto atual - Descontos obtidos: " + FormatadorMoeda.formatarMoeda(valorDesconto) + "\n" +
+           "Gasto atual - Mão de obra: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra);
   }
 
+
   // Getters e Setters
+  public String getNomeObra () {
+    return nomeObra;
+  }
+
+  public void setNomeObra (String nome) {
+    this.nomeObra = nome;
+  }
+
   public Integer getCustoMaoDeObra () {
     return custoMaoDeObra;
   }

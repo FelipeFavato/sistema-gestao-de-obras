@@ -378,7 +378,7 @@ export default {
       const valorD = dadosOrcamento.valorDesconto;
       const valorG = dadosOrcamento.valorGastos;
       const comprometidoMDO = custoMDO - pagoMDO;
-      const disponivel = custoP - (valorG + custoMDO - valorD);
+      const disponivel = custoP - (valorG + custoMDO);
 
       const trace1 = {
         x: ['Custo previsto'],

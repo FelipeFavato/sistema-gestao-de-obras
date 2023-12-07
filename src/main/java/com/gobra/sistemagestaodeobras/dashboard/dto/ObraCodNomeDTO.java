@@ -22,6 +22,10 @@ public class ObraCodNomeDTO {
     nome = projection.getNome();
   }
 
+  public String toString() {
+    return nome;
+  }
+
   // Getters e Setters
   public Integer getCodigo () {
     return codigo;

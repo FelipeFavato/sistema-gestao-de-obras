@@ -377,6 +377,7 @@ export default {
           }
         }).then(() => callback()).catch(error => {
           this.validateHttpStatus(error.response.status);
+          console.log(error)
         });
     },
     // Chama o método 'removeCompra' e repopula a lista correta.
