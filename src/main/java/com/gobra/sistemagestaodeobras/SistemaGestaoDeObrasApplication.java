@@ -2,6 +2,7 @@
 package com.gobra.sistemagestaodeobras;
 
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gobra.sistemagestaodeobras.dashboard.DashBoardController;
-import com.gobra.sistemagestaodeobras.dashboard.dto.MDOOrcamentoDTO;
+import com.gobra.sistemagestaodeobras.bot.BotController;
+import com.gobra.sistemagestaodeobras.bot.dto.GastoSocioBotDTO;
+import com.gobra.sistemagestaodeobras.bot.dto.OrcamentoBotDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
+import com.gobra.sistemagestaodeobras.utils.FormatadorMoeda;
+import com.gobra.sistemagestaodeobras.utils.ManipuladorNumeros;
 
 import jakarta.annotation.PostConstruct;
 
@@ -31,7 +35,7 @@ public class SistemaGestaoDeObrasApplication {
 	CompraRepository compraRepository;
 
 	@Autowired
-	DashBoardController dashBoardController;
+	BotController botController;
 
 	// metodo main = ponto de start da aplicação
 	public static void main(String[] args) {
@@ -109,31 +113,40 @@ public class SistemaGestaoDeObrasApplication {
 							//    os cabeçalhos HTTP.
 							// 4. "headers.setContentType(MediaType.APPLICATION_JSON)": Define o tipo de conteúdo do cabeçalho
 							// 		como JSON.
-							// 5. 
 							new Thread(new Runnable() {
 
               	public void run() {
                   try {
+										String retorno = "Usuário sem permissão!";
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_JSON);
 
-										// if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"5986351015"/*felipe */).contains(
-										// 	mensagem.get("message").get("from").get("id").asInt() + "")) {
+										if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"1691383719"/*felipe */).contains(
+											mensagem.get("message").get("from").get("id").asInt() + "")) {
 
 											String entrada = Normalizer.normalize(
 												mensagem.get("message").get("text").asText().toUpperCase(),
-												Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]",
-												"");
-											String modo = "proc";
-											String retorno = "";
+												Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
 
-											if (entrada.matches(".*ORC.*")) {
-												Integer codigo = 0;
-												if (entrada.endsWith("1")) {
-													codigo = 1;
-													List<MDOOrcamentoDTO> listaMdoOrcamentoDTOs = dashBoardController.getAllMDOorcamento(codigo);
-													retorno = entrada.toString() + "\n" + listaMdoOrcamentoDTOs.toString();
+											if (entrada.matches(".*COM.*")) {
+												retorno = "Possíveis COMANDOS" + "\n \n" +
+																	"Comandos|Com" + "\n" +
+																	"Orcamento|Orc [Código da obra]" + "\n" +
+																	"Socio|Soc [Código da obra]";
+											
+											} else if (entrada.matches(".*ORC.*")) {
+												OrcamentoBotDTO orcamento = botController.getOrcamento(ManipuladorNumeros.extrairNumero(entrada));
+												retorno = entrada.toString() + "\n" + orcamento.toString();
+												
+											} else if (entrada.matches(".*SOC.*")) {
+												String retornoSocios = "";
+												String nomeObra = "";
+												List<GastoSocioBotDTO> listGastoSocio = botController.getGastoSocio(ManipuladorNumeros.extrairNumero(entrada));
+												for (GastoSocioBotDTO socio : listGastoSocio) {
+													retornoSocios += socio.getNomeSocio() + ": " + FormatadorMoeda.formatarMoeda(socio.getValorFinal()) + "\n";
+													nomeObra = socio.getNomeObra();
 												}
+												retorno = entrada.toString() + "\n" + "Obra: " + nomeObra + "\n \n" + retornoSocios;
 											}
 
                     	String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
@@ -143,7 +156,16 @@ public class SistemaGestaoDeObrasApplication {
                     	new RestTemplate().postForEntity(
 												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity(json, headers),
 												String.class);
-										// }
+										} else {
+											String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
+                              put("chat_id", mensagem.get("message").get("chat").get("id").asText()).
+                              put("text", retorno).
+                              put("parse_mode", "html"));
+                    	new RestTemplate().postForEntity(
+												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity(json, headers),
+												String.class);
+
+										}
 
 									} catch (Exception e) {
                     e.printStackTrace();
