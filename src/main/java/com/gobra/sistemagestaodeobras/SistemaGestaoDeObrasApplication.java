@@ -57,7 +57,7 @@ public class SistemaGestaoDeObrasApplication {
 	  new Thread(new Runnable() {
 
       @Override
-			// 1. "public void run() {...}": Método com retorno void (vazio) com nome "run".
+			// 1. "public void run() {...}": Método com retorno void (vazio) com nome 'run'.
       public void run() {
 				// Token necessário para fazer a requisição à API do Telegram.
 				String token = "6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA";
