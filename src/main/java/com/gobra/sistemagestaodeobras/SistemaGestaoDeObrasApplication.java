@@ -21,6 +21,7 @@ import com.gobra.sistemagestaodeobras.bot.dto.OrcamentoBotDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 import com.gobra.sistemagestaodeobras.utils.FormatadorMoeda;
 import com.gobra.sistemagestaodeobras.utils.ManipuladorNumeros;
+import com.gobra.sistemagestaodeobras.utils.ManipuladorStrings;
 
 import jakarta.annotation.PostConstruct;
 
@@ -59,8 +60,15 @@ public class SistemaGestaoDeObrasApplication {
       @Override
 			// 1. "public void run() {...}": Método com retorno void (vazio) com nome 'run'.
       public void run() {
+				// BOT PROD oficial:
+				// String username = "HubConstrucoesBot";
 				// Token necessário para fazer a requisição à API do Telegram.
 				String token = "6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA";
+
+				// BOT DEV teste:
+				// String usernameTeste = "TESTEHubConstrucoesBot";
+				// String token = "6574404905:AAHZHyYnXNFviT17pS1fVtdEpqGvf1ncHyg";
+
 				// Variável auxiliar 'maxUpdateId'.
         int maxUpdateId = 0;
 
@@ -128,9 +136,9 @@ public class SistemaGestaoDeObrasApplication {
 												mensagem.get("message").get("text").asText().toUpperCase(),
 												Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
 
-											if (entrada.matches(".*COM.*")) {
-												retorno = "Possíveis COMANDOS" + "\n \n" +
-																	"Comandos|Com" + "\n" +
+											if (entrada.matches(".*OPC.*")) {
+												retorno = "Possíveis OPÇÕES" + "\n \n" +
+																	"Opcoes|Opc" + "\n" +
 																	"Orcamento|Orc [Código da obra]" + "\n" +
 																	"Socio|Soc [Código da obra]";
 											
@@ -143,10 +151,12 @@ public class SistemaGestaoDeObrasApplication {
 												String nomeObra = "";
 												List<GastoSocioBotDTO> listGastoSocio = botController.getGastoSocio(ManipuladorNumeros.extrairNumero(entrada));
 												for (GastoSocioBotDTO socio : listGastoSocio) {
-													retornoSocios += socio.getNomeSocio() + ": " + FormatadorMoeda.formatarMoeda(socio.getValorFinal()) + "\n";
+													retornoSocios += ManipuladorStrings.extrairPrimeiroUltimoNome(socio.getNomeSocio()) + ": "
+																				   + "<b>" + FormatadorMoeda.formatarMoeda(socio.getValorFinal()) + "</b>" + "\n";
 													nomeObra = socio.getNomeObra();
 												}
-												retorno = entrada.toString() + "\n" + "Obra: " + nomeObra + "\n \n" + retornoSocios;
+												retorno = entrada.toString() + "\n" + "Obra: " + "<b>" + nomeObra + "</b>" + "\n \n"
+																	+ "<b>GASTO TOTAL POR SÓCIO</b>" + "\n \n" + retornoSocios;
 											}
 
                     	String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().

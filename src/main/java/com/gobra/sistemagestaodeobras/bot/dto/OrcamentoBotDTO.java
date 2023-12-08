@@ -42,15 +42,15 @@ public class OrcamentoBotDTO {
   }
 
   public String toString() {
-    return "Obra: " + nomeObra + "\n" +
+    return "Obra: " + "<b>" + nomeObra + "</b>" + "\n" +
            "\n" +
-           "Custo total previsto da obra: " + FormatadorMoeda.formatarMoeda(custoPrevisto) + "\n" +
-           "Custo previsto mão de obra: " + FormatadorMoeda.formatarMoeda(custoMaoDeObra) + "\n" +
-           "Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) + "\n" +
+           "Custo total previsto da obra: " + "<b>" + FormatadorMoeda.formatarMoeda(custoPrevisto) + "</b>" + "\n" +
+           "Custo previsto mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(custoMaoDeObra) + "</b>" + "\n" +
+           "Saldo para investimento: " + "<b>" + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) + "</b>" + "\n" +
            "\n" +
-           "Gasto atual - Material/Serviço: " + FormatadorMoeda.formatarMoeda(valorGastos) + "\n" +
-           "Gasto atual - Descontos obtidos: " + FormatadorMoeda.formatarMoeda(valorDesconto) + "\n" +
-           "Gasto atual - Mão de obra: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra);
+           "Gasto atual - Material/Serviço: " + "<b>" + FormatadorMoeda.formatarMoeda(valorGastos) + "</b>" + "\n" +
+           "Gasto atual - Descontos obtidos: " + "<b>" + FormatadorMoeda.formatarMoeda(valorDesconto) + "</b>" + "\n" +
+           "Gasto atual - Mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) + "</b>";
   }
 
 
