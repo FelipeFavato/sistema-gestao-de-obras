@@ -132,6 +132,13 @@ public class SistemaGestaoDeObrasApplication {
 										if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"1691383719"/*felipe */).contains(
 											mensagem.get("message").get("from").get("id").asInt() + "")) {
 
+											// System.out.println(mensagem);
+											// System.out.println(mensagem.get("message"));
+											// System.out.println(mensagem.get("message").get("from"));
+											// System.out.println(mensagem.get("message").get("from").get("id"));
+											// System.out.println(mensagem.get("message").get("from").get("id").asInt());
+											// System.out.println(mensagem.get("message").get("from").get("id").asInt() + "");
+
 											String entrada = Normalizer.normalize(
 												mensagem.get("message").get("text").asText().toUpperCase(),
 												Normalizer.Form.NFD).replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");

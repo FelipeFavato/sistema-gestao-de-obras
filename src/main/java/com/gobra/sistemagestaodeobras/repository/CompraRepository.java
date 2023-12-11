@@ -62,8 +62,8 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
     nativeQuery = true,
     value = "SELECT "
       + "t2.nome as nomeFornecedor, "
-      + "t4.nome as nomeProduto, "
-      + "SUM(t3.valor_total) as valorTotal "
+      + "COALESCE(t4.nome, 'N/I') as nomeProduto, "
+      + "COALESCE(SUM(t3.valor_total), 0) as valorTotal "
       + "FROM public.compra as t1 "
       + "LEFT JOIN public.fornecedor as t2 "
       + "ON t1.id_fornecedor = t2.codigo "
