@@ -14,6 +14,8 @@ public record SocioRequestDTO (
 
   Date dataDesativacao,
 
+  Integer telegramID,
+
   List<Compra> compras,
 
   List<Obra> obras

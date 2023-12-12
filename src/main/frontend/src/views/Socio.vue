@@ -11,7 +11,8 @@ export default {
       info: [],
       codigo: '',
       nome: '',
-      dataDesativacao: ''
+      dataDesativacao: '',
+      telegramID: ''
     }
   },
 
@@ -42,7 +43,7 @@ export default {
       this.nome = '';
       this.dataDesativacao = '';
     },
-    fetchInfoDB () {
+    fetchInfoDB (callback) {
       axios.get("/api/socio",
       {
         headers: {
@@ -50,6 +51,7 @@ export default {
         }
       }).then(res => {
         this.info = res.data;
+        if (callback) callback();
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
@@ -73,17 +75,19 @@ export default {
       });
       this.cancel();
     },  
-    fillUpdateDeleteModal (codigo, nome, dataDesativacao) {
+    fillUpdateDeleteModal (codigo, nome, dataDesativacao, telegramID) {
       this.codigo = codigo;
       this.nome = nome;
       this.dataDesativacao = dataDesativacao;
+      this.telegramID = telegramID;
     },
-    updateInfoDB (codigo, nome, dataD) {
+    updateInfoDB (codigo, nome, teleID) {
       axios.put("/api/socio",
       {
         codigo: Number(codigo),
         nome: nome,
-        dataDesativacao: dataD
+        dataDesativacao: dataD,
+        telegramID: teleID
       },
       {
         headers: {
@@ -128,7 +132,9 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchInfoDB();
+    this.fetchInfoDB(() => {
+      console.log(this.info)
+    });
   }
 }
 
@@ -200,6 +206,20 @@ export default {
                 >
             </div>
 
+            <div class="mb-3">
+              <label for="telegramID-input" class="form-label bold">ID telegram:</label>
+              <input
+                type="number"
+                step="1"
+                title=''
+                class="form-control"
+                id="telegramID-input"
+                placeholder="ID telegram"
+                v-model="telegramID"
+                maxlength="30"
+                >
+            </div>
+
           </form>
         </div>
 
@@ -263,6 +283,20 @@ export default {
                 v-model="dataDesativacao">
             </div>
 
+            <div class="mb-3">
+              <label for="telegramID-input" class="form-label bold">ID telegram:</label>
+              <input
+                type="number"
+                step="1"
+                title=''
+                class="form-control"
+                id="telegramID-input"
+                placeholder="ID telegram"
+                v-model="telegramID"
+                maxlength="30"
+                >
+            </div>
+
           </form>
         </div>
 
@@ -287,7 +321,7 @@ export default {
           <th scope="col">Código</th>
           <th scope="col">Nome</th>
           <th scope="col">Data desativação</th>
-          <th></th>
+          <th scope="col">ID telegram</th>
           <th></th>
           <th></th>
           <th></th>
@@ -299,7 +333,7 @@ export default {
           <th scope="row">{{ socio.codigo }}</th>
           <td>{{ socio.nome }}</td>
           <td>{{ this.brazilDate(socio.dataDesativacao) }}</td>
-          <td></td>
+          <td>{{ this.telegramID }}</td>
           <td></td>
           <td></td>
           <td></td>

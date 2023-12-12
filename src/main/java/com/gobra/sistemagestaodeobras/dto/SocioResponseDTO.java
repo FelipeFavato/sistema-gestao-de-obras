@@ -15,6 +15,8 @@ public record SocioResponseDTO (
 
   Date dataDesativacao,
 
+  Integer telegramID,
+
   List<Compra> compras,
 
   List<Obra> obras
@@ -26,6 +28,7 @@ public record SocioResponseDTO (
       socioModel.getCodigo(),
       socioModel.getNome(),
       socioModel.getDataDesativacao(),
+      socioModel.getTelegramID(),
       socioModel.getCompras(),
       socioModel.getObras()
     );

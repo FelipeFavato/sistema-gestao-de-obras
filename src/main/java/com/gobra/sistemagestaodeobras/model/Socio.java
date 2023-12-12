@@ -47,6 +47,9 @@ public class Socio {
   @Temporal(TemporalType.DATE)
   private Date dataDesativacao;
 
+  @Column(name = "telegram_id", length = 30)
+  private Integer telegramID;
+
   // Cada Sócio tera uma lista de compras atrelada a ele.
   @JsonIgnore
   @OneToMany(mappedBy = "socio")
@@ -72,6 +75,7 @@ public class Socio {
   public Socio(SocioRequestDTO data) {
     this.nome = data.nome();
     this.dataDesativacao = data.dataDesativacao();
+    this.telegramID = data.telegramID();
     this.compras = data.compras();
     // this.obras = data.obras();
   }

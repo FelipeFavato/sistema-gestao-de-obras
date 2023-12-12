@@ -53,6 +53,7 @@ public class SocioController {
       Socio socio = optionalSocio.get();
       socio.setNome(data.nome());
       socio.setDataDesativacao(data.dataDesativacao());
+      socio.setTelegramID(data.telegramID());
       // socio.setObras(data.obras());
 
       return ResponseEntity.ok(socio);
