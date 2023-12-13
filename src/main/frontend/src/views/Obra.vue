@@ -16,28 +16,31 @@
 //     }]
 //   }
 
-//  {
+// {
 //     "codigo": 7,
 //     "nome": "Obra Teste 5",
 //     "endereco": "Rua Obra Teste, 5000",
-//     "dataInicio": "2023-05-03",
-//     "dataPrevistaFim": "2023-05-08",
-//     "dataRealFim": "2023-05-13",
+//     "dataInicio": "2023-05-02",
+//     "dataPrevistaFim": "2023-05-07",
+//     "dataRealFim": "2023-05-12",
+//     "custoMaoDeObra": 20000,
 //     "custoPrevisto": 100000,
-//     "compras": [],
 //     "socios": [
+//       {
+//         "codigo": 7,
+//         "nome": "Pedro",
+//         "dataDesativacao": null,
+//         "telegramID": null
+//       },
 //       {
 //         "codigo": 11,
 //         "nome": "Carla",
-//         "dataDesativacao": null
-//       },
-//       {
-//         "codigo": 3,
-//         "nome": "Felipe",
-//         "dataDesativacao": null
+//         "dataDesativacao": null,
+//         "telegramID": null
 //       }
 //     ]
 //   }
+  
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -123,7 +126,19 @@ export default {
     },
     // Atribui um Socio a uma Obra.
     assignSocio () {
-      axios.put()
+      axios.put("/api/obra",
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      },
+      {
+
+      }).then(res => {
+
+      }).catch(error => {
+
+      });
     },
     cancel () {
       this.codigo = '';
@@ -147,7 +162,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
-    fetchObrasInfoDB () {
+    fetchObrasInfoDB (callback) {
       axios.get("/api/obra",
       {
         headers: {
@@ -156,6 +171,7 @@ export default {
       }).then(res => {
         this.obrasInfo = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
         this.setHttpStatusCode(res.status);
+        if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       })
@@ -263,19 +279,15 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchObrasInfoDB();
+    this.fetchObrasInfoDB(() => {
+      console.log(this.obrasInfo)
+    });
     this.fetchSociosInfoDB();
-    // setTimeout(() => {
-    //   console.log(this.sociosInfo)
-    // }, 1500);
   }
 }
 </script>
 
 <template>
-
-  <!-- <p>{{ this.obrasInfo[1] }}</p>
-  <p>{{ this.sociosInfo[4] }}</p> -->
 
   <!-- Header com o botão de +Novo -->
   <header v-show="!this.showSocios" class="header middle-margin">

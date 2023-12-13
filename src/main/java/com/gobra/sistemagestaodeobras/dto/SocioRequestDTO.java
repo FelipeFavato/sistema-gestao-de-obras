@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.dto;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Date;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
@@ -18,6 +19,6 @@ public record SocioRequestDTO (
 
   List<Compra> compras,
 
-  List<Obra> obras
+  Set<Obra> obras
 
 ) { }

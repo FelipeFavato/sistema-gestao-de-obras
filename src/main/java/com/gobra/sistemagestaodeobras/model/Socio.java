@@ -2,16 +2,18 @@ package com.gobra.sistemagestaodeobras.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gobra.sistemagestaodeobras.dto.SocioRequestDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -57,26 +59,23 @@ public class Socio {
 
   // Um sócio poderá participar de muitas obras.
   // Uma obra poderá ter muitos sócios participando.
-  // @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  // @JoinTable(name = "socios_obras",
-  // joinColumns = {
-  //   @JoinColumn(name = "id_socio", referencedColumnName = "codigo")
-  // },
-  // inverseJoinColumns = {
-  //   @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
-  // })
+
+  // @ManyToMany(mappedBy = "socios", fetch = FetchType.LAZY)
   // @JsonIgnore
   // private List<Obra> obras;
-
-  @ManyToMany(mappedBy = "socios", fetch = FetchType.LAZY)
+  @ManyToMany
+  @JoinTable(
+    name = "socio_obra", 
+    joinColumns = @JoinColumn(name = "id_socio", referencedColumnName = "codigo"), 
+    inverseJoinColumns = @JoinColumn(name = "id_obra", referencedColumnName = "codigo"))
   @JsonIgnore
-  private List<Obra> obras;
+  private Set<Obra> obras;
 
   public Socio(SocioRequestDTO data) {
     this.nome = data.nome();
     this.dataDesativacao = data.dataDesativacao();
     this.telegramID = data.telegramID();
     this.compras = data.compras();
-    // this.obras = data.obras();
+    this.obras = data.obras();
   }
 }

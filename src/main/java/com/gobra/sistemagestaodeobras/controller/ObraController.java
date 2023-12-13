@@ -59,7 +59,7 @@ public class ObraController {
       obra.setCustoMaoDeObra(data.custoMaoDeObra());
       obra.setCustoPrevisto(data.custoPrevisto());
       obra.setCompras(data.compras());
-      obra.setSocios(data.socios());
+      // obra.setSocios(data.socios());
 
       return ResponseEntity.ok(obra);
     } else {
@@ -71,4 +71,5 @@ public class ObraController {
   public void deletaCompra(@RequestBody Obra obra) {
     repository.delete(obra);
   }
+
 }
