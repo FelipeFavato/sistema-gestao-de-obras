@@ -160,14 +160,17 @@ public class SistemaGestaoDeObrasApplication {
 											} else if (entrada.matches(".*SOC.*")) {
 												String retornoSocios = "";
 												String nomeObra = "";
+												double somaGastosSocios = 0;
 												List<GastoSocioBotDTO> listGastoSocio = botController.getGastoSocio(ManipuladorNumeros.extrairNumero(entrada));
 												for (GastoSocioBotDTO socio : listGastoSocio) {
 													retornoSocios += ManipuladorStrings.extrairPrimeiroUltimoNome(socio.getNomeSocio()) + ": "
 																				   + "<b>" + FormatadorMoeda.formatarMoeda(socio.getValorFinal()) + "</b>" + "\n";
 													nomeObra = socio.getNomeObra();
+													somaGastosSocios += socio.getValorFinal();
 												}
 												retorno = entrada.toString() + "\n" + "Obra: " + "<b>" + nomeObra + "</b>" + "\n \n"
-																	+ "<b>GASTO TOTAL POR SÓCIO</b>" + "\n \n" + retornoSocios;
+																	+ "<b>GASTO TOTAL POR SÓCIO</b>" + "\n \n" + retornoSocios + "\n \n"
+																	+ "<b>" + "Valor total investido: " + FormatadorMoeda.formatarMoeda(somaGastosSocios) + "</b>";
 											}
 
                     	String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().

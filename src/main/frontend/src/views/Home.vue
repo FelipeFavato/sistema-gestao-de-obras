@@ -405,17 +405,17 @@ export default {
         }
       };
 
-      const trace3 = {
-        x: ['Custo previsto'],
-        y: [valorD],
-        name: 'Desconto',
-        type: 'bar',
-        text: [this.fixCurrency(valorD)],
-        hoverinfo: "name+text",
-        marker: {
-          color: '#d62728'
-        }
-      };
+      // const trace3 = {
+      //   x: ['Custo previsto'],
+      //   y: [valorD],
+      //   name: 'Desconto',
+      //   type: 'bar',
+      //   text: [this.fixCurrency(valorD)],
+      //   hoverinfo: "name+text",
+      //   marker: {
+      //     color: '#d62728'
+      //   }
+      // };
 
       const trace4 = {
         x: ['Custo previsto'],
@@ -441,7 +441,7 @@ export default {
         }
       };
 
-      const data = [trace1, trace2, trace3, trace4, trace5];
+      const data = [trace1, trace2, trace4, trace5];
 
       const layout = {
         barmode: 'stack',

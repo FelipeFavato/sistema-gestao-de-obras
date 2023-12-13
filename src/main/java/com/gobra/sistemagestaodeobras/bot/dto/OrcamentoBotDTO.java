@@ -48,7 +48,6 @@ public class OrcamentoBotDTO {
            "Custo previsto mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(custoMaoDeObra) + "</b>" + "\n" +
            "\n" +
            "Gasto atual - Material/Serviço: " + "<b>" + FormatadorMoeda.formatarMoeda(valorGastos) + "</b>" + "\n" +
-           "Gasto atual - Descontos obtidos: " + "<b>" + FormatadorMoeda.formatarMoeda(valorDesconto) + "</b>" + "\n" +
            "Gasto atual - Mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) + "</b>" + "\n" +
            "\n" +
            "<b>" + "Valor total investido: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra + valorGastos) + "</b>" + "\n" +
