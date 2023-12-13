@@ -156,7 +156,7 @@ public class SistemaGestaoDeObrasApplication {
 											} else if (entrada.matches(".*ORC.*")) {
 												OrcamentoBotDTO orcamento = botController.getOrcamento(ManipuladorNumeros.extrairNumero(entrada));
 												retorno = entrada.toString() + "\n" + orcamento.toString();
-												
+
 											} else if (entrada.matches(".*SOC.*")) {
 												String retornoSocios = "";
 												String nomeObra = "";

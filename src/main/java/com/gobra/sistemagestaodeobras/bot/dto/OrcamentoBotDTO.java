@@ -46,11 +46,13 @@ public class OrcamentoBotDTO {
            "\n" +
            "Custo total previsto da obra: " + "<b>" + FormatadorMoeda.formatarMoeda(custoPrevisto) + "</b>" + "\n" +
            "Custo previsto mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(custoMaoDeObra) + "</b>" + "\n" +
-           "Saldo para investimento: " + "<b>" + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) + "</b>" + "\n" +
            "\n" +
            "Gasto atual - Material/Serviço: " + "<b>" + FormatadorMoeda.formatarMoeda(valorGastos) + "</b>" + "\n" +
            "Gasto atual - Descontos obtidos: " + "<b>" + FormatadorMoeda.formatarMoeda(valorDesconto) + "</b>" + "\n" +
-           "Gasto atual - Mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) + "</b>";
+           "Gasto atual - Mão de obra: " + "<b>" + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) + "</b>" + "\n" +
+           "\n" +
+           "<b>" + "Valor total investido: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra + valorGastos) + "</b>" + "\n" +
+           "<b>" + "Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) + "</b>";
   }
 
 
