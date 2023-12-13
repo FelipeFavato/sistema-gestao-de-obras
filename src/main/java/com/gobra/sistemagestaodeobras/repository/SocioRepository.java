@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.bot.projection.GastoSocioBotProjection;
+import com.gobra.sistemagestaodeobras.bot.projection.SocioTelegramIDBotProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorSocioProjection;
 import com.gobra.sistemagestaodeobras.model.Socio;
 
@@ -49,5 +50,14 @@ public interface SocioRepository extends JpaRepository<Socio, Integer> {
   )
   List<GastoSocioBotProjection> obterValorGastoPorSocioBot(@Param("codigo") Integer codigo);
 
+  @Query(
+    nativeQuery = true,
+    value = "SELECT "
+      + "nome as nomeSocio, "
+      + "telegram_id as telegramID "
+      + "FROM public.socio "
+      + "WHERE telegram_id IS NOT NULL"
+  )
+  List<SocioTelegramIDBotProjection> obterNomeSocioTelegramID();
 
 }

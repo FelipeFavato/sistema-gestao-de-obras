@@ -42,6 +42,7 @@ export default {
     cancel() {
       this.nome = '';
       this.dataDesativacao = '';
+      this.telegramID = '';
     },
     fetchInfoDB (callback) {
       axios.get("/api/socio",

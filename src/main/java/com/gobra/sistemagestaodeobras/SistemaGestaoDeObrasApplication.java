@@ -2,7 +2,7 @@
 package com.gobra.sistemagestaodeobras;
 
 import java.text.Normalizer;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gobra.sistemagestaodeobras.bot.BotController;
 import com.gobra.sistemagestaodeobras.bot.dto.GastoSocioBotDTO;
 import com.gobra.sistemagestaodeobras.bot.dto.OrcamentoBotDTO;
+import com.gobra.sistemagestaodeobras.bot.dto.SocioTelegramIDBotDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 import com.gobra.sistemagestaodeobras.utils.FormatadorMoeda;
 import com.gobra.sistemagestaodeobras.utils.ManipuladorNumeros;
@@ -128,8 +129,18 @@ public class SistemaGestaoDeObrasApplication {
 										String retorno = "Usuário sem permissão!";
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_JSON);
+										
+										List<String> arrayIDs = new ArrayList<>();
+										arrayIDs.add("663437082"); /*sussumu*/
+										arrayIDs.add("5986351015"); /*felipe*/
+										List<SocioTelegramIDBotDTO> listaSocioTeleID = botController.getSocioTeleID();
+										for (SocioTelegramIDBotDTO socioTeleID : listaSocioTeleID) {
+											String idAsString = String.valueOf(socioTeleID.getTelegramID());
+											arrayIDs.add(idAsString);
+										}
 
-										if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"5986351015"/*felipe */).contains(
+										// "663437082"/*sussumu*/,"765070396"/*favato*/,"5986351015"/*felipe */
+										if(/*Arrays.asList*/(arrayIDs).contains(
 											mensagem.get("message").get("from").get("id") + "")) {
 
 											String entrada = Normalizer.normalize(
