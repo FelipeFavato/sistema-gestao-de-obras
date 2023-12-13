@@ -50,7 +50,7 @@ export default {
           Authorization: this.localStorageToken
         }
       }).then(res => {
-        this.info = res.data;
+        this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
         if (callback) callback();
         this.setHttpStatusCode(res.status);
       }).catch(error => {
@@ -61,7 +61,8 @@ export default {
       axios.post("/api/socio",
       {
         nome: this.nome,
-        dataDesativacao: null
+        dataDesativacao: null,
+        telegramID: this.telegramID
       },
       {
         headers: {
@@ -75,13 +76,13 @@ export default {
       });
       this.cancel();
     },  
-    fillUpdateDeleteModal (codigo, nome, dataDesativacao, telegramID) {
+    fillUpdateDeleteModal (codigo, nome, dataD, teleID) {
       this.codigo = codigo;
       this.nome = nome;
-      this.dataDesativacao = dataDesativacao;
-      this.telegramID = telegramID;
+      this.dataDesativacao = dataD;
+      this.telegramID = teleID;
     },
-    updateInfoDB (codigo, nome, teleID) {
+    updateInfoDB (codigo, nome, dataD, teleID) {
       axios.put("/api/socio",
       {
         codigo: Number(codigo),
@@ -132,9 +133,7 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchInfoDB(() => {
-      console.log(this.info)
-    });
+    this.fetchInfoDB();
   }
 }
 
@@ -306,7 +305,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.dataDesativacao)"
+            @click="updateInfoDB(this.codigo, this.nome, this.dataDesativacao, this.telegramID)"
           >Salvar</button>
         </div>
       </div>
@@ -333,7 +332,7 @@ export default {
           <th scope="row">{{ socio.codigo }}</th>
           <td>{{ socio.nome }}</td>
           <td>{{ this.brazilDate(socio.dataDesativacao) }}</td>
-          <td>{{ this.telegramID }}</td>
+          <td>{{ socio.telegramID }}</td>
           <td></td>
           <td></td>
           <td></td>
@@ -344,8 +343,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(socio.codigo, socio.nome,
-              socio.dataDesativacao)"
+              @click="fillUpdateDeleteModal(socio.codigo, socio.nome, socio.dataDesativacao, socio.telegramID)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"

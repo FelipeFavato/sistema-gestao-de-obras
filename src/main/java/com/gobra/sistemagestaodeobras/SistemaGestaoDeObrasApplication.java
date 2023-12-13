@@ -129,15 +129,8 @@ public class SistemaGestaoDeObrasApplication {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_JSON);
 
-										if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"1691383719"/*felipe */).contains(
-											mensagem.get("message").get("from").get("id").asInt() + "")) {
-
-											// System.out.println(mensagem);
-											// System.out.println(mensagem.get("message"));
-											// System.out.println(mensagem.get("message").get("from"));
-											// System.out.println(mensagem.get("message").get("from").get("id"));
-											// System.out.println(mensagem.get("message").get("from").get("id").asInt());
-											// System.out.println(mensagem.get("message").get("from").get("id").asInt() + "");
+										if(Arrays.asList("663437082"/*sussumu*/,"765070396"/*favato*/,"5986351015"/*felipe */).contains(
+											mensagem.get("message").get("from").get("id") + "")) {
 
 											String entrada = Normalizer.normalize(
 												mensagem.get("message").get("text").asText().toUpperCase(),
@@ -171,7 +164,7 @@ public class SistemaGestaoDeObrasApplication {
                               put("text", retorno).
                               put("parse_mode", "html"));
                     	new RestTemplate().postForEntity(
-												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity(json, headers),
+												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity<>(json, headers),
 												String.class);
 										} else {
 											String json = new ObjectMapper().writeValueAsString(new ObjectMapper().createObjectNode().
@@ -179,7 +172,7 @@ public class SistemaGestaoDeObrasApplication {
                               put("text", retorno).
                               put("parse_mode", "html"));
                     	new RestTemplate().postForEntity(
-												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity(json, headers),
+												"https://api.telegram.org/bot" + token + "/sendMessage", new HttpEntity<>(json, headers),
 												String.class);
 
 										}

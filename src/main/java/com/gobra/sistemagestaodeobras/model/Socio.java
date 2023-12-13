@@ -48,7 +48,7 @@ public class Socio {
   private Date dataDesativacao;
 
   @Column(name = "telegram_id", length = 30)
-  private Integer telegramID;
+  private Long telegramID;
 
   // Cada Sócio tera uma lista de compras atrelada a ele.
   @JsonIgnore

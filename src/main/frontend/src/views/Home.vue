@@ -89,7 +89,7 @@ export default {
         this.obrasInfo = res.data;
         if (callback) callback();
       }).catch(error => {
-
+        this.validateHttpStatus(error.response.status);
       });
     },
     fetchUsuarioInfoDB () {
