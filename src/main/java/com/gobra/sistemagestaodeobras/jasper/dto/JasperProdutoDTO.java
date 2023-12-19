@@ -4,40 +4,64 @@ import com.gobra.sistemagestaodeobras.jasper.projection.JasperProdutoProjection;
 
 public class JasperProdutoDTO {
   
-  private Integer codigoProduto;
+  private Integer codigo;
   
-  private String nomeProduto;
+  private String nome;
+
+  private String categoria;
+
+  private String marca;
 
 
   public JasperProdutoDTO() {
 
   }
 
-  public JasperProdutoDTO(Integer codigo, String nome) {
-    this.codigoProduto = codigo;
-    this.nomeProduto = nome;
+  public JasperProdutoDTO(Integer codigo, String nome, String categoria, String marca) {
+    this.codigo = codigo;
+    this.nome = nome;
+    this.categoria = categoria;
+    this.marca = marca;
   }
 
   public JasperProdutoDTO(JasperProdutoProjection projection) {
-    codigoProduto = projection.getCodigoProduto();
-    nomeProduto = projection.getNomeProduto();
+    codigo = projection.getCodigo();
+    nome = projection.getNome();
+    categoria = projection.getCategoria();
+    marca = projection.getMarca();
   }
 
   // Getters e Setters
-  public Integer getCodigoProduto () {
-    return codigoProduto;
+  public Integer getCodigo () {
+    return codigo;
   }
 
-  public void setCodigoProduto (Integer codigo) {
-    this.codigoProduto = codigo;
+  public void setCodigo (Integer codigo) {
+    this.codigo = codigo;
   }
 
-  public String getNomeProduto () {
-    return nomeProduto;
+  public String getNome () {
+    return nome;
   }
 
-  public void setNomeProduto (String nome) {
-    this.nomeProduto = nome;
+  public void setNome (String nome) {
+    this.nome = nome;
+  }
+
+  public String getCategoria () {
+    return categoria;
+  }
+
+  public void setCategoria (String categoria) {
+    this.categoria = categoria;
+  }
+
+  public String getMarca () {
+    return marca;
+  }
+
+  public void setMarca (String marca) {
+    this.marca = marca;
   }
 
 }

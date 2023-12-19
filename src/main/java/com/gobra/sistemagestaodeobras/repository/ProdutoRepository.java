@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.model.Produto;
 import com.gobra.sistemagestaodeobras.jasper.projection.JasperProdutoProjection;
@@ -18,5 +19,21 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
       + "FROM public.produto"
   )
   List<JasperProdutoProjection>obterProdutoNomeCod();
+
+  @Query(
+    nativeQuery = true,
+    value = "SELECT "
+      + "t1.codigo as codigo, "
+      + "t1.nome as nome, "
+      + "t1.tipo_produto as categoria, "
+      + "t2.nome as marca "
+      + "FROM public.produto as t1 "
+      + "LEFT JOIN public.marca as t2 "
+      + "ON t1.id_marca = t2.codigo "
+      + "WHERE (:categoria = 'todos' OR t1.tipo_produto = :categoria) "
+      + "AND (:marca = 'todos' OR t2.nome = :marca) "
+      + "ORDER BY t1.nome ASC"
+    )
+  List<JasperProdutoProjection>obterRelatorioJasperProduto(@Param("categoria") String categoria, @Param("marca") String marca);
 
 }

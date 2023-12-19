@@ -2,8 +2,11 @@ package com.gobra.sistemagestaodeobras.jasper.projection;
 
 public interface JasperProdutoProjection {
   
-  Integer getCodigoProduto();
+  Integer getCodigo();
 
-  String getNomeProduto();
+  String getNome();
 
+  String getCategoria();
+
+  String getMarca();
 }

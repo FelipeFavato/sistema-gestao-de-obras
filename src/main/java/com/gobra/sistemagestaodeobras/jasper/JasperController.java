@@ -29,9 +29,9 @@ public class JasperController {
   private JasperService jasperService;
 
 
-  @GetMapping("produto")
-  public List<JasperProdutoDTO> getAllProduto () {
-    List<JasperProdutoDTO> listaProdutos = produtoRepository.obterProdutoNomeCod().stream().map(JasperProdutoDTO::new).toList();
+  @GetMapping("/produto/{categoria}/{marca}")
+  public List<JasperProdutoDTO> getAllProduto (@PathVariable String categoria, @PathVariable String marca) {
+    List<JasperProdutoDTO> listaProdutos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
     return listaProdutos;
   }
 
@@ -39,7 +39,5 @@ public class JasperController {
   public String generateReport (@PathVariable String format) throws FileNotFoundException, JRException {
     return jasperService.exportReport(format);
   }
-
-
 
 }
