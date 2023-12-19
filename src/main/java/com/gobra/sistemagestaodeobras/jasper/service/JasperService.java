@@ -29,9 +29,9 @@ public class JasperService {
   @Autowired
   private ProdutoRepository produtoRepository;
 
-  public String exportReport (String reportFormat) throws FileNotFoundException, JRException {
+  public String exportReport (String categoria, String marca) throws FileNotFoundException, JRException {
     String path = "/home/felipe/ProjetoFF";
-    List<JasperProdutoDTO> produtos = produtoRepository.obterProdutoNomeCod().stream().map(JasperProdutoDTO::new).toList();
+    List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
 
     // Carrega e compila o arquivo
     File file = ResourceUtils.getFile("classpath:jasperproduto.jrxml");
@@ -42,13 +42,16 @@ public class JasperService {
     parameters.put("createdBy", "Felipe");
     JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-    if (reportFormat.equalsIgnoreCase("html")) {
-      JasperExportManager.exportReportToHtmlFile(jasperPrint, path+"/produtosinfo.html");
-    }
+    // https://www.whalebonebuildingsupplies.co.uk/uploads/1/8/0/0/18007699/icon-construction-manager_orig.png
+    // if (reportFormat.equalsIgnoreCase("html")) {
+    //   JasperExportManager.exportReportToHtmlFile(jasperPrint, path+"/produtosinfo.html");
+    // }
 
-    if (reportFormat.equalsIgnoreCase("pdf")) {
-      JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
-    }
+    // if (reportFormat.equalsIgnoreCase("pdf")) {
+    //   JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
+    // }
+
+    JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
 
     return "Relatório gerado no caminho: " + path;
   }
