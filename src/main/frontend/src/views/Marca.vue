@@ -1,11 +1,13 @@
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   data () {
     return {
       info: [],
       localStorageToken: null,
+      useRouter: useRouter(),
       httpStatus: '',
       nome: '',
       dataDesativacao: ''

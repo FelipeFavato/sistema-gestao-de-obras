@@ -78,7 +78,7 @@ export default {
 
       <!-- Logo/Nome => link clicável para Home -->
       <a class="navbar-brand" href="#">
-        <img class="logo" src="../assets/imagens/capacete.png" alt="Logo">
+        <img class="logo" src="../assets/imagens/capacete-branco.png" alt="Logo">
       </a>
       <a class="navbar-brand" href="#">
         HUB 
@@ -106,9 +106,15 @@ export default {
             <a class="nav-link" href="#compra">Custos</a>
           </li>
 
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#obracusto">ObraCusto</a>
-          </li> -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Informações
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#dashboard">Dashboard</a></li>
+              <li><a class="dropdown-item" href="#relatorio">Relatórios</a></li>
+            </ul>
+          </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

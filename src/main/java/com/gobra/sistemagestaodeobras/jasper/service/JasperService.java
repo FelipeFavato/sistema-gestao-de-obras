@@ -30,7 +30,8 @@ public class JasperService {
   private ProdutoRepository produtoRepository;
 
   public String exportReport (String categoria, String marca) throws FileNotFoundException, JRException {
-    String path = "/home/felipe/ProjetoFF";
+    String userHome = System.getProperty("user.home");
+    String path = userHome + "/Downloads";
     List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
 
     // Carrega e compila o arquivo
@@ -43,6 +44,7 @@ public class JasperService {
     JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
     // https://www.whalebonebuildingsupplies.co.uk/uploads/1/8/0/0/18007699/icon-construction-manager_orig.png
+    // "https://www.google.com/url?q=https%3A%2F%2Flogocapaceteprojeto.png&sa=D&sntz=1&usg=AOvVaw09nmWljOAdTl1sL2BiEicZ"
     // if (reportFormat.equalsIgnoreCase("html")) {
     //   JasperExportManager.exportReportToHtmlFile(jasperPrint, path+"/produtosinfo.html");
     // }
@@ -51,7 +53,7 @@ public class JasperService {
     //   JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
     // }
 
-    JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
+    JasperExportManager.exportReportToPdfFile(jasperPrint, path + "/produtos.pdf");
 
     return "Relatório gerado no caminho: " + path;
   }

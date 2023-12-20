@@ -63,7 +63,7 @@ export default {
         <!-- Left Box -->
         <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #252925;">
           <div class="featured-image mb-3 mt-3">
-            <img src="../assets/imagens/capacete.png" alt="capacete" class="img-fluid" style="width: 250px;">
+            <img src="../assets/imagens/capacete-branco.png" alt="capacete" class="img-fluid" style="width: 250px;">
           </div>
           <p class="text-white fs-2" style="font-family:'Courier New', Courier, monospace; font-weight: 700;">HUB Construções</p>
           <!-- <small class="text-white text-warp text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;"></small> -->

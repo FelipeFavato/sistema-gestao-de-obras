@@ -3,6 +3,7 @@
 import { RouterView } from 'vue-router';
 import MenuNav from './components/MenuNav.vue';
 
+
 export default {
 
   components: {

@@ -22,7 +22,7 @@ public class JasperController {
   private JasperService jasperService;
 
 
-  // @GetMapping("/produto/{categoria}/{marca}")
+  // @GetMapping("/api/jasper/produto/{categoria}/{marca}")
   // public List<JasperProdutoDTO> getAllProduto (@PathVariable String categoria, @PathVariable String marca) {
   //   List<JasperProdutoDTO> listaProdutos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
   //   return listaProdutos;
