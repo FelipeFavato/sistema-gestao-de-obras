@@ -36,15 +36,14 @@
 					</textElement>
 					<text><![CDATA[Relatório de produtos]]></text>
 				</staticText>
-				<image>
+				<!-- <image>
 					<reportElement x="3" y="3" width="50" height="50" uuid="58470a55-5077-45ef-bf79-8c205adade87">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
-					<!-- ../frontend/src/assets/imagens/capacete.png -->
 					<imageExpression><![CDATA["https://lh5.googleusercontent.com/YhoI8_-rmDxrXTyfiQiJ02oCAYWVe-kS8FiUOFsjY3qy3mWmf2dx0Yhk0ti84f-ty8oLnD9FvB4RczZsmTDk5yWgmF_CcmbQwc3qnU70w2IbSjr9FjJjfvbX3OkVDC92Yw=w1280"]]></imageExpression>
-				</image>
+				</image> -->
 			</frame>
 		</band>
 	</title>

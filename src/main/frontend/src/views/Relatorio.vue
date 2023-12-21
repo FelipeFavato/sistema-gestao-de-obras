@@ -185,6 +185,7 @@ export default {
 
     <div v-if="mensagemConfirmacao" class="relatorio">
       <h2>Relátorio gerado na sua pasta de Downloads!</h2>
+      <!-- <p>{{ this.retorno.data }}</p> -->
     </div>
   </main>
 
