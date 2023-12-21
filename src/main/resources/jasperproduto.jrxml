@@ -42,7 +42,8 @@
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
-					<imageExpression><![CDATA["https://lh3.googleusercontent.com/YYNAbgI3wByZ2wgzU66_OPwGEbQSP1M55iJBDAk9XoQeODdlhJRDuDck_mn9vPk1q0Hr2OZlmgLiRZWUxtz8_5RFc36Sucszt0JZsKaxyx-xeDn0YBdIvisQnN_MHf7OgA=w1280"]]></imageExpression>
+					<!-- ../frontend/src/assets/imagens/capacete.png -->
+					<imageExpression><![CDATA["https://lh5.googleusercontent.com/YhoI8_-rmDxrXTyfiQiJ02oCAYWVe-kS8FiUOFsjY3qy3mWmf2dx0Yhk0ti84f-ty8oLnD9FvB4RczZsmTDk5yWgmF_CcmbQwc3qnU70w2IbSjr9FjJjfvbX3OkVDC92Yw=w1280"]]></imageExpression>
 				</image>
 			</frame>
 		</band>
