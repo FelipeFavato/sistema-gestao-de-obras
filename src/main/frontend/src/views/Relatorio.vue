@@ -64,6 +64,9 @@ export default {
         // if (callback) callback();
       });
     },
+    limparButtonActions() {
+      this.area = '';
+    },
     gerarButtonActions () {
       this.setMensagemConfirmacao(false);
       this.gerarPDF(() => {
@@ -89,8 +92,9 @@ export default {
 
   mounted () {
     this.getLocalStorageToken();
-    this.fetchMarcasInfo();
-    console.log(this.area)
+    this.fetchMarcasInfo(() => {
+      console.log(this.marcasInfo)
+    });
   }
 }
 
@@ -162,6 +166,14 @@ export default {
       <div class="barra-lateral-div">
         <button
           type="button"
+          class="btn btn-secondary"
+          :disabled="area === '' ? true : false"
+          @click="limparButtonActions()"
+          >
+          Limpar
+        </button>
+        <button
+          type="button"
           class="btn btn-success botao"
           @click="gerarButtonActions()"
           :disabled="area === '' ? true : false"
@@ -218,12 +230,13 @@ export default {
 
 .barra-lateral-div {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
+  padding-bottom: 5px;
 }
 
 .barra-lateral button {
   display: flex;
-  width: 30%;
+  width: 35%;
   justify-content: center;
 }
 
