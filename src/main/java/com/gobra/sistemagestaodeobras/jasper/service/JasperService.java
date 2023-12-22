@@ -3,6 +3,7 @@ package com.gobra.sistemagestaodeobras.jasper.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,13 @@ public class JasperService {
     List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
 
     // Carrega e compila o arquivo
-    File file = ResourceUtils.getFile("classpath:jasperproduto.jrxml");
-    FileInputStream fis = new FileInputStream(file);
-    JasperReport jasperReport = JasperCompileManager.compileReport(fis);
+    // File file = ResourceUtils.getFile("classpath:jasperproduto.jrxml");
+
+    InputStream produtoReportStream = getClass().getResourceAsStream("/jasperproduto.jrxml");
+    JasperReport jasperReport = JasperCompileManager.compileReport(produtoReportStream);
+
+    // FileInputStream fis = new FileInputStream(file);
+    // JasperReport jasperReport = JasperCompileManager.compileReport(fis);
     JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(produtos);
 
     Map<String, Object> parameters = new HashMap<>();
