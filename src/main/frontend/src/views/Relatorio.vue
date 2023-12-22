@@ -58,10 +58,13 @@ export default {
       axios.get(`/api/jasper/${this.area}/${this.categoria}/${this.marca}`,
       {
         headers: {
-          Authorization: this.localStorageToken
-        }
+          Authorization: this.localStorageToken,
+          'Content-Type': 'application/pdf',
+        },
+        responseType: 'blob'
       }).then(res => {
         this.exibirPDF(res.data);
+        // console.log(res)
         if (callback) callback();
       }).catch(error => {
         this.retorno = error.response;
