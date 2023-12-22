@@ -141,7 +141,7 @@ export default {
               <hr class="dropdown-divider">
               <option value="">S/ seleção</option>
             </select>
-            <label for="floatingSelect-area">Área</label>
+            <label for="floatingSelect-area">Relatórios</label>
           </div>
         </li>
 

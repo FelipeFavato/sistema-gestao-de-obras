@@ -107,14 +107,8 @@ export default {
             <a class="nav-link" href="#compra">Custos</a>
           </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Informações
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#dashboard">Dashboard</a></li>
-              <li><a class="dropdown-item" href="#relatorio">Relatórios</a></li>
-            </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="#relatorio">Relatórios</a>
           </li>
 
           <li class="nav-item dropdown">
