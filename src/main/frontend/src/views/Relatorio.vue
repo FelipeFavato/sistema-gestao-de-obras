@@ -61,6 +61,7 @@ export default {
         if (callback) callback();
       }).catch(error => {
         this.retorno = error.response;
+        console.log(this.retorno);
         // if (callback) callback();
       });
     },
@@ -92,9 +93,7 @@ export default {
 
   mounted () {
     this.getLocalStorageToken();
-    this.fetchMarcasInfo(() => {
-      console.log(this.marcasInfo)
-    });
+    this.fetchMarcasInfo();
   }
 }
 
