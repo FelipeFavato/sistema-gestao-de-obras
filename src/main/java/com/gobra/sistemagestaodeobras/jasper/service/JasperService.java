@@ -1,7 +1,5 @@
 package com.gobra.sistemagestaodeobras.jasper.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -10,7 +8,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import com.gobra.sistemagestaodeobras.jasper.dto.JasperProdutoDTO;
 import com.gobra.sistemagestaodeobras.repository.ProdutoRepository;
@@ -31,9 +28,9 @@ public class JasperService {
   @Autowired
   private ProdutoRepository produtoRepository;
 
-  public String exportReport (String categoria, String marca) throws FileNotFoundException, JRException {
-    String userHome = System.getProperty("user.home");
-    String path = userHome + "/Downloads";
+  public byte[] exportReport (String categoria, String marca) throws FileNotFoundException, JRException {
+    // String userHome = System.getProperty("user.home");
+    // String path = userHome + "/Downloads";
     List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioJasperProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
 
     // Carrega e compila o arquivo
@@ -41,6 +38,8 @@ public class JasperService {
 
     InputStream produtoReportStream = getClass().getResourceAsStream("/jasperproduto.jrxml");
     JasperReport jasperReport = JasperCompileManager.compileReport(produtoReportStream);
+    // JRSaver.saveObject(jasperReport, "produtoReport.jasper");
+
 
     // FileInputStream fis = new FileInputStream(file);
     // JasperReport jasperReport = JasperCompileManager.compileReport(fis);
@@ -60,9 +59,10 @@ public class JasperService {
     //   JasperExportManager.exportReportToPdfFile(jasperPrint, path+"/produtosinfo.pdf");
     // }
 
-    JasperExportManager.exportReportToPdfFile(jasperPrint, path + "/produtos.pdf");
+    // Exporta o relatório para um array de bytes
+    byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
 
-    return "Relatório gerado no caminho: " + path;
+    return pdfBytes;
   }
 
 }

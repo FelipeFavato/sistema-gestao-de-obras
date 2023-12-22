@@ -67,6 +67,7 @@ export default {
       this.getSessionUser();
       this.setUserRole();
     });
+    this.$emit('menuHeight', this.$el.clientHeight);
   }
 }
 

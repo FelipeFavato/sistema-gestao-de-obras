@@ -6,6 +6,12 @@ import MenuNav from './components/MenuNav.vue';
 
 export default {
 
+  data () {
+    return {
+      menuHeight: 0
+    }
+  },
+
   components: {
     MenuNav,
   },
@@ -16,6 +22,13 @@ export default {
     }
   },
 
+  methods: {
+    setMenuHeight(height) {
+      // Receber a altura do menu de navegação e ajustar a altura da barra lateral
+      this.menuHeight = height;
+    },
+  },
+
   mounted () {
   }
 }
@@ -24,11 +37,11 @@ export default {
 
 <template>
   <header v-if="isNotLoginPage" class="App-header">
-    <MenuNav />
+    <MenuNav @menuHeight="setMenuHeight" />
   </header>
 
   <main>
-    <RouterView />
+    <RouterView :alturaMenu="menuHeight" />
   </main>
 </template>
 

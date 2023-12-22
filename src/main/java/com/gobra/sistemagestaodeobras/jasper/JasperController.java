@@ -29,7 +29,7 @@ public class JasperController {
   // }
 
   @GetMapping("/produto/{categoria}/{marca}")
-  public String generateReport (@PathVariable String categoria, @PathVariable String marca) throws FileNotFoundException, JRException {
+  public byte[] generateReport (@PathVariable String categoria, @PathVariable String marca) throws FileNotFoundException, JRException {
     return jasperService.exportReport(categoria, marca);
   }
 

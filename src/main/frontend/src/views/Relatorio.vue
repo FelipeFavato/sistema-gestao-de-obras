@@ -21,6 +21,10 @@ export default {
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
@@ -57,11 +61,10 @@ export default {
           Authorization: this.localStorageToken
         }
       }).then(res => {
-        this.retorno = res;
+        this.exibirPDF(res.data);
         if (callback) callback();
       }).catch(error => {
         this.retorno = error.response;
-        console.log(this.retorno);
         // if (callback) callback();
       });
     },
@@ -73,6 +76,19 @@ export default {
       this.gerarPDF(() => {
         this.setMensagemConfirmacao(true);
       });
+    },
+    exibirPDF(pdfBytes) {
+      // Crie um Blob a partir dos bytes do PDF
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+      // Crie uma URL temporária para o Blob
+      const url = URL.createObjectURL(blob);
+
+      // Recupera um iframe
+      const iframe = document.getElementById('iframe');
+
+      // Defina a fonte do iframe como a URL temporária do Blob
+      iframe.src = url;
     },
     // Busca de Dados
     fetchMarcasInfo(callback) {
@@ -102,7 +118,7 @@ export default {
 
 
 <template>
-  <main class="main-container">
+  <main class="main-container" :style="{ height: `calc(99vh - ${alturaMenu}px)` }">
     <aside class="barra-lateral">
       <div>
         <h4 class="title">Filtros</h4>
@@ -182,9 +198,8 @@ export default {
       </div>
     </aside>
 
-    <div v-if="mensagemConfirmacao" class="relatorio">
-      <h2>Relátorio gerado na sua pasta de Downloads!</h2>
-      <!-- <p>{{ this.retorno.data }}</p> -->
+    <div class="relatorio">
+      <iframe id="iframe" width="100%" height="100%"></iframe>
     </div>
   </main>
 
@@ -199,7 +214,6 @@ export default {
 }
 
 .relatorio {
-  /* border: 1px solid #2b3035; */
   width: 90%;
 }
 
@@ -215,11 +229,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 80vh;
+  /* height: 85vh; */
   /* border: 5px solid #2b3035; */
+  /* background-color: white; */
   width: 12%;
   border-right: 3px solid #2b3035;
-  border-bottom: 3px solid #2b3035;
+  height: 100%;
+  /* border-bottom: 3px solid #2b3035; */
   /* background-color: #BBBBBB; */
 }
 
@@ -231,7 +247,7 @@ export default {
 .barra-lateral-div {
   display: flex;
   justify-content: space-around;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
 }
 
 .barra-lateral button {
