@@ -8,6 +8,7 @@ const routes = [
   { path: '/obra', name: 'obra', component: () => import('../views/Obra.vue') },
   { path: '/compra', name: 'compra', component: Compra },
   { path: '/relatorio', component: () => import('../views/Relatorio.vue') },
+  { path: '/dashboard', component: () => import('../views/Dashboard.vue') },
   { path: '/socio', component: () => import('../views/Socio.vue') },
   { path: '/localuso', component: () => import('../views/LocalUso.vue') },
   { path: '/fornecedor', component: () => import('../views/Fornecedores.vue') },

@@ -690,7 +690,7 @@ export default {
   <main>
 
     <!-- DropDown com as opções de Obra para selecionar e renderizar os gráficos relativos aquela obra -->
-    <!-- <header class="header middle-margin">
+    <header class="header middle-margin">
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {{ selectedObraNome ? selectedObraNome : 'Obras' }}
@@ -705,7 +705,7 @@ export default {
           </li>
         </ul>
       </div>
-    </header> -->
+    </header>
 
     <div v-if="this.selectedObraNome">
       <div class="row">

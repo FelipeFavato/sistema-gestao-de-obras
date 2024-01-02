@@ -108,6 +108,10 @@ export default {
           </li>
 
           <li class="nav-item">
+            <a class="nav-link" href="#dashboard">Dashboard</a>
+          </li>
+
+          <li class="nav-item">
             <a class="nav-link" href="#relatorio">Relatórios</a>
           </li>
 

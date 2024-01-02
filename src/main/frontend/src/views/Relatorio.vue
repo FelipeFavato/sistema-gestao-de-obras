@@ -124,7 +124,7 @@ export default {
   <main class="main-container" :style="{ height: `calc(99vh - ${alturaMenu}px)` }">
     <aside class="barra-lateral">
       <div>
-        <h4 class="title">Filtros</h4>
+        <!-- <h4 class="title font-16">Filtros</h4> -->
         
         <ul class="nav flex-column">
 
@@ -139,7 +139,7 @@ export default {
               <!-- <option selected value=""></option> -->
               <option value="produto">Produtos</option>
               <hr class="dropdown-divider">
-              <option value="">S/ seleção</option>
+              <option value="">Selecionar</option>
             </select>
             <label for="floatingSelect-area">Relatórios</label>
           </div>
@@ -257,6 +257,10 @@ export default {
   display: flex;
   width: 35%;
   justify-content: center;
+}
+
+.font-16 {
+  font-size: 16px;
 }
 
 </style>
