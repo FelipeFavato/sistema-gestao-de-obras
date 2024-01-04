@@ -7,14 +7,12 @@ public class Peixe implements IPresa, IPredador {
 
   @Override
   public String cacar() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'cacar'");
+    return "O peixe está caçando peixes menores!";
   }
 
   @Override
   public String fugir() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'fugir'");
+    return "O Peixe esta sendo caçado por peixes maiores!";
   }
   
 }
