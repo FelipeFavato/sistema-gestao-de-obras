@@ -21,11 +21,11 @@ public class RelatorioController {
   @Autowired
   private RelatorioService relatorioService;
 
-  @GetMapping("/produto/{categoria}/{marca}/{formato}")
+  @GetMapping("/produto/{categoria}/{marca}")
   public byte[] generateProdutoReport (
     @PathVariable String categoria, @PathVariable String marca, @PathVariable String formato
   ) throws FileNotFoundException, JRException {
-    return relatorioService.exportProdutoReport(categoria, marca, formato);
+    return relatorioService.exportProdutoReport(categoria, marca);
   }
 
 }

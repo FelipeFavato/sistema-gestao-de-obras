@@ -24,10 +24,12 @@ public class RelatorioService {
   @Autowired
   private ProdutoRepository produtoRepository;
 
-  public byte[] exportProdutoReport (String categoria, String marca, String formato) throws FileNotFoundException, JRException {
+  public byte[] exportProdutoReport (String categoria, String marca) throws FileNotFoundException, JRException {
     // String userHome = System.getProperty("user.home");
     // String path = userHome + "/Downloads";
     List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
+
+    System.out.println(produtos);
 
     // if ("pdf".equalsIgnoreCase(formato)) {
       byte[] pdfBytes = exportPDFReport.exportPDFReport("/jasperproduto.jrxml", produtos);
