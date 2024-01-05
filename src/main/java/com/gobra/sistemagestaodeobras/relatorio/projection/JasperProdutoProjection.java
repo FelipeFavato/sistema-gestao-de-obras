@@ -1,4 +1,4 @@
-package com.gobra.sistemagestaodeobras.jasper.projection;
+package com.gobra.sistemagestaodeobras.relatorio.projection;
 
 public interface JasperProdutoProjection {
   

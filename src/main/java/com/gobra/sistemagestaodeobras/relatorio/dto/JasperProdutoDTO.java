@@ -1,6 +1,6 @@
-package com.gobra.sistemagestaodeobras.jasper.dto;
+package com.gobra.sistemagestaodeobras.relatorio.dto;
 
-import com.gobra.sistemagestaodeobras.jasper.projection.JasperProdutoProjection;
+import com.gobra.sistemagestaodeobras.relatorio.projection.JasperProdutoProjection;
 
 public class JasperProdutoDTO {
   
