@@ -17,7 +17,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
-public class ExportPDFReport {
+public class PDFReport {
   
   public byte[] exportPDFReport (String caminhoArquivo, List<?> listaItens) throws FileNotFoundException, JRException {
     InputStream reportStream = getClass().getResourceAsStream(caminhoArquivo);

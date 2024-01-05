@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.model.Produto;
-import com.gobra.sistemagestaodeobras.relatorio.projection.JasperProdutoProjection;
+import com.gobra.sistemagestaodeobras.relatorio.projection.RelatorioProdutoProjection;
 
 public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
   
@@ -18,7 +18,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
       + "nome as nomeProduto "
       + "FROM public.produto"
   )
-  List<JasperProdutoProjection>obterProdutoNomeCod();
+  List<RelatorioProdutoProjection>obterProdutoNomeCod();
 
   @Query(
     nativeQuery = true,
@@ -34,6 +34,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
       + "AND (:marca = 'todos' OR t2.nome = :marca) "
       + "ORDER BY t1.nome ASC"
     )
-  List<JasperProdutoProjection>obterRelatorioProduto(@Param("categoria") String categoria, @Param("marca") String marca);
+  List<RelatorioProdutoProjection>obterRelatorioProduto(@Param("categoria") String categoria, @Param("marca") String marca);
 
 }

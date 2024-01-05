@@ -1,6 +1,6 @@
 package com.gobra.sistemagestaodeobras.relatorio.projection;
 
-public interface JasperProdutoProjection {
+public interface RelatorioProdutoProjection {
   
   Integer getCodigo();
 

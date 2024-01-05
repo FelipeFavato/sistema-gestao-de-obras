@@ -17,6 +17,7 @@ export default {
       retorno: '',
       // Variaveis de comportamento
       area: '',
+      formato: 'pdf',
       mensagemConfirmacao: false,
     }
   },
@@ -55,7 +56,7 @@ export default {
       this.categoria = categ;
     },
     gerarPDF (callback) {
-      axios.get(`/api/jasper/${this.area}/${this.categoria}/${this.marca}`,
+      axios.get(`/api/relatorio/${this.area}/pdf/${this.categoria}/${this.marca}`,
       {
         headers: {
           Authorization: this.localStorageToken,
@@ -73,6 +74,7 @@ export default {
     },
     limparButtonActions() {
       this.area = '';
+      this.formato = 'pdf';
     },
     gerarButtonActions () {
       this.setMensagemConfirmacao(false);
@@ -92,6 +94,20 @@ export default {
 
       // Defina a fonte do iframe como a URL temporária do Blob
       iframe.src = url;
+    },
+    baixarCSV () {
+      axios.get(`/api/relatorio/${this.area}/csv/${this.categoria}/${this.marca}`,
+      {
+        headers: {
+          Authorization: this.localStorageToken,
+          'Content-Type': 'application/csv',
+          'Content-Disposition': 'attachment'
+        },
+      }).then(res => {
+        console.log(res.data)
+      }).catch(error => {
+        console.log(error);
+      })
     },
     // Busca de Dados
     fetchMarcasInfo(callback) {
@@ -123,64 +139,80 @@ export default {
 <template>
   <main class="main-container" :style="{ height: `calc(99vh - ${alturaMenu}px)` }">
     <aside class="barra-lateral">
-      <div>
-        <!-- <h4 class="title font-16">Filtros</h4> -->
-        
+      <!-- Filtros -->
+      <div>        
         <ul class="nav flex-column">
 
-          <!-- Áreas -->
-        <li class="nav-item">
-          <div class="form-floating">
-            <select
+            <!-- Áreas -->
+          <li class="nav-item">
+            <div class="form-floating">
+              <select
+                class="form-select"
+                id="floatingSelect-area"
+                aria-label="Floating label select example"
+                v-model="area">
+                <!-- <option selected value=""></option> -->
+                <option value="produto">Produtos</option>
+                <hr class="dropdown-divider">
+                <option value="">Selecionar</option>
+              </select>
+              <label for="floatingSelect-area">Relatórios</label>
+            </div>
+          </li>
+
+          <!-- Produto - Categoria -->
+          <li v-if="area === 'produto'" class="nav-item">
+            <div class="form-floating">
+              <select
               class="form-select"
-              id="floatingSelect-area"
-              aria-label="Floating label select example"
-              v-model="area">
-              <!-- <option selected value=""></option> -->
-              <option value="produto">Produtos</option>
-              <hr class="dropdown-divider">
-              <option value="">Selecionar</option>
-            </select>
-            <label for="floatingSelect-area">Relatórios</label>
-          </div>
-        </li>
+              id="floatingSelect-categoria"
+                aria-label="Floating label select example"
+                v-model="categoria">
+                <option selected value="todos">Todas</option>
+                <option value="Material">Material</option>
+                <option value="Serviço">Serviço</option>
+                <option value="TaxasImpostos">Taxas/Impostos</option>
+              </select>
+              <label for="floatingSelect-categoria">Categoria</label>
+            </div>
+          </li>
 
-        <!-- Produto - Categoria -->
-        <li v-if="area === 'produto'" class="nav-item">
-          <div class="form-floating">
-            <select
-            class="form-select"
-            id="floatingSelect-categoria"
-              aria-label="Floating label select example"
-              v-model="categoria">
-              <option selected value="todos">Todas</option>
-              <option value="Material">Material</option>
-              <option value="Serviço">Serviço</option>
-              <option value="TaxasImpostos">Taxas/Impostos</option>
-            </select>
-            <label for="floatingSelect-categoria">Categoria</label>
-          </div>
-        </li>
+          <!-- Produto - Marca -->
+          <li v-if="area === 'produto'" class="nav-item">
+            <div class="form-floating">
+              <select
+                class="form-select"
+                id="floatingSelect-marca"
+                aria-label="Floating label select example"
+                v-model="marca">
+                <option selected value="todos">Todas</option>
+                <option
+                v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
+                >{{ marca.nome }}</option>
+              </select>
+              <label for="floatingSelect-marca">Marca</label>
+            </div>
+          </li>
 
-        <!-- Produto - Marca -->
-        <li v-if="area === 'produto'" class="nav-item">
-          <div class="form-floating">
-            <select
-              class="form-select"
-              id="floatingSelect-marca"
-              aria-label="Floating label select example"
-              v-model="marca">
-              <option selected value="todos">Todas</option>
-              <option
-              v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
-              >{{ marca.nome }}</option>
-            </select>
-            <label for="floatingSelect-marca">Marca</label>
-          </div>
-        </li>
-      </ul>
-    </div>
+          <!-- Formato -->
+          <li v-if="area != ''" class="nav-item">
+            <div class="form-floating">
+              <select
+                class="form-select"
+                id="floatingSelect-formato"
+                aria-label="Floating label select example"
+                v-model="formato">
+                <option value="pdf">PDF</option>
+                <option value="csv">Excel (CSV)</option>
+              </select>
+              <label for="floatingSelect-formato">Formato</label>
+            </div>
+          </li>
 
+        </ul>
+      </div>
+
+      <!-- Botões -->
       <div class="barra-lateral-div">
         <button
           type="button"
@@ -193,10 +225,10 @@ export default {
         <button
           type="button"
           class="btn btn-success botao"
-          @click="gerarButtonActions()"
+          @click="formato === 'pdf' ? gerarButtonActions() : baixarCSV()"
           :disabled="area === '' ? true : false"
           >
-          Gerar
+          {{ formato === 'pdf' ? 'Gerar': 'Baixar' }}
         </button>
       </div>
     </aside>

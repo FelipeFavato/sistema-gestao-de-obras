@@ -1,8 +1,8 @@
 package com.gobra.sistemagestaodeobras.relatorio.dto;
 
-import com.gobra.sistemagestaodeobras.relatorio.projection.JasperProdutoProjection;
+import com.gobra.sistemagestaodeobras.relatorio.projection.RelatorioProdutoProjection;
 
-public class JasperProdutoDTO {
+public class RelatorioProdutoDTO {
   
   private Integer codigo;
   
@@ -13,18 +13,18 @@ public class JasperProdutoDTO {
   private String marca;
 
 
-  public JasperProdutoDTO() {
+  public RelatorioProdutoDTO() {
 
   }
 
-  public JasperProdutoDTO(Integer codigo, String nome, String categoria, String marca) {
+  public RelatorioProdutoDTO(Integer codigo, String nome, String categoria, String marca) {
     this.codigo = codigo;
     this.nome = nome;
     this.categoria = categoria;
     this.marca = marca;
   }
 
-  public JasperProdutoDTO(JasperProdutoProjection projection) {
+  public RelatorioProdutoDTO(RelatorioProdutoProjection projection) {
     codigo = projection.getCodigo();
     nome = projection.getNome();
     categoria = projection.getCategoria();
