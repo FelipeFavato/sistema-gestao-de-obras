@@ -23,7 +23,7 @@ public class RelatorioController {
 
   @GetMapping("/produto/{categoria}/{marca}")
   public byte[] generateProdutoReport (
-    @PathVariable String categoria, @PathVariable String marca, @PathVariable String formato
+    @PathVariable String categoria, @PathVariable String marca
   ) throws FileNotFoundException, JRException {
     return relatorioService.exportProdutoReport(categoria, marca);
   }

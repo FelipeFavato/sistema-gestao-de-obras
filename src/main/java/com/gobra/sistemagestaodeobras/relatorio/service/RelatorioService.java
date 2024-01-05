@@ -29,12 +29,12 @@ public class RelatorioService {
     // String path = userHome + "/Downloads";
     List<JasperProdutoDTO> produtos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(JasperProdutoDTO::new).toList();
 
-    System.out.println(produtos);
+    // System.out.println(produtos);
 
     // if ("pdf".equalsIgnoreCase(formato)) {
-      byte[] pdfBytes = exportPDFReport.exportPDFReport("/jasperproduto.jrxml", produtos);
+    byte[] pdfBytes = exportPDFReport.exportPDFReport("/jasperproduto.jrxml", produtos);
 
-      return pdfBytes;
+    return pdfBytes;
 
     // } else if ("csv".equalsIgnoreCase(formato)) {
       // lógica para gerar o arquivo CSV
