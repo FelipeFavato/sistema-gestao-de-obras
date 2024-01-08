@@ -26,14 +26,11 @@ public class RelatorioService {
 
   // Produto PDF -------------------------------------------------------
   public byte[] exportPDFProdutoReport (String categoria, String marca) throws FileNotFoundException, JRException {
-    // String userHome = System.getProperty("user.home");
-    // String path = userHome + "/Downloads";
     List<RelatorioProdutoDTO> produtos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
 
     byte[] pdfBytes = pdfReport.exportPDFReport("/jasperproduto.jrxml", produtos);
 
     return pdfBytes;
-
   }
 
   // ------------------------------------------------------------------------

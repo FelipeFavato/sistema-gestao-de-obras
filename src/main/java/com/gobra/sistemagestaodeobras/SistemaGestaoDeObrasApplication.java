@@ -1,4 +1,4 @@
-// Arquivo de start da aplicação
+// Arquivo de start da aplicação 
 package com.gobra.sistemagestaodeobras;
 
 import java.text.Normalizer;

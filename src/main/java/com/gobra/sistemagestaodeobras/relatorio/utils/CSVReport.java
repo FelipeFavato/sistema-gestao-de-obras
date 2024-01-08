@@ -15,12 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class CSVReport {
 
+	// Todos -------------------------------------------------------------------------------------------
 	public void formatCSVReport (HttpServletResponse response, String nomeArquivo) throws Exception {
     response.setCharacterEncoding("UTF-8");
-    response.setContentType("text/csv; charset=UTF-8");
+    response.setContentType("text/csv;charset=UTF-8");
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo);
 	}
 
+	// --------------------------------------------------------------------------------------------------
 	
 	// Produto -----------------------------------------------------------------------------------------
 	public StatefulBeanToCsv<RelatorioProdutoDTO> createProdutoCSVWriter (HttpServletResponse response) throws Exception {
@@ -47,7 +49,6 @@ public class CSVReport {
 	public void setHeadersProduto (HttpServletResponse response) throws Exception {
 		response.getWriter().write("\"CODIGO\",\"NOME\",\"CATEGORIA\",\"MARCA\"\n");
 	}
-
 	// --------------------------------------------------------------------------------------------------
 
 }
