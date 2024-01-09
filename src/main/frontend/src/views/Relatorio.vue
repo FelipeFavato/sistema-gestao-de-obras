@@ -95,20 +95,37 @@ export default {
       // Defina a fonte do iframe como a URL temporária do Blob
       iframe.src = url;
     },
-    baixarCSV () {
+    baixarCSV() {
       axios.get(`/api/relatorio/${this.area}/csv/${this.categoria}/${this.marca}`,
       {
         headers: {
           Authorization: this.localStorageToken,
-          'Content-Type': 'application/csv',
-          'Content-Disposition': 'attachment'
+          'Content-Type': 'application/json'
         },
-      }).then(res => {
-        console.log(res.data)
-      }).catch(error => {
-        console.log(error);
+        responseType: 'blob'
       })
-    },
+      .then(response => {
+        // Cria um Blob a partir dos dados da resposta
+        var blob = new Blob([response.data]);
+
+        // Cria um URL de objeto para o Blob
+        var url = window.URL.createObjectURL(blob);
+        
+        // Cria um link temporário e configura o URL
+        var link = document.createElement('a');
+        link.href = url;
+
+        // Define o atributo de download para o nome do arquivo desejado
+        link.download = `${this.area}.csv`;
+        
+        // Simula um clique no link para iniciar o download
+        link.click();
+
+        // Libera recursos do URL de objeto
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Erro na solicitação:', error));
+    }, 
     // Busca de Dados
     fetchMarcasInfo(callback) {
       axios.get('/api/marca',
@@ -214,6 +231,8 @@ export default {
 
       <!-- Botões -->
       <div class="barra-lateral-div">
+
+        <!-- Botão Limpar -->
         <button
           type="button"
           class="btn btn-secondary"
@@ -222,19 +241,35 @@ export default {
           >
           Limpar
         </button>
+    
+        <!-- Botão Gerar -->
         <button
+          v-if="formato === 'pdf'"
           type="button"
           class="btn btn-success botao"
-          @click="formato === 'pdf' ? gerarButtonActions() : baixarCSV()"
+          @click="gerarButtonActions()"
           :disabled="area === '' ? true : false"
-          >
-          {{ formato === 'pdf' ? 'Gerar': 'Baixar' }}
+        >
+          Gerar
         </button>
+    
+        <!-- Botão Baixar -->
+        <button
+          v-if="formato === 'csv'"
+          @click="baixarCSV()"
+          type="button"
+          class="btn btn-success"
+          :disabled="area === '' ? true : false"
+        >
+          Baixar
+        </button>
+
       </div>
     </aside>
 
     <div class="relatorio">
       <iframe id="iframe" width="100%" height="100%"></iframe>
+      
     </div>
   </main>
 
