@@ -60,15 +60,15 @@ public class Socio {
   // Um sócio poderá participar de muitas obras.
   // Uma obra poderá ter muitos sócios participando.
 
-  // @ManyToMany(mappedBy = "socios", fetch = FetchType.LAZY)
-  // @JsonIgnore
-  // private List<Obra> obras;
-  @ManyToMany
-  @JoinTable(
-    name = "socio_obra", 
-    joinColumns = @JoinColumn(name = "id_socio", referencedColumnName = "codigo"), 
-    inverseJoinColumns = @JoinColumn(name = "id_obra", referencedColumnName = "codigo"))
   @JsonIgnore
+  @ManyToMany(
+    // fetch = FetchType.LAZY,
+    // cascade = CascadeType.ALL
+  )
+  @JoinTable(name = "socio_obra", 
+    joinColumns = @JoinColumn(name = "id_socio", referencedColumnName = "codigo"), 
+    inverseJoinColumns = @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
+  )
   private Set<Obra> obras;
 
   public Socio(SocioRequestDTO data) {

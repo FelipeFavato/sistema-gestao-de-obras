@@ -66,4 +66,5 @@ public class SocioController {
   public void deletaSocio (@RequestBody Socio socio) {
     repository.delete(socio);
   }
+
 }

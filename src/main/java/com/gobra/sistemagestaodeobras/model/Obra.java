@@ -81,8 +81,10 @@ public class Obra {
   // @JsonIgnore
   // private List<Socio> socios;
 
-  @ManyToMany(mappedBy = "obras")
-  // @JsonIgnore
+  @JsonIgnore
+  @ManyToMany(mappedBy = "obras"
+  // fetch = FetchType.LAZY
+  )
   private Set<Socio> socios;
 
 

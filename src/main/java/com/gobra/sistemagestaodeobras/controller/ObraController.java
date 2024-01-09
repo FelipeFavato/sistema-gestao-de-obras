@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gobra.sistemagestaodeobras.dto.AssociacaoSocioObraDTO;
 import com.gobra.sistemagestaodeobras.dto.ObraRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.ObraResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Obra;
 import com.gobra.sistemagestaodeobras.repository.ObraRepository;
+import com.gobra.sistemagestaodeobras.service.ObraService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,6 +32,9 @@ public class ObraController {
   
   @Autowired
   private ObraRepository repository;
+
+  @Autowired
+  private ObraService obraService;
 
   @PostMapping
   public void saveObra(@RequestBody ObraRequestDTO data) {
@@ -72,4 +78,15 @@ public class ObraController {
     repository.delete(obra);
   }
 
+  // Associar sócio a uma obra
+  @PostMapping("/associar-socio-obra")
+  public ResponseEntity<String> associarSocioObra(@RequestBody AssociacaoSocioObraDTO associacaoDTO) {
+      try {
+        obraService.associarSocioAObra(associacaoDTO.getIdSocio(), associacaoDTO.getIdObra());
+        return ResponseEntity.ok("Associação realizada com sucesso!");
+      } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Erro ao realizar a associação: " + e.getMessage());
+      }
+  }
 }

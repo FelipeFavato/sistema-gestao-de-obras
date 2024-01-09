@@ -73,6 +73,10 @@ export default {
     };
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
@@ -120,24 +124,25 @@ export default {
         if (chosenObra.codigo === cod) {
           this.obra = chosenObra;
           this.getObraInfo = chosenObra;
-          console.log(this.obra);
         }
       }
     },
     // Atribui um Socio a uma Obra.
-    assignSocio () {
-      axios.put("/api/obra",
+    assignSocio (codigoSocio) {
+      axios.post("/api/obra/associar-socio-obra",
+      {
+        idSocio: codigoSocio,
+        idObra: this.getObraInfo.codigo
+      },
       {
         headers: {
           Authorization: `Bearer ${this.localStorageToken}`
         }
-      },
-      {
-
       }).then(res => {
-
+        this.fetchObrasInfoDB();
+        console.log(res);
       }).catch(error => {
-
+        console.log(error)
       });
     },
     cancel () {
@@ -280,7 +285,7 @@ export default {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchObrasInfoDB(() => {
-      console.log(this.obrasInfo)
+      // console.log(this.obrasInfo)
     });
     this.fetchSociosInfoDB();
   }
@@ -592,7 +597,7 @@ export default {
         </div>
 
         <div class="modal-body">
-          <form action="PUT">
+          <form action="POST">
 
             <!-- Código - Obra -->
             <div class="mb-3">
@@ -625,7 +630,7 @@ export default {
                 id="socio-select"
                 v-model="selectedSocio"
                 ><option
-                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.codigo"
                 >{{ socio.nome }}</option>
               </select>
             </div>
@@ -639,12 +644,14 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="assignSocio(this.codigo, this.nome, this.endereco, this.dataInicio, this.dataPrevistaFim, this.dataRealFim, this.custoPrevisto)"
+            @click="assignSocio(this.selectedSocio)"
           >Salvar</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- DesAtribuirSocioModal -->
 
   <!-- Tabela Obras -->
   <main v-show="!showSocios" class="middle-margin table-responsive">
@@ -682,12 +689,12 @@ export default {
               @click="fillUpdateDeleteModal(obra.codigo, obra.nome, obra.endereco, obra.dataInicio,
                 obra.dataPrevistaFim, obra.dataRealFim, obra.custoMaoDeObra, obra.custoPrevisto)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
-            <!-- <button
+            <button
               type="button"
               class="btn btn-light btn-sm small"
               title="Sócios"
               @click="getSociosForThisObra(obra.codigo)"
-            ><img src="../assets/imagens/perfil-preto.jpg" alt="socios"></button> -->
+            ><img src="../assets/imagens/perfil-preto.jpg" alt="socios"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
