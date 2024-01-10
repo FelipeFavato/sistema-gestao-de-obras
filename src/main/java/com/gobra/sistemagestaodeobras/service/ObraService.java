@@ -8,6 +8,8 @@ import com.gobra.sistemagestaodeobras.model.Socio;
 import com.gobra.sistemagestaodeobras.repository.ObraRepository;
 import com.gobra.sistemagestaodeobras.repository.SocioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class ObraService {
 
@@ -28,4 +30,18 @@ public class ObraService {
 
     obraRepository.save(obra);
   }
+
+  public void desassociarSocioDeObra(Integer idSocio, Integer idObra) {
+    Socio socio = socioRepository.findById(idSocio)
+            .orElseThrow(() -> new EntityNotFoundException("Sócio não encontrado com ID: " + idSocio));
+
+    Obra obra = obraRepository.findById(idObra)
+            .orElseThrow(() -> new EntityNotFoundException("Obra não encontrada com ID: " + idObra));
+
+    socio.getObras().remove(obra);
+    obra.getSocios().remove(socio);
+
+    obraRepository.save(obra);
+  }
+
 }

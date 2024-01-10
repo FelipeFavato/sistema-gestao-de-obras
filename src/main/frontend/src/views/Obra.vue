@@ -58,7 +58,8 @@ export default {
       httpStatus: '',
       showSocios: false,
       getObraInfo: {},
-      selectedSocio: '',
+      selectedSocioID: '',
+      sociosNotYetAssigned: [],
       // Variáveis para requisição
       localStorageToken: null,
       codigo: '',
@@ -99,11 +100,20 @@ export default {
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para alternar a renderização de Obras e Sócios.
-    switchObrasSocios () {
-      this.showSocios = !this.showSocios;
-      this.clearSelectedSocioByObra();
-      this.clearSelectedObra();
+    // -----------------------------------------------------------------------------------------
+    // Método para limpar os dados preenchidos caso o usuário desista da requisição.
+    cancel () {
+      this.codigo = '';
+      this.nome = '';
+      this.endereco = '';
+      this.dataInicio = '';
+      this.dataPrevistaFim = '';
+      this.dataRealFim = '';
+      this.custoMaoDeObra = '';
+      this.custoPrevisto = '';
+    },
+    cancelAtribuir () {
+      this.selectedSocioID = '';
     },
     // Método para limpar a lista de sócios selecionados por obra.
     clearSelectedSocioByObra () {
@@ -113,12 +123,20 @@ export default {
     clearSelectedObra () {
       this.obra = {};
     },
-    // Recupera os sócios corretos para a obra selecionada
-    getSociosForThisObra (cod) {
-      this.switchObrasSocios();
-      this.fillObraForRequest(cod);
+    // Método para alternar a renderização de Obras e Sócios.
+    // Clicando no botão de 'Sócios':
+    //  - Troca o valor de 'showSocios' para True, mostrando os sócios;
+    //  - Limpa os Sócios selecionados por obra para que possa repopular com os sócios corretos da nova Obra selecionada;
+    //  - Limpa a Obra selecionada para que possa repopular com a nova obra selecionada.
+    // Clicando no botão de 'Voltar':
+    //  - Troca o valor de 'showSocios' para False, escondendo os sócios;
+    //  - Apenas limpa os sócios selecionados e a Obra selecionada.
+    switchObrasSocios () {
+      this.showSocios = !this.showSocios;
+      this.clearSelectedSocioByObra();
+      this.clearSelectedObra();
     },
-    // Método para preencher a obra para a atribuição de sócios
+    // Método para preencher a obra para a atribuição de sócios.
     fillObraForRequest (cod) {
       for (let chosenObra of this.obrasInfo) {
         if (chosenObra.codigo === cod) {
@@ -127,8 +145,41 @@ export default {
         }
       }
     },
-    // Atribui um Socio a uma Obra.
+    // Método para preencher a lista de Sócios de acordo com a obra selecionada.
+    fillSociosSelecionadosByObra () {
+      this.selectedSocioByObra =  this.getObraInfo.socios;
+    },
+    // Métodos para gerar uma lista mais adequada para a atribuição de sócios.
+    diffObjectsArray(arr1, arr2) {
+      // Filtrar objetos exclusivos em arr1
+      let uniqueInArr1 = arr1.filter(obj1 => !arr2.some(obj2 => obj1.codigo === obj2.codigo));
+
+      // Filtrar objetos exclusivos em arr2
+      let uniqueInArr2 = arr2.filter(obj2 => !arr1.some(obj1 => obj2.codigo === obj1.codigo));
+
+      // Combinar os resultados
+      let result = uniqueInArr1.concat(uniqueInArr2);
+
+      return result;
+    },
+    selectNotYetAssignedSocios () {
+      this.sociosNotYetAssigned = this.diffObjectsArray(this.sociosInfo, this.selectedSocioByObra);
+    },
+    // Recupera os sócios corretos para a obra selecionada.
+    // Clicando no botão 'Sócios':
+    //  - Limpa tudo no método 'switchObrasSocios' e troca 'showSocios' para True;
+    //  - Popula a obra correta com 'fillObraForRequest';
+    //  - Popula os sócios corretos daquela obra com 'fillSociosSelecionadosByObra'.
+    //  - Popula os sócios ainda não atribuidos para a obra selecionada.
+    getSociosForThisObra (cod) {
+      this.switchObrasSocios(); 
+      this.fillObraForRequest(cod);
+      this.fillSociosSelecionadosByObra();
+      this.selectNotYetAssignedSocios();
+    },
+    // Atribui e desatribui um Socio a uma Obra.
     assignSocio (codigoSocio) {
+      this.cancelAtribuir();
       axios.post("/api/obra/associar-socio-obra",
       {
         idSocio: codigoSocio,
@@ -139,21 +190,40 @@ export default {
           Authorization: `Bearer ${this.localStorageToken}`
         }
       }).then(res => {
-        this.fetchObrasInfoDB();
-        console.log(res);
+        const self = this;
+        this.fetchObrasInfoDB(() => {
+          self.fillObraForRequest(this.getObraInfo.codigo);
+          self.fillSociosSelecionadosByObra();
+          self.selectNotYetAssignedSocios();
+        });
       }).catch(error => {
-        console.log(error)
       });
     },
-    cancel () {
-      this.codigo = '';
-      this.nome = '';
-      this.endereco = '';
-      this.dataInicio = '';
-      this.dataPrevistaFim = '';
-      this.dataRealFim = '';
-      this.custoPrevisto = '';
+    fillDesatribuirModal(codigoSocio) {
+      this.selectedSocioID = codigoSocio;
     },
+    unAssignSocio () {
+      axios.post('/api/obra/desassociar-socio-obra',
+      {
+        idSocio: this.selectedSocioID,
+        idObra: this.getObraInfo.codigo
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        const self = this;
+        this.fetchObrasInfoDB(() => {
+          self.fillObraForRequest(this.getObraInfo.codigo);
+          self.fillSociosSelecionadosByObra();
+          self.selectNotYetAssignedSocios();
+        });
+      }).catch(error => {
+        console.log(error);
+      })
+    },
+    // ----------------------------------------------------------------------
     fetchSociosInfoDB () {
       axios.get('/api/socio',
       {
@@ -161,7 +231,7 @@ export default {
           Authorization: `Bearer ${this.localStorageToken}`
         }
       }).then(res => {
-        this.sociosInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
+        this.sociosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
@@ -284,9 +354,7 @@ export default {
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchObrasInfoDB(() => {
-      // console.log(this.obrasInfo)
-    });
+    this.fetchObrasInfoDB();
     this.fetchSociosInfoDB();
   }
 }
@@ -294,7 +362,7 @@ export default {
 
 <template>
 
-  <!-- Header com o botão de +Novo -->
+  <!-- Header com o botão de + Nova Obra -->
   <header v-show="!this.showSocios" class="header middle-margin">
     <button
       type="button"
@@ -304,7 +372,7 @@ export default {
     >+ Nova Obra</button>
   </header>
 
-  <!-- Botão 'Voltar' + botão '+ Atribuit sócio' -->
+  <!-- Botão 'Voltar' + botão '+ Atribuir sócio' -->
   <div class="header middle-margin">
     <!-- Botão 'Voltar' + botão '+ Novo Item' -->
     <div v-show="this.showSocios" class="column">
@@ -329,7 +397,7 @@ export default {
       </button>
     </div>
 
-    <!-- Informações da compra  -->
+    <!-- Informações da Obra  -->
     <div v-if="this.showSocios" class="column">
       <h5>
         {{ getObraInfo.codigo }} - {{ getObraInfo.nome }}
@@ -593,7 +661,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="atribuirSocioModalLabel">Atribuir Sócio</h1>
-          <button @click="" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelAtribuir" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -628,9 +696,9 @@ export default {
               <select
                 class="form-select"
                 id="socio-select"
-                v-model="selectedSocio"
+                v-model="selectedSocioID"
                 ><option
-                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.codigo"
+                  v-for="(socio, i) in sociosNotYetAssigned" :key="i" :value="socio.codigo"
                 >{{ socio.nome }}</option>
               </select>
             </div>
@@ -640,11 +708,11 @@ export default {
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelAtribuir"
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="assignSocio(this.selectedSocio)"
+            @click="assignSocio(this.selectedSocioID)"
           >Salvar</button>
         </div>
       </div>
@@ -652,6 +720,32 @@ export default {
   </div>
 
   <!-- DesAtribuirSocioModal -->
+  <div class="modal fade" id="desatribuirSocioModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="desatribuirSocioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="desatribuirSocioModalLabel">Realmente deseja excluir?</h1>
+          <button @click="cancelAtribuir" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancelAtribuir"
+          >Não</button>
+
+          <button
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="unAssignSocio()"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Tabela Obras -->
   <main v-show="!showSocios" class="middle-margin table-responsive">
@@ -725,7 +819,7 @@ export default {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(socio, i) in obra.socios" :key="i">
+        <tr v-for="(socio, i) in selectedSocioByObra" :key="i">
           <th scope="row">{{ socio.codigo }}</th>
           <td>{{ socio.nome }}</td>
           <td></td>
@@ -739,8 +833,8 @@ export default {
               class="btn btn-light btn-sm small"
               title="Excluir"
               data-bs-toggle="modal"
-              data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal()"
+              data-bs-target="#desatribuirSocioModal"
+              @click="fillDesatribuirModal(socio.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>

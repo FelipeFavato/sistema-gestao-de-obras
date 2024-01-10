@@ -81,12 +81,24 @@ public class ObraController {
   // Associar sócio a uma obra
   @PostMapping("/associar-socio-obra")
   public ResponseEntity<String> associarSocioObra(@RequestBody AssociacaoSocioObraDTO associacaoDTO) {
-      try {
-        obraService.associarSocioAObra(associacaoDTO.getIdSocio(), associacaoDTO.getIdObra());
-        return ResponseEntity.ok("Associação realizada com sucesso!");
-      } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Erro ao realizar a associação: " + e.getMessage());
-      }
+    try {
+      obraService.associarSocioAObra(associacaoDTO.getIdSocio(), associacaoDTO.getIdObra());
+      return ResponseEntity.ok("Associação realizada com sucesso!");
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Erro ao realizar a associação: " + e.getMessage());
+    }
+  }
+
+  // Desassociar um sócio a uma obra
+  @PostMapping("/desassociar-socio-obra")
+  public ResponseEntity<String> desassociarSocioObra(@RequestBody AssociacaoSocioObraDTO desassociacaoDTO) {
+    try {
+      obraService.desassociarSocioDeObra(desassociacaoDTO.getIdSocio(), desassociacaoDTO.getIdObra());
+      return ResponseEntity.ok("Desassociação realizada com sucesso!");
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Erro ao realizar a desassociação: " + e.getMessage());
+    }
   }
 }
