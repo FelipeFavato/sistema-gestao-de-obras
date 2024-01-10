@@ -68,6 +68,7 @@ export default {
       localUsoInfo: [],
       unidadeMedidaInfo: [],
       sociosInfo: [],
+      selectedSociosInfo: [],
       selectedComprasByObra: [],
       selectedItensByCompra: [],
       // Variáveis auxiliares
@@ -107,6 +108,10 @@ export default {
       valorUnitario: '',
       valorTotal: ''
     }
+  },
+
+  props: {
+    alturaMenu: Number,
   },
 
   methods: {
@@ -161,7 +166,7 @@ export default {
       });
     },
     // Método GET - Obras.
-    fetchObrasInfoDB () {
+    fetchObrasInfoDB (callback) {
       axios.get("/api/obra",
       {
         headers: {
@@ -170,6 +175,7 @@ export default {
       }).then(res => {
         this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
         this.setHttpStatusCode(res.status);
+        if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       });
@@ -304,10 +310,15 @@ export default {
         }
       }
     },
+    selectSociosInfoByObra () {
+      this.selectedSociosInfo = [];
+      this.selectedSociosInfo = this.obra.socios;
+    },
     // Método para renderizar a lista de Compras por Obra.
     obrasDropDownActions (nomeObra) {
       this.selectObra(nomeObra);
       this.fillObraForRequest();
+      this.selectSociosInfoByObra();
       this.emptySelectedComprasByObraArray();
       this.selectComprasByObra();
     },
@@ -864,7 +875,7 @@ export default {
                 id="socio-pagador-select"
                 v-model="selectedSocioNome">
                 <option
-                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                  v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.nome"
                   >{{ socio.nome }}</option>
               </select>
             </div>
