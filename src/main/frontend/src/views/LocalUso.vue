@@ -123,6 +123,7 @@ export default {
       return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
     },
   },
+  // 
 
   mounted () {
     this.getLocalStorageToken();
