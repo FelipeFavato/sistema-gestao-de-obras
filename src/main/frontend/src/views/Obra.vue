@@ -177,7 +177,7 @@ export default {
       this.fillSociosSelecionadosByObra();
       this.selectNotYetAssignedSocios();
     },
-    // Atribui e desatribui um Socio a uma Obra.
+    // Atribui e desatribui um Socio a uma Obra. ---------------------------
     assignSocio (codigoSocio) {
       this.cancelAtribuir();
       axios.post("/api/obra/associar-socio-obra",
@@ -223,7 +223,7 @@ export default {
         console.log(error);
       })
     },
-    // ----------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     fetchSociosInfoDB () {
       axios.get('/api/socio',
       {
