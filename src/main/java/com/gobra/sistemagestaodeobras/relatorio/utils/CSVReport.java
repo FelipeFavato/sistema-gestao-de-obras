@@ -48,6 +48,7 @@ public class CSVReport {
   }
 
 	public void setHeadersProduto (HttpServletResponse response) throws Exception {
+        response.getWriter().write("\uFEFF"); 
 		response.getWriter().write("CODIGO;NOME;CATEGORIA;MARCA\n");
 	}
 	// --------------------------------------------------------------------------------------------------
