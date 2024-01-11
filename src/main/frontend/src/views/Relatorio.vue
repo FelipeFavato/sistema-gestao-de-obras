@@ -102,7 +102,7 @@ export default {
           Authorization: this.localStorageToken,
           'Content-Type': 'application/json'
         },
-        responseType: 'blob'
+        // responseType: 'blob'
       })
       .then(response => {
         // Cria um Blob a partir dos dados da resposta

@@ -18,7 +18,7 @@ public class CSVReport {
 	// Todos -------------------------------------------------------------------------------------------
 	public void formatCSVReport (HttpServletResponse response, String nomeArquivo) throws Exception {
     response.setCharacterEncoding("UTF-8");
-    response.setContentType("text/csv"); // ;charset=UTF-8
+    response.setContentType("text/csv;charset=UTF-8"); // 
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo);
 	}
 
