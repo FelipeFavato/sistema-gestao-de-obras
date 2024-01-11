@@ -47,11 +47,20 @@ export default {
     // Método que mostra a senha.
     changeShowPassword () {
       this.showPassword = !this.showPassword;
+    },
+    // Lida com o clique do botão ENTER.
+    handleGlobalKeyPress(event) {
+      // Verifica se a tecla pressionada é 'Enter'
+      if (event.key === 'Enter') {
+        // Aciona o método de login
+        this.login();
+      }
     }
   },
 
   mounted () {
-
+    // Adiciona um ouvinte de evento global no elemento 'body'
+    document.body.addEventListener('keyup', this.handleGlobalKeyPress);
   },
 
 }
