@@ -697,6 +697,7 @@ export default {
 
       this.valorFinal = this.valorOriginal - this.valorDesconto
     },
+    // Método para calcular o valor final do item.
     calculaValorItem() {
       this.valorTotal = this.quantidade * this.valorUnitario;
     },
