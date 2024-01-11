@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.bot.dto.GastoSocioBotDTO;
 import com.gobra.sistemagestaodeobras.bot.dto.OrcamentoBotDTO;
 import com.gobra.sistemagestaodeobras.bot.dto.SocioTelegramIDBotDTO;
+import com.gobra.sistemagestaodeobras.bot.dto.TelegramIDBotDTO;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
+import com.gobra.sistemagestaodeobras.repository.ObraRepository;
 import com.gobra.sistemagestaodeobras.repository.SocioRepository;
 
 
@@ -24,6 +26,9 @@ public class BotController {
 
   @Autowired
   private SocioRepository socioRepository;
+
+  @Autowired
+  private ObraRepository obraRepository;
 
 
   @GetMapping("orcamentobot")
@@ -45,4 +50,9 @@ public class BotController {
     return socioTeleID;
   }
 
+  @GetMapping("telegramidsocioporobra")
+  public List<TelegramIDBotDTO> getTeleID (@RequestParam Integer codigo) {
+    List<TelegramIDBotDTO> listaTeleID = obraRepository.obterTelegramIDDosSociosDaObra(codigo).stream().map(TelegramIDBotDTO::new).toList();
+    return listaTeleID;
+  }
 }
