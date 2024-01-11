@@ -45,7 +45,7 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
   @Query(
     nativeQuery = true,
     value = "SELECT "
-      + "DATE(date_trunc('month', data_vencimento)) as dataVencimento, "
+      + "DATE(date_trunc('month', data_pagamento)) as dataVencimento, "
       + "SUM(CASE WHEN id_fornecedor = 43 "
       + "THEN valor_final ELSE 0 END) as gastoMaoDeObra, "
       + "SUM(CASE WHEN id_fornecedor != 43 "
@@ -53,8 +53,8 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
       + "SUM (valor_final) as gastoTotal "
       + "FROM public.compra "
       + "WHERE id_obra = :codigo "
-      + "GROUP BY DATE(date_trunc('month', data_vencimento)) "
-      + "ORDER BY DATE(date_trunc('month', data_vencimento))"
+      + "GROUP BY DATE(date_trunc('month', data_pagamento)) "
+      + "ORDER BY DATE(date_trunc('month', data_pagamento))"
   )
   List<AcumuladoGastosProjection> obterValorAcumuladoGastos(@Param("codigo") Integer codigo);
 

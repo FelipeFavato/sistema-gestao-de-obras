@@ -688,6 +688,18 @@ export default {
 
       this.checkValueStatus();
     },
+    // Método para calcular valor final ao inserir valor original e desconto
+    // no momento de inserir uma nova compra
+    calculaValorFinalCompra () {
+      if (!this.valorDesconto) {
+        this.valorDesconto = 0;
+      }
+
+      this.valorFinal = this.valorOriginal - this.valorDesconto
+    },
+    calculaValorItem() {
+      this.valorTotal = this.quantidade * this.valorUnitario;
+    },
     // Método para verificar se a soma dos itens passa do total da compra.
     checkValueStatus () {
       if (this.getCompraInfo.valorOriginal.toFixed(2) > this.valorTotalCompra.toFixed(2)) {
@@ -886,15 +898,16 @@ export default {
               <select
                 class="form-select"
                 id="fornecedor-select"
-                v-model="selectedFornecedorNome">
-                <option
+                v-model="selectedFornecedorNome"
+                @click="fillFornecedorForRequest"
+              ><option
                   v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
                   >{{ fornecedor.nome }}</option>
               </select>
             </div>
 
             <!-- Data da Compra -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
@@ -904,7 +917,7 @@ export default {
             </div>
 
             <!-- Data da Entrega -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
@@ -924,7 +937,7 @@ export default {
             </div>
 
             <!-- Data de Vencimento -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
@@ -944,7 +957,8 @@ export default {
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Desconto -->
@@ -958,7 +972,8 @@ export default {
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Final -->
@@ -1051,15 +1066,16 @@ export default {
               <select
                 class="form-select"
                 id="fornecedor-select"
-                v-model="selectedFornecedorNome">
-                <option
-                  v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
-                  >{{ fornecedor.nome }}</option>
+                v-model="selectedFornecedorNome"
+                @click="fillFornecedorForRequest"
+              ><option
+                v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
+                >{{ fornecedor.nome }}</option>
               </select>
             </div>
 
             <!-- Data da Compra -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
@@ -1069,7 +1085,7 @@ export default {
             </div>
 
             <!-- Data da Entrega -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
@@ -1089,7 +1105,7 @@ export default {
             </div>
 
             <!-- Data de Vencimento -->
-            <div class="mb-3">
+            <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
               <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
@@ -1109,7 +1125,8 @@ export default {
                 id="valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Desconto -->
@@ -1123,7 +1140,8 @@ export default {
                 id="desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Final -->
@@ -1270,7 +1288,8 @@ export default {
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorUnitario"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorItem">
             </div>
 
             <!-- Valor Total -->
@@ -1391,7 +1410,8 @@ export default {
                 id="valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorUnitario"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorItem">
             </div>
 
             <!-- Valor Total -->

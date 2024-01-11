@@ -9,7 +9,8 @@ export default {
       useRouter: useRouter(),
       emailLogin: '',
       senhaLogin: '',
-      httpStatusCode: ''
+      httpStatusCode: '',
+      showPassword: false
     }
   },
 
@@ -43,6 +44,10 @@ export default {
         this.setHttpStatusCode(error.response.status);
       })
     },
+    // Método que mostra a senha.
+    changeShowPassword () {
+      this.showPassword = !this.showPassword;
+    }
   },
 
   mounted () {
@@ -83,6 +88,7 @@ export default {
                         id="email-login-input"
                         placeholder="usuario@email.com"
                         v-model="emailLogin"
+                        @keyup.enter="login"
                       >
                   </div>
 
@@ -90,11 +96,12 @@ export default {
                   <div class="mb-3">
                     <label for="senha-login-input" class="form-label bold">Senha:</label>
                       <input
-                        type="password"
+                        :type="this.showPassword ? 'text' : 'password'"
                         class="form-control"
                         id="senha-login-input"
                         placeholder="******"
                         v-model="senhaLogin"
+                        @keyup.enter="login"
                       >
                   </div>
                 </div>
@@ -117,6 +124,12 @@ export default {
                     @click="login"
                   >Login</button>
                 </div>
+<!-- 
+                <div>
+                  <input v-model="username" placeholder="Usuário" @keyup.enter="login">
+                  <input v-model="password" type="password" placeholder="Senha" @keyup.enter="login">
+                  <button @click="login">Entrar</button>
+                </div> -->
 
               </form>
           </div>

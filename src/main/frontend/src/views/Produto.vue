@@ -21,6 +21,10 @@ export default {
     };
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
