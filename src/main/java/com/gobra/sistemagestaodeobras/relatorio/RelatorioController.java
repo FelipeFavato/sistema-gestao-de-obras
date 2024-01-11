@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.relatorio;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,9 +50,12 @@ public class RelatorioController {
     
     // Seta os headers do CSV de Produtos.
     csvReport.setHeadersProduto(response);
+
+    // Gera a lista de produtos a ser gravada.
+    List<RelatorioProdutoDTO> listaProdutos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
     
     // Escreve os dados no arquivo.
-    writer.write(produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList());
+    writer.write(listaProdutos);
 
   }
   // ------------------------------------------------------------------

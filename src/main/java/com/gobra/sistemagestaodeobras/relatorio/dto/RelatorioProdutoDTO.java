@@ -31,6 +31,11 @@ public class RelatorioProdutoDTO {
     marca = projection.getMarca();
   }
 
+  public String toString () {
+    return codigo + nome + categoria + marca;
+  }
+
+
   // Getters e Setters
   public Integer getCodigo () {
     return codigo;

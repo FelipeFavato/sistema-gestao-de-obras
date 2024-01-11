@@ -18,21 +18,22 @@ public class CSVReport {
 	// Todos -------------------------------------------------------------------------------------------
 	public void formatCSVReport (HttpServletResponse response, String nomeArquivo) throws Exception {
     response.setCharacterEncoding("UTF-8");
-    response.setContentType("text/csv;charset=UTF-8");
+    response.setContentType("text/csv"); // ;charset=UTF-8
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo);
 	}
 
 	// --------------------------------------------------------------------------------------------------
 	
 	// Produto -----------------------------------------------------------------------------------------
-	public StatefulBeanToCsv<RelatorioProdutoDTO> createProdutoCSVWriter (HttpServletResponse response) throws Exception {
-		StatefulBeanToCsv<RelatorioProdutoDTO> writer = new StatefulBeanToCsvBuilder<RelatorioProdutoDTO>(response.getWriter())
-				.withSeparator(CSVWriter.DEFAULT_SEPARATOR)
-				.withOrderedResults(false)
-				.withMappingStrategy(this.mapeiaColunasProduto())
-				.build();
-		
-		return writer;
+	public StatefulBeanToCsv<RelatorioProdutoDTO> createProdutoCSVWriter(HttpServletResponse response) throws Exception {
+    StatefulBeanToCsv<RelatorioProdutoDTO> writer = new StatefulBeanToCsvBuilder<RelatorioProdutoDTO>(response.getWriter())
+            .withOrderedResults(true)
+            .withMappingStrategy(this.mapeiaColunasProduto())
+            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER) // Desativa o uso de aspas
+            .withSeparator(';') // Define o ponto e vírgula como separador
+            .build();
+
+    return writer;
 	}
   
 	public ColumnPositionMappingStrategy<RelatorioProdutoDTO> mapeiaColunasProduto() {
@@ -47,7 +48,7 @@ public class CSVReport {
   }
 
 	public void setHeadersProduto (HttpServletResponse response) throws Exception {
-		response.getWriter().write("\"CODIGO\",\"NOME\",\"CATEGORIA\",\"MARCA\"\n");
+		response.getWriter().write("CODIGO;NOME;CATEGORIA;MARCA\n");
 	}
 	// --------------------------------------------------------------------------------------------------
 
