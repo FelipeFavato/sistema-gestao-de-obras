@@ -74,6 +74,19 @@ export default {
     };
   },
 
+  // O vue percebe que estou usando algumas variaveis, qualquer atualização nas variaveis, ele atualiza
+  // uma variável X
+  computed: {
+
+  },
+
+  // Pode definir um comportamento a ser chamado quando uma variável mudar.
+  watch: {
+    // variavel: function() {
+
+    // }
+  },
+
   props: {
     alturaMenu: Number,
   },

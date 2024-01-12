@@ -167,6 +167,14 @@ export default {
     }
   },
 
+  // {
+  //   codigo: Number(codigo),
+  //   nome: nome,
+  //   tipoProduto: tipo,
+  //   marca: { codigoMarca: 1 } 
+  //  }
+  // Trocar na modal tambem
+
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();

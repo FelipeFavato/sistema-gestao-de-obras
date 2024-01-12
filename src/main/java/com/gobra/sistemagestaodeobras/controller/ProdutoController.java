@@ -34,6 +34,7 @@ public class ProdutoController {
   @PostMapping
   public void saveProduto(@RequestBody ProdutoRequestDTO data) {
     Produto produtoData = new Produto(data);
+    // produtoData.setMarca(marcaRepository.getReferenceById(data.getMarca()));
     repository.save(produtoData);
   }
 
