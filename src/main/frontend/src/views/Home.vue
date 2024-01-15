@@ -695,7 +695,7 @@ export default {
         <h5 class="card-title">Atualizações 15.01.24</h5>
         <p class="card-text">Página de Local de uso</p>
         <p>1. Possível abrir o formulário de + Novo Local clicando diretamente no ENTER.</p>
-        <p>2. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para as modais de inserção, atualização e exclusão.</p>
+        <p>2. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para todas as modais dessa página.</p>
         <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p>
         <p></p>
         <p></p>
