@@ -75,6 +75,7 @@ export default {
       useRouter: useRouter(),
       httpStatus: '',
       selectedObraNome: '',
+      nomeObra: '',
       selectedFornecedorNome: '',
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
@@ -798,10 +799,10 @@ export default {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchComprasInfoDB(() => {
-      this.obrasDropDownActions(localStorage.getItem('nomeObra'));
+      this.obrasDropDownActions(localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '');
     });
     this.fetchObrasInfoDB(() => {
-      this.obrasDropDownActions(localStorage.getItem('nomeObra'));
+      this.obrasDropDownActions(localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '');
     });
     this.fetchFornecedoresInfoDB();
     this.fetchItensCompraInfoDB();
