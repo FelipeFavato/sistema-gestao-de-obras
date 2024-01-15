@@ -676,9 +676,9 @@ export default {
   },
 
   mounted () {
-    this.getLocalStorageToken();
-    this.validateLogin();
-    this.fetchObrasInfoDB();
+    // this.getLocalStorageToken();
+    // this.validateLogin();
+    // this.fetchObrasInfoDB();
   }
 }
 
@@ -688,6 +688,22 @@ export default {
 <template>
 
   <main>
+
+    <!-- Atualizações -->
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Atualizações 15.01.24</h5>
+        <p class="card-text">Página de Local de uso</p>
+        <p>1. Possível abrir o formulário de + Novo Local clicando diretamente no ENTER.</p>
+        <p>2. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para as modais de inserção, atualização e exclusão.</p>
+        <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p>
+        <p></p>
+        <p></p>
+        <a href="#localuso" class="btn btn-success">Ver mudanças (Local de uso) -></a>
+      </div>
+    </div>
+
+
 
     <!-- DropDown com as opções de Obra para selecionar e renderizar os gráficos relativos aquela obra -->
     <!-- <header class="header middle-margin">
@@ -707,7 +723,7 @@ export default {
       </div>
     </header> -->
 
-    <div v-if="this.selectedObraNome">
+    <!-- <div v-if="this.selectedObraNome">
       <div class="row">
         <div class="col-sm-6 mb-3 mb-sm-0 pad-10">
           <div class="card">
@@ -777,7 +793,7 @@ export default {
         </div>
       </div>
 
-    </div>
+    </div> -->
 
   </main>
   

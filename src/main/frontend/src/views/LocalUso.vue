@@ -15,6 +15,23 @@ export default {
     };
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
+  // O vue percebe que estou usando algumas variaveis, qualquer atualização nas variaveis, ele atualiza
+  // uma variável X
+  computed: {
+
+  },
+
+  // Pode definir um comportamento a ser chamado quando uma variável mudar.
+  watch: {
+    // variavel() {
+
+    // }
+  },
+
   methods: {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
@@ -69,6 +86,7 @@ export default {
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
+        console.log(error)
       });
       this.cancel();
     },
@@ -122,12 +140,95 @@ export default {
 
       return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
     },
+    // HGPK = Handle Global Press Key
+    HGPKEnter () {
+      window.addEventListener('keydown', (event) => {
+        const e = event;
+        // Confere se o botão apertado foi o 'ENTER'.
+        const ENTER = e.keyCode === 13;
+
+        // Recupera botões e elementos da página.
+        let body = document.getElementsByTagName('body');
+        let novoLocalButton = document.getElementById('novoLocalButton');
+        let salvarNovoButton = document.getElementById('salvarNovoButton');
+        let atualizarButton = document.getElementById('atualizarButton');
+        let confirmarDeleteButton = document.getElementById('confirmarDeleteButton');
+
+        // Modais para comparar se elas estão aparecendo ou não.
+        let deleteModal = document.getElementById('deleteModal');
+        let insertModal = document.getElementById('insertModal');
+        let updateModal = document.getElementById('updateModal');
+
+        const noModalOpen = body[0].classList.value === '';
+        const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+        const isInsertModal = insertModal.classList.value === 'modal fade show';
+        const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+        // Se não houver nenhuma modal aberta, ao clicar ENTER deve ser acionado o
+        // botão de '+ Novo Local'.
+        if (noModalOpen && ENTER) {
+          e.preventDefault();
+          novoLocalButton.click();
+        } else if (!noModalOpen && isInsertModal && ENTER) {
+          e.preventDefault();
+          salvarNovoButton.click();
+        } else if (!noModalOpen && isUpdateModal && ENTER) {
+          e.preventDefault();
+          atualizarButton.click();
+        } else if (!noModalOpen && isDeleteModal && ENTER) {
+          e.preventDefault();
+          confirmarDeleteButton.click();
+        }
+      });
+    },
+    HGPKEsc () {
+      window.addEventListener('keydown', (event) => {
+        const e = event;
+        const ESC = e.keyCode === 27;
+
+        // Recupera botões e elementos da página.
+        let body = document.getElementsByTagName('body');
+        let fecharInsertButton = document.getElementById('fecharInsertButton');
+        let fecharUpdateButton = document.getElementById('fecharUpdateButton');
+        let naoDeleteButton = document.getElementById('naoDeleteButton');
+
+        // Modais para comparar se elas estão aparecendo ou não;
+        let deleteModal = document.getElementById('deleteModal');
+        let insertModal = document.getElementById('insertModal');
+        let updateModal = document.getElementById('updateModal');
+
+        const noModalOpen = body[0].classList.value === '';
+        const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+        const isInsertModal = insertModal.classList.value === 'modal fade show';
+        const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+        // Ações baseadas na situação:
+        if (isInsertModal && ESC) {
+          e.preventDefault();
+          fecharInsertButton.click();
+        } else if (!noModalOpen && isUpdateModal && ESC) {
+          e.preventDefault();
+          fecharUpdateButton.click();
+        } else if (!noModalOpen && isDeleteModal && ESC) {
+          e.preventDefault();
+          naoDeleteButton.click();
+        }
+      });
+    },
+    // ------------------------------
+    // Precisa ser melhorado:
+    focusFirstInput () {
+      setTimeout(() => {
+        document.getElementById('nameInput').focus();
+      }, 500);
+    }
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.HGPKEnter();
   }
 }
 
@@ -142,6 +243,9 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      id="novoLocalButton"
+      @click="focusFirstInput"
+      v-on:click=""
     >+ Novo Local de Uso</button>
   </header>
 
@@ -156,6 +260,7 @@ export default {
 
         <div class="modal-footer header">
           <button
+            id="naoDeleteButton"
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
@@ -163,6 +268,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirmarDeleteButton"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -186,11 +292,11 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Local:</label>
+              <label for="nameInput" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="nameInput"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
                 maxlength="30">
@@ -201,12 +307,14 @@ export default {
 
         <div class="modal-footer">
           <button
+            id="fecharInsertButton"
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
             @click="cancel"
           >Fechar</button>
           <button
+            id="salvarNovoButton"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -264,11 +372,11 @@ export default {
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+          <button id="fecharUpdateButton" type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button id="atualizarButton" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
             @click="updateInfoDB(this.codigoLocalUsoObra, this.nomeLocalUsoObra, this.dataDesativacao)"
           >Salvar</button>
         </div>
