@@ -115,7 +115,7 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.
+    // Método para redirecionar para a página de login.this.obrasInfo[0].nome
     redirectToLogin () {
       this.useRouter.push('/login');
     },
@@ -277,6 +277,7 @@ export default {
     // Método para preencher a Obra Selecionada (variavel obraSelected).
     selectObra (nomeObra) {
       this.selectedObraNome = nomeObra;
+      localStorage.setItem('nomeObra', this.selectedObraNome);
     },
     // Método para preencher o objeto "this.obra" com a obra correta para a requisição.
     fillObraForRequest () {
@@ -716,20 +717,99 @@ export default {
       const partes = nomeSocio.split(' ');
 
       return `${partes[0]} ${partes[partes.length - 1]}`
-    }
+    },
+    // HGPK = Handle Global Press Key -------------------------
+    HGPKEnter () {
+      window.addEventListener('keydown', (event) => {
+        // Confere se o botão apertado foi o 'ENTER' 
+        const e = event;
+        const ENTER = e.keyCode === 13;
+
+        // Recupera botões e elementos da página.
+        let body = document.getElementsByTagName('body');
+        let novaCompraButton = document.getElementById('novaCompraButton');
+        let novoItemButton = document.getElementById('novoItemButton');
+
+        let salvaNovaCompra = document.getElementById('salvaNovaCompra');
+        let atualizaCompra = document.getElementById('atualizaCompra');
+        let deletaCompra = document.getElementById('deletaCompra');
+
+        let salvaNovoItem = document.getElementById('salvaNovoItem');
+        let atualizaItem = document.getElementById('atualizaItem');
+        let deletaItem = document.getElementById('deletaItem');
+
+        // Modais e comparações se elas estão ativas ou não.
+        let deleteCompraModal = document.getElementById('deleteModal');
+        let insertCompraModal = document.getElementById('insertModal');
+        let updateCompraModal = document.getElementById('updateModal');
+
+        let deleteItemModal = document.getElementById('deleteItemModal');
+        let insertItemModal = document.getElementById('insertItemModal');
+        let updateItemModal = document.getElementById('updateItemModal');
+
+        const noModalOpen = body[0].classList.value === '';
+
+        const isDeleteCompraModal = deleteCompraModal.classList.value === 'modal fade show';
+        const isInsertCompraModal = insertCompraModal.classList.value === 'modal fade show';
+        const isUpdateCompraModal = updateCompraModal.classList.value === 'modal fade show';
+
+        const isDeleteItemModal = deleteItemModal.classList.value === 'modal fade show';
+        const isInsertItemModal = insertItemModal.classList.value === 'modal fade show';
+        const isUpdateItemModal = updateItemModal.classList.value === 'modal fade show';
+
+        // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+        if (noModalOpen && !this.showItems && ENTER) {
+          e.preventDefault();
+          novaCompraButton.click();
+        } else if (!noModalOpen && isInsertCompraModal && !this.showItems && ENTER) {
+          e.preventDefault();
+          salvaNovaCompra.click();
+        } else if (!noModalOpen && isUpdateCompraModal && !this.showItems && ENTER) {
+          e.preventDefault();
+          atualizaCompra.click();
+        } else if (!noModalOpen && isDeleteCompraModal && !this.showItems && ENTER) {
+          e.preventDefault();
+          deletaCompra.click();
+        } else if (noModalOpen && this.showItems && ENTER) {
+          e.preventDefault();
+          novoItemButton.click();
+        } else if (!noModalOpen && isInsertItemModal && this.showItems && ENTER) {
+          e.preventDefault();
+          salvaNovoItem.click();
+        } else if (!noModalOpen && isUpdateItemModal && this.showItems && ENTER) {
+          e.preventDefault();
+          atualizaItem.click();
+        } else if (!noModalOpen && isDeleteItemModal && this.showItems && ENTER) {
+          e.preventDefault();
+          deletaItem.click();
+        }
+      });
+    },
+    // --------------------------------------------------------
+    // Precisa ser melhorado:
+    // focusFirstInput () {
+    //   setTimeout(() => {
+    //     document.getElementById('socio-pagador-select').focus();
+    //   }, 500);
+    // }
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
-    this.fetchComprasInfoDB();
-    this.fetchObrasInfoDB();
+    this.fetchComprasInfoDB(() => {
+      this.obrasDropDownActions(localStorage.getItem('nomeObra'));
+    });
+    this.fetchObrasInfoDB(() => {
+      this.obrasDropDownActions(localStorage.getItem('nomeObra'));
+    });
     this.fetchFornecedoresInfoDB();
     this.fetchItensCompraInfoDB();
     this.fetchProdutosInfoDB();
     this.fetchLocalUsoInfoDB();
     this.fetchUnidadeMedidaInfoDB();
     this.fetchSociosInfoDB();
+    this.HGPKEnter();
   }
 }
 </script>
@@ -778,6 +858,7 @@ export default {
       </button>
       <!-- Botão para adicionar Novo Item à Compra. -->
       <button
+        id="novoItemButton"
         @click="fillCompraCodForne"
         type="button"
         class="btn btn-success light-green"
@@ -821,6 +902,7 @@ export default {
     <!-- Botão para adicionar Compra -->
     <button
       v-show="!this.showItems"
+      id="novaCompraButton"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -846,6 +928,7 @@ export default {
           >Não</button>
 
           <button
+            id="deletaCompra"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -1002,6 +1085,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salvaNovaCompra"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -1165,7 +1249,7 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button id="atualizaCompra" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
             @click="updateCompraInfoDB(this.codigo, this.dataCompra, this.dataEntrega,
               this.dataPagamento, this.dataVencimento,
               this.valorOriginal, this.valorDesconto, this.valorFinal)"
@@ -1193,6 +1277,7 @@ export default {
           >Não</button>
 
           <button
+            id="deletaItem"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -1318,6 +1403,7 @@ export default {
             @click="cancelItem"
           >Fechar</button>
           <button
+            id="salvaNovoItem"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -1437,7 +1523,7 @@ export default {
             @click="cancelItem"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button id="atualizaItem" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
             @click="updateItemInfoDB(this.codigoItem, this.quantidade, this.valorUnitario, this.valorTotal)"
           >Salvar</button>
         </div>
