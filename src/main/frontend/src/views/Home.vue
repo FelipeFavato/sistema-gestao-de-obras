@@ -696,7 +696,6 @@ export default {
           <div>
             <h5 class="card-title">Atualização 16.01.24</h5>
             <p class="card-text">Página de Produtos</p>
-            <!-- <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p> -->
             <p>1. Combo corrigido para enviar apenas o código da Marca ao criar novo Produto ou atualizar.</p>
             <p></p>
             <p></p>
