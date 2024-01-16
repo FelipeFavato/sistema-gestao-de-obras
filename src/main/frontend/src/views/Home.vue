@@ -694,7 +694,22 @@ export default {
       <div class="card margin-10" style="width: 18rem;">
         <div class="card-body column">
           <div>
-            <h5 class="card-title">Atualizações 15.01.24</h5>
+            <h5 class="card-title">Atualização 16.01.24</h5>
+            <p class="card-text">Página de Produtos</p>
+            <!-- <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p> -->
+            <p>1. Combo corrigido para enviar apenas o código da Marca ao criar novo Produto ou atualizar.</p>
+            <p></p>
+            <p></p>
+            <p></p>
+          </div>
+          <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
+        </div>
+      </div>
+
+      <div class="card margin-10" style="width: 18rem;">
+        <div class="card-body column">
+          <div>
+            <h5 class="card-title">Atualização 15.01.24</h5>
             <p class="card-text">Página de Custos</p>
             <!-- <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p> -->
             <p>1. Ao selecionar uma obra para inserir as compras, ela fica salva. Mesmo recarregando a página, não se perde a obra selecionada.</p>
@@ -709,7 +724,7 @@ export default {
       <div class="card margin-10" style="width: 18rem;">
         <div class="card-body column">
           <div>  
-            <h5 class="card-title">Atualizações 15.01.24</h5>
+            <h5 class="card-title">Atualização 15.01.24</h5>
             <p class="card-text">Página de Local de uso</p>
             <p>1. Possível abrir o formulário de + Novo Local clicando diretamente no ENTER.</p>
             <p>2. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para todas as modais dessa página.</p>

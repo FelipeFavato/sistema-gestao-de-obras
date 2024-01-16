@@ -2,6 +2,15 @@
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+// Requisição de Novo Produto
+// {
+//   nome: String,
+//   tipoProduto: String,
+//   marca: {
+//     codigo: Number
+//   } 
+// }
+
 export default {
   data () {
     return {
@@ -11,13 +20,14 @@ export default {
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
-      selectedMarcaNome: '',
       // Variaveis para requisição
       localStorageToken: null,
       codigo: '',
       nome: '',
       tipoProduto: '',
-      marca: {}
+      marca: {},
+      selectedMarcaCod: '',
+      selectedMarcaNome: ''
     };
   },
 
@@ -47,15 +57,17 @@ export default {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
+    // ------------------------------------------------------------------------------------
     // Método para esvaziar os dados quando enviada/cancelada a requisição.
     cancel() {
       this.nome = '';
       this.tipoProduto = '';
       this.marca = {};
       this.selectedMarcaNome = '';
+      this.selectedMarcaCod = '';
     },
     // Método para buscar os dados no Banco.
-    fetchInfoDB () {
+    fetchInfoDB (callback) {
       axios.get("/api/produto",
       {
         headers: {
@@ -64,17 +76,20 @@ export default {
       }).then(res => {
         this.info = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
         this.setHttpStatusCode(res.status);
+        if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       });
     },
     // Método para criar os dados no Banco.
-    createProduto () {
+    createProdutoInfoDB () {
       axios.post("/api/produto",
         {
           nome: this.nome,
           tipoProduto: this.tipoProduto,
-          marca: this.marca
+          marca: {
+            codigo: this.selectedMarcaCod
+          }
         },
         {
           headers: {
@@ -88,27 +103,31 @@ export default {
         });
       this.cancel();
     },
-    createProdutoInfoDB () {
-      this.fillMarcaForRequest();
-      this.createProduto();
-    },
     // Método para preencher as informações da Modal.
-    fillUpdateDeleteModal (codigo, nome, tipo, marca) {
+    fillUpdateDeleteModal (codigo, nome, tipo, marcaCodigo, marcaNome) {
       this.codigo = codigo;
       this.nome = nome;
       this.tipoProduto = tipo;
-      this.marca = marca;
-      this.selectedMarcaNome = marca.nome;
+      this.selectedMarcaCod = marcaCodigo;
+      this.selectedMarcaNome = marcaNome;
     },
     // Método para atualizar um Produto no Banco.
-    updateInfoDB (codigo, nome, tipo) {
-      this.fillMarcaForRequest();
+    fillCodigoMarcaForUpdate () {
+      for (let marca of this.marcasInfo) {
+        if (marca.nome === this.selectedMarcaNome) {
+          this.selectedMarcaCod = marca.codigo
+        }
+      }
+    },
+    updateInfo () {
       axios.put("/api/produto",
         {
-          codigo: Number(codigo),
-          nome: nome,
-          tipoProduto: tipo,
-          marca: this.marca
+          codigo: this.codigo,
+          nome: this.nome,
+          tipoProduto: this.tipoProduto,
+          marca: {
+            codigo: this.selectedMarcaCod
+          }
         },
         {
           headers: {
@@ -121,6 +140,10 @@ export default {
           this.validateHttpStatus(error.response.status);
         });
       this.cancel();
+    },
+    updateInfoDB () {
+      this.fillCodigoMarcaForUpdate();
+      this.updateInfo();
     },
     // Método para remover um produto do Banco.
     removeFromDB (codigo) {
@@ -157,23 +180,9 @@ export default {
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       });
-    },
-    fillMarcaForRequest () {
-      for (let chosenMarca of this.marcasInfo) {
-        if (chosenMarca.nome === this.selectedMarcaNome) {
-          this.marca = chosenMarca;
-        }
-      }
     }
   },
 
-  // {
-  //   codigo: Number(codigo),
-  //   nome: nome,
-  //   tipoProduto: tipo,
-  //   marca: { codigoMarca: 1 } 
-  //  }
-  // Trocar na modal tambem
 
   mounted () {
     this.getLocalStorageToken();
@@ -256,9 +265,9 @@ export default {
               <select
                 class="form-select"
                 id="marca-empresa-select"
-                v-model="selectedMarcaNome">
+                v-model="selectedMarcaCod">
                 <option
-                  v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
+                  v-for="(marca, i) in marcasInfo" :key="i" :value="marca.codigo"
                   >{{ marca.nome }}</option>
               </select>
             </div>
@@ -369,7 +378,7 @@ export default {
           >Fechar</button>
 
           <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.tipoProduto)"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>
@@ -407,8 +416,7 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(produto.codigo, produto.nome,
-              produto.tipoProduto, produto.marca)"
+              @click="fillUpdateDeleteModal(produto.codigo, produto.nome, produto.tipoProduto, produto.marca.codigo, produto.marca.nome)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
