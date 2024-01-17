@@ -20,24 +20,16 @@
 // Requisição de NOVO ITEM DE COMPRA:
 // {
 //   "compra": {
-//     "codigo": 89,
-//     "dataCompra": "2006-11-27",
-//     "dataEntrega": "2017-04-20",
-//     "dataPagamento": "2015-06-09",
-//     "dataVencimento": "1971-05-17",
-//     "valorOriginal": 100.0,
-//     "valorDesconto": 0.0,
-//     "valorFinal": 100.0
+//     "codigo": 89
 //   },
 //   "produto": {
-//     "codigo": 1,
-//     "nome": "Areia",
-//     "tipoProduto": "Material"
+//     "codigo": 1
 //   },
 //   "localUso": {
-//     "codigoLocalUsoObra": 2,
-//     "nomeLocalUsoObra": "Fundação",
-//     "dataDesativacao": null
+//     "codigoLocalUsoObra": 2
+//   },
+//   "unidadeMedida": {
+//     "codigo": 1
 //   },
 //   "quantidade": 10,
 //   "valorUnitario": 1.50,
@@ -71,8 +63,11 @@ export default {
       selectedFornecedorNome: '',
       selectedFornecedorCod: '',
       selectedProdutoNome: '',
+      selectedProdutoCod: '',
       selectedLocalUsoNome: '',
+      selectedLocalUsoCod: '',
       selectedUnidadeMedida: '',
+      selectedUnidadeMedidaCod: '',
       selectedSocioNome: '',
       selectedSocioCod: '',
       selectedCompraID: '',
@@ -153,8 +148,11 @@ export default {
     },
     cancelItem() {
       this.selectedProdutoNome = '';
+      this.selectedProdutoCod = '';
       this.selectedLocalUsoNome = '';
+      this.selectedLocalUsoCod = '';
       this.selectedUnidadeMedida = '';
+      this.selectedUnidadeMedidaCod = '';
       // this.compra = {};
       this.unidadeMedida = {};
       this.produto = {};
@@ -362,7 +360,6 @@ export default {
       this.switchItensCompras();
       this.selectCompraID(cod);
       this.fillCompraInfo();
-      this.fillCompraForRequest();
       this.selectItensByCompra();
       this.sumValorTotalCompra();
     },
@@ -370,7 +367,7 @@ export default {
 
 
     // Métodos de CREATE/INSERT - POST: -------------------------------------------------\
-    // Insere Nova Compra.
+    // Insere NOVA COMPRA.
     createCompra (callback) {
       axios.post("/api/compra",
         {
@@ -404,6 +401,39 @@ export default {
       });
       this.cancel();
     },
+    // Item: ----------------------------------------------------------------------------|
+    // Insere NOVO ITEM a uma compra.
+    createItem (callback) {
+      axios.post("/api/itemcompra",
+        {
+          compra: { codigo: this.selectedCompraID },
+          produto: { codigo: this.selectedProdutoCod },
+          localUso: { codigoLocalUsoObra: this.selectedLocalUsoCod },
+          unidadeMedida: { codigo: this.selectedUnidadeMedidaCod },
+          quantidade: this.quantidade,
+          valorUnitario: this.valorUnitario,
+          valorTotal: this.valorTotal
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.localStorageToken}`
+          }
+        }).then(() => callback()).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
+    },
+    // Chama o método 'createItem()', repopula a lista correta e reseta os dados da requisição.
+    createItemInfoDB () {
+      const self = this;
+      this.createItem(() => {
+        self.fetchItensCompraInfoDB(() => {
+          self.clearSelectedItensByCompra();
+          self.selectItensByCompra();
+          self.sumValorTotalCompra();
+        });
+      });
+      this.cancelItem();
+    },
     //////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -421,6 +451,7 @@ export default {
       this.valorFinal = valorF;
       this.selectedFornecedorNome = selForneNome;
       this.selectedSocioNome = selSocioNome;
+      this.checkTipoFornecedor();
     },
     // Seta os códigos de Sócio e Fornecedor corretos escolhidos na modal.
     getCodigoSocioForCompraUpdate () {
@@ -429,7 +460,6 @@ export default {
           this.selectedSocioCod = socio.codigo;
         }
       }
-      console.log(this.selectedSocioCod)
     },
     getCodigoFornecedorForCompraUpdate () {
       for (let fornecedor of this.fornecedoresInfo) {
@@ -437,6 +467,7 @@ export default {
           this.selectedFornecedorCod = fornecedor.codigo;
         }
       }
+      this.checkTipoFornecedor();
     },
     // Atualiza COMPRA.
     updateCompra (callback) {
@@ -464,6 +495,8 @@ export default {
     },
     // Chama o método 'updateCompra', repopula a lista corretamente e reseta os dados da requisição.
     updateCompraInfoDB () {
+      this.getCodigoSocioForCompraUpdate();
+      this.getCodigoFornecedorForCompraUpdate();
       const self = this;
       this.updateCompra(() => {
         self.fetchComprasInfoDB(() => {
@@ -473,10 +506,73 @@ export default {
       });
       this.cancel();
     },
+    // Item: ----------------------------------------------------------------------------|
+    // Preenche a modal UPDATE de ITEM.
+    fillUpdateItemModal (cod, qnt, valorU, valorT, selProdNome, selProdCod, selLocUsoNome, selUniMedida) {
+      this.codigoItem = cod;
+      this.quantidade = qnt;
+      this.valorUnitario = valorU;
+      this.valorTotal = valorT;
+      this.selectedProdutoNome = selProdNome;
+      this.selectedProdutoCod = selProdCod;
+      this.selectedLocalUsoNome = selLocUsoNome;
+      this.selectedUnidadeMedida = selUniMedida;
+    },
+    // Seta os códigos de Local Uso e Unidade de Medida corretos para a requisição.
+    getCodigoLocalUsoForItemUpdate () {
+      for (let localUso of this.localUsoInfo) {
+        if (localUso.nomeLocalUsoObra === this.selectedLocalUsoNome) {
+          this.selectedLocalUsoCod = localUso.codigoLocalUsoObra;
+        }
+      }
+    },
+    getCodigoUnidadeMedidaForItemUpdate () {
+      for (let unidadeMedida of this.unidadeMedidaInfo) {
+        if (unidadeMedida.unidade === this.selectedUnidadeMedida) {
+          this.selectedUnidadeMedidaCod = unidadeMedida.codigo;
+        }
+      }
+    },
+    // Atualiza o ITEM selecionado.
+    updateItem (callback) {
+      axios.put("/api/itemcompra",
+      {
+        codigo: this.codigoItem,
+        compra: { codigo: this.selectedCompraID },
+        produto: { codigo: this.selectedProdutoCod },
+        localUso: { codigoLocalUsoObra: this.selectedLocalUsoCod },
+        unidadeMedida: { codigo: this.selectedUnidadeMedidaCod },
+        quantidade: this.quantidade,
+        valorUnitario: this.valorUnitario,
+        valorTotal: this.valorTotal
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(() => callback()).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
+    },
+    // Chama o método 'updateItem' e repopula a lista corretamente.
+    updateItemInfoDB () {
+      this.getCodigoLocalUsoForItemUpdate();
+      this.getCodigoUnidadeMedidaForItemUpdate();
+      const self = this;
+      this.updateItem(() => {
+        self.fetchItensCompraInfoDB(() => {
+          self.clearSelectedItensByCompra();
+          self.selectItensByCompra();
+          self.sumValorTotalCompra();
+        });
+      });
+      this.cancelItem();
+    },
     //////////////////////////////////////////////////////////////////////////////////////
 
 
     // Métodos de DELETE - DELETE: ------------------------------------------------------\
+    // Preenche a modal de DELETE de COMPRA.
     fillDeleteCompraModal(cod) {
       this.codigo = cod;
     },
@@ -492,7 +588,6 @@ export default {
           }
         }).then(() => callback()).catch(error => {
           this.validateHttpStatus(error.response.status);
-          console.log(error)
           alert('Essa compra não pode ser removida pois há ITENS associados a ela.');
         });
     },
@@ -507,108 +602,12 @@ export default {
       });
       this.cancel();
     },
-    //////////////////////////////////////////////////////////////////////////////////////
-
-
-    // Método para preencher o 'this.getCompraInfo' para usar informações na página.
-    fillCompraInfo () {
-      for (let chosenCompra of this.comprasInfo) {
-        if (chosenCompra.codigo === this.selectedCompraID) {
-          this.getCompraInfo = chosenCompra;
-        }
-      }
-    },
-    // Método para preencher o 'this.compra' com o formato correto para a requisição.
-    fillCompraForRequest () {
-      for (let chosenCompra of this.comprasInfo) {
-        if (chosenCompra.codigo === this.selectedCompraID) {
-          this.compra = chosenCompra;
-        }
-      }
-    },
-    // Método para preencher o 'this.produto' com o formato correto para a requisição.
-    fillProdutoForRequest () {
-      for (let chosenProduto of this.produtosInfo) {
-        if (chosenProduto.nome === this.selectedProdutoNome) {
-          this.produto = chosenProduto;
-        }
-      }
-    },
-    // Método para preencher 'this.localUso' com o formato correto para a requisição.
-    fillLocalUsoForRequest () {
-      for (let chosenLocalUso of this.localUsoInfo) {
-        if (chosenLocalUso.nomeLocalUsoObra === this.selectedLocalUsoNome) {
-          this.localUso = chosenLocalUso;
-        }
-      }
-    },
-    // Método para preencher 'this.unidadeMedida' com o formato correto para a requisição.
-    fillUnidadeMedidaForRequest() {
-      for (let chosenUnidadeMedida of this.unidadeMedidaInfo) {
-        if (chosenUnidadeMedida.unidade === this.selectedUnidadeMedida) {
-          this.unidadeMedida = chosenUnidadeMedida;
-        }
-      }
-    },
-    // Método para preencher o 'this.compraCodForne' para a inserção de novo Item.
-    fillCompraCodForne () {
-      this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
-    },
-    // Método para inserir um novo Item a uma Compra.
-    createItem (callback) {
-      axios.post("/api/itemcompra",
-        {
-          compra: this.compra,
-          produto: this.produto,
-          localUso: this.localUso,
-          unidadeMedida: this.unidadeMedida,
-          quantidade: this.quantidade,
-          valorUnitario: this.valorUnitario,
-          valorTotal: this.valorTotal
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
-          }
-        }).then(() => callback()).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
-    },
-    // Método que chama o método 'createItem' e realiza a requisição.
-    createItemInfoDB () {
-      let self = this;
-      this.fillCompraForRequest();  // Teoricamente não precisa dessa chamada.
-      this.fillProdutoForRequest();
-      this.fillLocalUsoForRequest();
-      this.fillUnidadeMedidaForRequest();
-      this.createItem(() => {
-        self.fetchItensCompraInfoDB(() => {
-          self.clearSelectedItensByCompra();
-          self.selectItensByCompra();
-          self.sumValorTotalCompra();
-        });
-      });
-      this.cancelItem();
-    },
-    // Método para preencher a ItemModal de DELETE e UPDATE.
-    fillUpdateDeleteItemModal (cod, comp, prod, locUso, uniMedida, qnt, valorU,
-      valorT, selectedProdNome, selectedLocUsoNome, selectedUniMedida) {
+    // Item: ----------------------------------------------------------------------------|
+    // Preenche a modal de DELETE de ITEM.
+    fillDeleteItemModal (cod) {
       this.codigoItem = cod;
-      this.compra = comp;
-      this.produto = prod;
-      this.localUso = locUso;
-      this.unidadeMedida = uniMedida;
-      this.quantidade = qnt;
-      this.valorUnitario = valorU;
-      this.valorTotal = valorT;
-      this.selectedProdutoNome = selectedProdNome;
-      this.selectedLocalUsoNome = selectedLocUsoNome;
-      this.selectedUnidadeMedida = selectedUniMedida;
     },
-    // Método que exclui um item.
-    // 1. .then(() => callback()): função de retorno de chamada a ser executada
-    //    após a remoção bem-sucedida do item. Permite que a função que chame
-    //    'removeItem' defina essa callback a ser executada após a exclusão.
+    // Deleta ITEM.
     removeItem (cod, callback) {
       axios.delete("/api/itemcompra",
         {
@@ -622,8 +621,7 @@ export default {
           this.validateHttpStatus(error.response.status);
         });
     },
-    // Método que chama 'removeItem' e renderiza a lista.
-    // Função organizada por ordem de execução usando callbacks.
+    // Chama o método 'removeItem', repopula a lista correta e reseta os dados da requisição.
     removeItemFromDB (cod) {
       let self = this;
       this.removeItem(cod, () => {
@@ -635,43 +633,8 @@ export default {
       });
       this.cancelItem();
     },
-    // Método para atualizar um Item selecionado.
-    updateItem (cod, qnt, valorU, valorT, callback) {
-      axios.put("/api/itemcompra",
-      {
-        codigo: Number(cod),
-        compra: this.compra,
-        produto: this.produto,
-        localUso: this.localUso,
-        unidadeMedida: this.unidadeMedida,
-        quantidade: qnt,
-        valorUnitario: valorU,
-        valorTotal: valorT
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then(() => callback()).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      });
-    },
-    // Chama o método 'updateItem' e repopula a lista corretamente.
-    updateItemInfoDB (cod, qnt, valorU, valorT) {
-      let self = this;
-      this.fillCompraForRequest();
-      this.fillProdutoForRequest();
-      this.fillLocalUsoForRequest();
-      this.fillUnidadeMedidaForRequest();
-      this.updateItem(cod, qnt, valorU, valorT, () => {
-        self.fetchItensCompraInfoDB(() => {
-          self.clearSelectedItensByCompra();
-          self.selectItensByCompra();
-          self.sumValorTotalCompra();
-        });
-      });
-      this.cancelItem();
-    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
     
     // Métodos de renderização: --------------------------------------------------------\
     // Alterna a renderização entre COMPRAS e ITENS.
@@ -679,6 +642,26 @@ export default {
       this.showItems = !this.showItems;
       this.clearSelectedCompraID();
       this.clearSelectedItensByCompra();
+    },
+    // Preenche o 'this.getCompraInfo' para usar informações na página.
+    fillCompraInfo () {
+      for (let chosenCompra of this.comprasInfo) {
+        if (chosenCompra.codigo === this.selectedCompraID) {
+          this.getCompraInfo = chosenCompra;
+        }
+      }
+    },
+    // Verifica o tipo de fornecedor para renderizar as DATAS de acordo.
+    checkTipoFornecedor () {
+      for (let forne of this.fornecedoresInfo) {
+        if (forne.codigo === this.selectedFornecedorCod | forne.nome === this.selectedFornecedorNome) {
+          this.fornecedor = forne;
+        }
+      }
+    },
+    // Preenche o 'this.compraCodForne' para a VISUALIZAÇÃO no momento de inserção de novo Item.
+    fillCompraCodForne () {
+      this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
     },
     // Renderiza apenas o primeiro e ultimo nome do sócio.
     firstLastName (nomeSocio) {
@@ -715,6 +698,7 @@ export default {
     },
     //////////////////////////////////////////////////////////////////////////////////////
  
+
     // Métodos de refinamento: ----------------------------------------------------------\
     // HGPK = Handle Global Press Key: Lida com os cliques de ENTER na página.
     HGPKEnter () {
@@ -1022,6 +1006,7 @@ export default {
                 class="form-select"
                 id="fornecedor-select"
                 v-model="selectedFornecedorCod"
+                @click="checkTipoFornecedor"
               ><option
                   v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.codigo"
                   >{{ fornecedor.nome }}</option>
@@ -1353,10 +1338,10 @@ export default {
               <select
                 class="form-select"
                 id="produto-select"
-                v-model="selectedProdutoNome">
-                <option
-                  v-for="(produto, i) in produtosInfo" :key="i" :value="produto.nome"
-                  >{{ produto.nome }}</option>
+                v-model="selectedProdutoCod"
+              ><option
+                v-for="(produto, i) in produtosInfo" :key="i" :value="produto.codigo"
+                >{{ produto.nome }}</option>
               </select>
             </div>
 
@@ -1366,10 +1351,10 @@ export default {
               <select
                 class="form-select"
                 id="local-uso-select"
-                v-model="selectedLocalUsoNome">
-                <option
-                  v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.nomeLocalUsoObra"
-                  >{{ localUso.nomeLocalUsoObra }}</option>
+                v-model="selectedLocalUsoCod"
+              ><option
+                v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.codigoLocalUsoObra"
+                >{{ localUso.nomeLocalUsoObra }}</option>
               </select>
             </div>
 
@@ -1391,10 +1376,10 @@ export default {
               <select
                 class="form-select"
                 id="unidade-medida-select"
-                v-model="selectedUnidadeMedida">
-                <option
-                  v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.unidade"
-                  >{{ unidadeMedida.unidade }}</option>
+                v-model="selectedUnidadeMedidaCod"
+              ><option
+                v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.codigo"
+                >{{ unidadeMedida.unidade }}</option>
               </select>
             </div>
 
@@ -1489,10 +1474,11 @@ export default {
               <select
                 class="form-select"
                 id="local-uso-select"
-                v-model="selectedLocalUsoNome">
-                <option
-                  v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.nomeLocalUsoObra"
-                  >{{ localUso.nomeLocalUsoObra }}</option>
+                v-model="selectedLocalUsoNome"
+                @click="getCodigoLocalUsoForItemUpdate"
+              ><option
+                v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.nomeLocalUsoObra"
+                >{{ localUso.nomeLocalUsoObra }}</option>
               </select>
             </div>
 
@@ -1514,8 +1500,9 @@ export default {
               <select
                 class="form-select"
                 id="unidade-medida-select"
-                v-model="selectedUnidadeMedida">
-                <option
+                v-model="selectedUnidadeMedida"
+                @click="getCodigoUnidadeMedidaForItemUpdate"
+              ><option
                   v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.unidade"
                   >{{ unidadeMedida.unidade }}</option>
               </select>
@@ -1559,7 +1546,7 @@ export default {
           >Fechar</button>
 
           <button id="atualizaItem" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateItemInfoDB(this.codigoItem, this.quantidade, this.valorUnitario, this.valorTotal)"
+            @click="updateItemInfoDB"
           >Salvar</button>
         </div>
       </div>
@@ -1663,9 +1650,9 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateItemModal"
-              @click="fillUpdateDeleteItemModal(item.codigo, item.compra, item.produto, item.localUso,
-                item.unidadeMedida, item.quantidade, item.valorUnitario, item.valorTotal,
-                item.produto.nome, item.localUso.nomeLocalUsoObra, item.unidadeMedida.unidade)"
+              @click="fillUpdateItemModal(item.codigo, item.quantidade, item.valorUnitario,
+              item.valorTotal, item.produto.nome, item.produto.codigo,
+              item.localUso.nomeLocalUsoObra, item.unidadeMedida.unidade)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
@@ -1673,7 +1660,7 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteItemModal"
-              @click="fillUpdateDeleteItemModal(item.codigo)"
+              @click="fillDeleteItemModal(item.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
