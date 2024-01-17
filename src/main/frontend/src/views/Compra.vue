@@ -2,28 +2,19 @@
 // Requisição de NOVA COMPRA:
 // {
 //   "obra":  {
-//     "codigo": 2,
-//     "nome": "Obra Teste 2",
-//     "endereco": "Rua Obra Teste, 2000",
-//     "dataInicio": "2023-10-10",
-//     "dataPrevistaFim": "2023-10-15",
-//     "dataRealFim": "2023-10-25",
-//     "custoPrevisto": 45000
+//     "codigo": 1
 //   },
 //   "fornecedor": {
-//     "codigo": 15,
-//     "nome": "Fornecedor Teste 1",
-//     "telefone": "(11) 97557-8998",
-//     "endereco": "Rua Fornecedor Teste, 1000",
-//     "tipoFornecedor": "Material"
+//     "codigo": 23
+//   },
+//   "socio": {
+//     "codigo": 4
 //   },
 //   "dataCompra": "2023-05-30",
 //   "dataEntrega": "2023-05-30",
-//   "dataPagamento": "",
-//   "dataVencimento": "",
-//   "valorOriginal": 90,
-//   "valorDesconto": 0,
-//   "valorFinal": 90
+//   "valorOriginal": 200,
+//   "valorDesconto": 5,
+//   "valorFinal": 195
 // }
 
 // Requisição de NOVO ITEM DE COMPRA:
@@ -75,12 +66,15 @@ export default {
       useRouter: useRouter(),
       httpStatus: '',
       selectedObraNome: '',
+      selectedObraId: '',
       nomeObra: '',
       selectedFornecedorNome: '',
+      selectedFornecedorCod: '',
       selectedProdutoNome: '',
       selectedLocalUsoNome: '',
       selectedUnidadeMedida: '',
       selectedSocioNome: '',
+      selectedSocioCod: '',
       selectedCompraID: '',
       getCompraInfo: {}, // Apenas informações da compra para serem usadas na página.
       compraCodForne: '',
@@ -116,31 +110,37 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.this.obrasInfo[0].nome
+    // Validações de Login:--------------------------------------------------------------\
+    // Redireciona para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
+    // Recupera o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
+    // Seta o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o login baseado no token.
+    // Valida o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
+    // Valida o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
-    // Método para apagar dados que foram preenchidos e enviados ou não enviados.
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Métodos para apagar dados que foram preenchidos e enviados ou não enviados: ------\
     cancel () {
       this.selectedFornecedorNome = '';
+      this.selectedFornecedorCod = '';
       this.selectedSocioNome = '';
+      this.selectedSocioCod = '';
       this.fornecedor = {};
       this.socio = {};
       this.dataCompra = '';
@@ -151,7 +151,23 @@ export default {
       this.valorDesconto = '';
       this.valorFinal = '';
     },
-    // Método GET - Compras.
+    cancelItem() {
+      this.selectedProdutoNome = '';
+      this.selectedLocalUsoNome = '';
+      this.selectedUnidadeMedida = '';
+      // this.compra = {};
+      this.unidadeMedida = {};
+      this.produto = {};
+      this.localUso = {};
+      this.quantidade = '';
+      this.valorUnitario = '';
+      this.valorTotal = '';
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Busca de dados - GET: ------------------------------------------------------------\
+    // GET - Compras.
     fetchComprasInfoDB (callback) {
       axios.get("/api/compra",
       {
@@ -166,7 +182,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método GET - Obras.
+    // GET - Obras.
     fetchObrasInfoDB (callback) {
       axios.get("/api/obra",
       {
@@ -181,7 +197,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método GET - Fornecedores.
+    // GET - Fornecedores.
     fetchFornecedoresInfoDB () {
       axios.get("/api/fornecedor",
       {
@@ -195,7 +211,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
-    // Método GET - Itens das compras.
+    // GET - Itens das compras.
     fetchItensCompraInfoDB (callback) {
       axios.get("/api/itemcompra",
       {
@@ -215,7 +231,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método GET - Produtos.
+    // GET - Produtos.
     fetchProdutosInfoDB() {
       axios.get("/api/produto",
       {
@@ -229,7 +245,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
-    // Método GET - LocalUso.
+    // GET - LocalUso.
     fetchLocalUsoInfoDB () {
       axios.get("/api/localuso",
       {
@@ -243,7 +259,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
-    // Método GET - UnidadeMedida.
+    // GET - UnidadeMedida.
     fetchUnidadeMedidaInfoDB () {
       axios.get("/api/unidademedida",
       {
@@ -257,7 +273,7 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método GET - Sócios.
+    // GET - Sócios.
     fetchSociosInfoDB () {
       axios.get('/api/socio',
       {
@@ -271,40 +287,15 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
-    // Método para esvaziar o array que guarda as Compras selecionadas por Obra.
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Métodos de comportamento: --------------------------------------------------------\
+    // Esvazia o array de COMPRAS por OBRA.
     emptySelectedComprasByObraArray () {
       this.selectedComprasByObra = [];
     },
-    // Método para preencher a Obra Selecionada (variavel obraSelected).
-    selectObra (nomeObra) {
-      this.selectedObraNome = nomeObra;
-      localStorage.setItem('nomeObra', this.selectedObraNome);
-    },
-    // Método para preencher o objeto "this.obra" com a obra correta para a requisição.
-    fillObraForRequest () {
-      for (let chosenObra of this.obrasInfo) {
-        if (chosenObra.nome === this.selectedObraNome) {
-          this.obra = chosenObra;
-        }
-      }
-    },
-    // Método para preencher o objeto "this.fornecedor" com o fornecedor correto para a requisição.
-    fillFornecedorForRequest () {
-      for (let chosenFornecedor of this.fornecedoresInfo) {
-        if (chosenFornecedor.nome === this.selectedFornecedorNome) {
-          this.fornecedor = chosenFornecedor;
-        }
-      }
-    },
-    // Método para preencher o objeto "this.socio" com o socio correto para a requisição.
-    fillSocioForRequest () {
-      for (let chosenSocio of this.sociosInfo) {
-        if (chosenSocio.nome === this.selectedSocioNome) {
-          this.socio = chosenSocio;
-        }
-      }
-    },
-    // Método para popular o array "selectedComprasByObra".
+    // Popula o array de COMPRAS por OBRA.
     selectComprasByObra () {
       for (let chosenCompra of this.comprasInfo) {
         if (chosenCompra.obra.nome === this.selectedObraNome) {
@@ -312,42 +303,80 @@ export default {
         }
       }
     },
+    // Seta as chaves 'nomeObra' e 'codigoObra' no Local Storage.
+    setObraInfoLocalStorage (nomeObra, codigoObra) {
+      localStorage.setItem('nomeObra', nomeObra);
+      localStorage.setItem('codigoObra', codigoObra);
+    },
+    // Seleciona 'this.selectedObraNome' e 'this.selectedCodigoObra'.
+    selectObra (nomeObra, codigoObra) {
+      this.selectedObraNome = nomeObra;
+      this.selectedObraId = codigoObra;
+      this.setObraInfoLocalStorage(nomeObra, codigoObra);
+    },
+    // Preenche o objeto "this.obra" com a obra correta para comportamentos da página.
+    fillObraForBehavior () {
+      for (let chosenObra of this.obrasInfo) {
+        if (chosenObra.nome === this.selectedObraNome) {
+          this.obra = chosenObra;
+        }
+      }
+    },
+    // Preenche o Array 'this.selectedSociosInfo' para popular os sócios corretos de cada obra.
     selectSociosInfoByObra () {
+      this.fillObraForBehavior();
       this.selectedSociosInfo = [];
       this.selectedSociosInfo = this.obra.socios;
     },
-    // Método para renderizar a lista de Compras por Obra.
-    obrasDropDownActions (nomeObra) {
-      this.selectObra(nomeObra);
-      this.fillObraForRequest();
+    // Renderiza a lista de Compras por Obra selecionada.
+    obrasDropDownActions (nomeObra, codigoObra) {
+      this.selectObra(nomeObra, codigoObra);
       this.selectSociosInfoByObra();
       this.emptySelectedComprasByObraArray();
       this.selectComprasByObra();
     },
-    // Método para preencher a modal de DELETE e UPDATE.
-    fillUpdateDeleteModal (cod, obra, fornecedor, socio, dataC, dataE, dataP,
-      dataV, valorO, valorD, valorF, selectedFornecedorNome, selectedSocioNome) {
-      this.codigo = cod;
-      this.obra = obra;
-      this.fornecedor = fornecedor;
-      this.socio = socio;
-      this.dataCompra = dataC;
-      this.dataEntrega = dataE;
-      this.dataPagamento = dataP;
-      this.dataVencimento = dataV;
-      this.valorOriginal = valorO;
-      this.valorDesconto = valorD;
-      this.valorFinal = valorF;
-      this.selectedFornecedorNome = selectedFornecedorNome;
-      this.selectedSocioNome = selectedSocioNome;
+    // Limpa 'this.selectedCompraID' as retornar para a tela de COMPRAS.
+    clearSelectedCompraID () {
+      this.selectedCompraID = '';
     },
-    // Método para inserir Nova Compra.
+    // Limpa a lista de ITENS selecionados por COMPRA.
+    clearSelectedItensByCompra () {
+      this.selectedItensByCompra = [];
+    },
+    // Preenche a variavel 'selectedCompraID' para permitir renderizar seus itens.
+    selectCompraID (cod) {
+      this.selectedCompraID = cod;
+    },
+    // Popula o array 'selectedItensByCompra'.
+    selectItensByCompra () {
+      for (let item of this.itensCompraInfo) {
+        if (item.compra.codigo === this.selectedCompraID) {
+          this.selectedItensByCompra.push(item);
+        }
+      }
+      // Ordena por nome de produto
+      this.selectedItensByCompra.sort((s1, s2) => s1.produto['nome'].localeCompare(s2.produto['nome']))
+    },
+    // Recupera os itens corretos para a compra selecionada.
+    getItensForThisCompra (cod) {
+      this.switchItensCompras();
+      this.selectCompraID(cod);
+      this.fillCompraInfo();
+      this.fillCompraForRequest();
+      this.selectItensByCompra();
+      this.sumValorTotalCompra();
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Métodos de CREATE/INSERT - POST: -------------------------------------------------\
+    // Insere Nova Compra.
     createCompra (callback) {
       axios.post("/api/compra",
         {
-          obra: this.obra,
-          fornecedor: this.fornecedor,
-          socio: this.socio,
+          obra: { codigo: this.selectedObraId },
+          fornecedor: { codigo: this.selectedFornecedorCod },
+          socio: { codigo: this.selectedSocioCod },
           dataCompra: this.dataCompra,
           dataEntrega: this.dataEntrega,
           dataPagamento: this.dataPagamento,
@@ -360,16 +389,13 @@ export default {
           headers: {
             Authorization: `Bearer ${this.localStorageToken}`
           }
-        }).then(() => callback()).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
+        }
+      ).then(() => callback())
+      .catch(error => this.validateHttpStatus(error.response.status));
     },
-    // Chama o método 'createCompra' e repopula a lista correta.
+    // Chama o método 'createCompra()', repopula a lista correta e reseta os dados de requisição.
     createCompraInfoDB () {
-      let self = this;
-      this.fillObraForRequest();
-      this.fillFornecedorForRequest();
-      this.fillSocioForRequest();
+      const self = this;
       this.createCompra(() => {
         self.fetchComprasInfoDB(() => {
           self.emptySelectedComprasByObraArray();
@@ -378,7 +404,83 @@ export default {
       });
       this.cancel();
     },
-    // Remove Compra selecionada.
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Métodos de UPDATE - PUT: ---------------------------------------------------------\
+    // Preenche a modal UPDATE de COMPRA.
+    fillUpdateCompraModal (cod, codigoObra, dataC, dataE, dataP, dataV, valorO, valorD, valorF, selForneNome, selSocioNome) {
+      this.codigo = cod;
+      this.selectedObraId = codigoObra;
+      this.dataCompra = dataC;
+      this.dataEntrega = dataE;
+      this.dataPagamento = dataP;
+      this.dataVencimento = dataV;
+      this.valorOriginal = valorO;
+      this.valorDesconto = valorD;
+      this.valorFinal = valorF;
+      this.selectedFornecedorNome = selForneNome;
+      this.selectedSocioNome = selSocioNome;
+    },
+    // Seta os códigos de Sócio e Fornecedor corretos escolhidos na modal.
+    getCodigoSocioForCompraUpdate () {
+      for (let socio of this.sociosInfo) {
+        if (socio.nome === this.selectedSocioNome) {
+          this.selectedSocioCod = socio.codigo;
+        }
+      }
+      console.log(this.selectedSocioCod)
+    },
+    getCodigoFornecedorForCompraUpdate () {
+      for (let fornecedor of this.fornecedoresInfo) {
+        if (fornecedor.nome === this.selectedFornecedorNome) {
+          this.selectedFornecedorCod = fornecedor.codigo;
+        }
+      }
+    },
+    // Atualiza COMPRA.
+    updateCompra (callback) {
+      axios.put("/api/compra",
+      {
+        codigo: this.codigo,
+        obra: { codigo: this.selectedObraId },
+        fornecedor: { codigo: this.selectedFornecedorCod },
+        socio: { codigo: this.selectedSocioCod },
+        dataCompra: this.dataCompra,
+        dataEntrega: this.dataEntrega,
+        dataPagamento: this.dataPagamento,
+        dataVencimento: this.dataVencimento,
+        valorOriginal: this.valorOriginal,
+        valorDesconto: this.valorDesconto,
+        valorFinal: this.valorFinal
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(() => callback()).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
+    },
+    // Chama o método 'updateCompra', repopula a lista corretamente e reseta os dados da requisição.
+    updateCompraInfoDB () {
+      const self = this;
+      this.updateCompra(() => {
+        self.fetchComprasInfoDB(() => {
+          self.emptySelectedComprasByObraArray();
+          self.selectComprasByObra();
+        });
+      });
+      this.cancel();
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Métodos de DELETE - DELETE: ------------------------------------------------------\
+    fillDeleteCompraModal(cod) {
+      this.codigo = cod;
+    },
+    // Deleta COMPRA.
     removeCompra (codigo, callback) {
       axios.delete("/api/compra",
         {
@@ -391,9 +493,10 @@ export default {
         }).then(() => callback()).catch(error => {
           this.validateHttpStatus(error.response.status);
           console.log(error)
+          alert('Essa compra não pode ser removida pois há ITENS associados a ela.');
         });
     },
-    // Chama o método 'removeCompra' e repopula a lista correta.
+    // Chama o método 'removeCompra', repopula a lista correta e reseta os dados da requisição.
     removeCompraFromDB (codigo) {
       let self = this;
       this.removeCompra(codigo, () => {
@@ -404,121 +507,9 @@ export default {
       });
       this.cancel();
     },
-    // Método para atualizar uma Compra selecionada.
-    updateCompra (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF, callback) {
-      axios.put("/api/compra",
-      {
-        codigo: Number(cod),
-        obra: this.obra,
-        fornecedor: this.fornecedor,
-        socio: this.socio,
-        dataCompra: dataC,
-        dataEntrega: dataE,
-        dataPagamento: dataP,
-        dataVencimento: dataV,
-        valorOriginal: valorO,
-        valorDesconto: valorD,
-        valorFinal: valorF
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then(() => callback()).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      });
-    },
-    // Chama o método 'updateCompra' e repopula a lista corretamente.
-    updateCompraInfoDB (cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF) {
-      let self = this;
-      this.fillObraForRequest();
-      this.fillFornecedorForRequest();
-      this.fillSocioForRequest();
-      this.updateCompra(cod, dataC, dataE, dataP, dataV, valorO, valorD, valorF, () => {
-        self.fetchComprasInfoDB(() => {
-          self.emptySelectedComprasByObraArray();
-          self.selectComprasByObra();
-        });
-      });
-      this.cancel();
-    },
-    // Método para apresentar valores monetários BRL corretamente.
-    fixCurrency (dinheiroDouble) {
-      if (dinheiroDouble === null) {
-        return null
-      } else {
-        const valorFormatado = dinheiroDouble.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        });
+    //////////////////////////////////////////////////////////////////////////////////////
 
-        return valorFormatado;
-      }
-    },
-    // Método para ajustar para data brasileira.
-    brazilDate (data) {
-      if (data === null) {
-        return null
-      }
 
-      let partes = data.split("-");
-
-      if (partes.length === 3) {
-          return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      } else {
-          return null;
-      }
-    },
-    // Método para limpar a requisição caso não seja enviada.
-    cancelItem() {
-      this.selectedProdutoNome = '';
-      this.selectedLocalUsoNome = '';
-      this.selectedUnidadeMedida = '';
-      // this.compra = {};
-      this.unidadeMedida = {};
-      this.produto = {};
-      this.localUso = {};
-      this.quantidade = '';
-      this.valorUnitario = '';
-      this.valorTotal = '';
-    },
-    // Método para alternar a renderização de Compras e Itens.
-    switchItensCompras () {
-      this.showItems = !this.showItems;
-      this.clearSelectedCompraID();
-      this.clearSelectedItensByCompra();
-    },
-    // Método para limpar a lista de itens selecionados por compra.
-    clearSelectedItensByCompra () {
-      this.selectedItensByCompra = [];
-    },
-    // Método para retornar às compras, limpando 'selectedCompraID'.
-    clearSelectedCompraID () {
-      this.selectedCompraID = '';
-    },
-    // Método para preencher a variavel 'selectedCompraID'.
-    selectCompraID (cod) {
-      this.selectedCompraID = cod;
-    },
-    // Recupera os itens corretos para a compra selecionada.
-    getItensForThisCompra (cod) {
-      this.switchItensCompras();
-      this.selectCompraID(cod);
-      this.fillCompraInfo();
-      this.fillCompraForRequest();
-      this.selectItensByCompra();
-      this.sumValorTotalCompra();
-    },
-    // Método para popular o array 'selectedItensByCompra'.
-    selectItensByCompra () {
-      for (let item of this.itensCompraInfo) {
-        if (item.compra.codigo === this.selectedCompraID) {
-          this.selectedItensByCompra.push(item);
-        }
-      }
-      // Ordena por nome de produto
-      this.selectedItensByCompra.sort((s1, s2) => s1.produto['nome'].localeCompare(s2.produto['nome']))
-    },
     // Método para preencher o 'this.getCompraInfo' para usar informações na página.
     fillCompraInfo () {
       for (let chosenCompra of this.comprasInfo) {
@@ -681,45 +672,51 @@ export default {
       });
       this.cancelItem();
     },
-    // Método que traz o valor total dos itens de uma compra.
-    sumValorTotalCompra () {
-      this.valorTotalCompra = 0;
-      for (let item of this.selectedItensByCompra) {
-        this.valorTotalCompra += item.valorTotal
-      }
-
-      this.checkValueStatus();
+    
+    // Métodos de renderização: --------------------------------------------------------\
+    // Alterna a renderização entre COMPRAS e ITENS.
+    switchItensCompras () {
+      this.showItems = !this.showItems;
+      this.clearSelectedCompraID();
+      this.clearSelectedItensByCompra();
     },
-    // Método para calcular valor final ao inserir valor original e desconto
-    // no momento de inserir uma nova compra
-    calculaValorFinalCompra () {
-      if (!this.valorDesconto) {
-        this.valorDesconto = 0;
-      }
-
-      this.valorFinal = this.valorOriginal - this.valorDesconto
-    },
-    // Método para calcular o valor final do item.
-    calculaValorItem() {
-      this.valorTotal = this.quantidade * this.valorUnitario;
-    },
-    // Método para verificar se a soma dos itens passa do total da compra.
-    checkValueStatus () {
-      if (this.getCompraInfo.valorOriginal.toFixed(2) > this.valorTotalCompra.toFixed(2)) {
-        this.valueStatus = 'grey-letter';
-      } else if (this.getCompraInfo.valorOriginal.toFixed(2) < this.valorTotalCompra.toFixed(2)) {
-        this.valueStatus = 'red-letter';
-      } else {
-        this.valueStatus = 'green-letter';
-      }
-    },
-    // Método para renderizar apenas o primeiro e ultimo nome do sócio.
+    // Renderiza apenas o primeiro e ultimo nome do sócio.
     firstLastName (nomeSocio) {
       const partes = nomeSocio.split(' ');
 
       return `${partes[0]} ${partes[partes.length - 1]}`
     },
-    // HGPK = Handle Global Press Key -------------------------
+    // Apresenta valores monetários BRL corretamente.
+    fixCurrency (dinheiroDouble) {
+      if (dinheiroDouble === null) {
+        return null
+      } else {
+        const valorFormatado = dinheiroDouble.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+
+        return valorFormatado;
+      }
+    },
+    // Ajusta para data brasileira.
+    brazilDate (data) {
+      if (data === null) {
+        return null
+      }
+
+      let partes = data.split("-");
+
+      if (partes.length === 3) {
+          return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      } else {
+          return null;
+      }
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+ 
+    // Métodos de refinamento: ----------------------------------------------------------\
+    // HGPK = Handle Global Press Key: Lida com os cliques de ENTER na página.
     HGPKEnter () {
       window.addEventListener('keydown', (event) => {
         // Confere se o botão apertado foi o 'ENTER' 
@@ -786,23 +783,64 @@ export default {
         }
       });
     },
-    // --------------------------------------------------------
-    // Precisa ser melhorado:
+    // Soma o valor total dos itens de uma compra.
+    sumValorTotalCompra () {
+      this.valorTotalCompra = 0;
+      for (let item of this.selectedItensByCompra) {
+        this.valorTotalCompra += item.valorTotal
+      }
+
+      this.checkValueStatus();
+    },
+    // Calcula valor final ao inserir valor original e desconto no momento de inserir uma nova compra.
+    calculaValorFinalCompra () {
+      if (!this.valorDesconto) {
+        this.valorDesconto = 0;
+      }
+
+      this.valorFinal = this.valorOriginal - this.valorDesconto
+    },
+    // Calcula o valor final do item.
+    calculaValorItem() {
+      this.valorTotal = this.quantidade * this.valorUnitario;
+    },
+    // Verifica se a soma dos itens passa do total da compra.
+    checkValueStatus () {
+      if (this.getCompraInfo.valorOriginal.toFixed(2) > this.valorTotalCompra.toFixed(2)) {
+        this.valueStatus = 'grey-letter';
+      } else if (this.getCompraInfo.valorOriginal.toFixed(2) < this.valorTotalCompra.toFixed(2)) {
+        this.valueStatus = 'red-letter';
+      } else {
+        this.valueStatus = 'green-letter';
+      }
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
+
+    // Precisa ser melhorado: -----------------------------------------------------------\
+    // 
     // focusFirstInput () {
     //   setTimeout(() => {
     //     document.getElementById('socio-pagador-select').focus();
     //   }, 500);
     // }
+    //////////////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchComprasInfoDB(() => {
-      this.obrasDropDownActions(localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '');
+      this.obrasDropDownActions(
+        localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '',
+        localStorage.getItem('codigoObra') ? localStorage.getItem('codigoObra') : 1
+      );
     });
     this.fetchObrasInfoDB(() => {
-      this.obrasDropDownActions(localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '');
+      this.obrasDropDownActions(
+        localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '',
+        localStorage.getItem('codigoObra') ? localStorage.getItem('codigoObra') : 1
+      );
     });
     this.fetchFornecedoresInfoDB();
     this.fetchItensCompraInfoDB();
@@ -829,7 +867,7 @@ export default {
           <button
             class="dropdown-item"
             type="button"
-            @click="obrasDropDownActions(obra.nome)"
+            @click="obrasDropDownActions(obra.nome, obra.codigo)"
             >{{ obra.nome }}</button>
         </li>
         <li><hr class="dropdown-divider"></li>
@@ -837,7 +875,7 @@ export default {
           <button
             class="dropdown-item"
             type="button"
-            @click="obrasDropDownActions('')"
+            @click="obrasDropDownActions('', '')"
           >Limpar</button>
         </li>
       </ul>
@@ -970,9 +1008,9 @@ export default {
               <select
                 class="form-select"
                 id="socio-pagador-select"
-                v-model="selectedSocioNome">
+                v-model="selectedSocioCod">
                 <option
-                  v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.nome"
+                  v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.codigo"
                   >{{ socio.nome }}</option>
               </select>
             </div>
@@ -983,10 +1021,9 @@ export default {
               <select
                 class="form-select"
                 id="fornecedor-select"
-                v-model="selectedFornecedorNome"
-                @click="fillFornecedorForRequest"
+                v-model="selectedFornecedorCod"
               ><option
-                  v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
+                  v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.codigo"
                   >{{ fornecedor.nome }}</option>
               </select>
             </div>
@@ -1122,15 +1159,13 @@ export default {
 
             <!-- Obra -->
             <div class="mb-3">
-              <label for="obra-select" class="bold">Obra:</label>
-              <select
-                class="form-select"
-                id="obra-select"
+              <label for="obra-input" class="form-label bold">Obra:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="obra-input"
+                disabled
                 v-model="selectedObraNome">
-                <option
-                  v-for="(obra, i) in obrasInfo" :key="i" :value="obra.nome"
-                  >{{ obra.nome }}</option>
-              </select>
             </div>
 
             <!-- Sócio pagador -->
@@ -1139,9 +1174,10 @@ export default {
               <select
                 class="form-select"
                 id="socio-pagador-select"
-                v-model="selectedSocioNome">
-                <option
-                  v-for="(socio, i) in sociosInfo" :key="i" :value="socio.nome"
+                v-model="selectedSocioNome"
+                @click="getCodigoSocioForCompraUpdate"
+              ><option
+                  v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.nome"
                   >{{ socio.nome }}</option>
               </select>
             </div>
@@ -1153,7 +1189,7 @@ export default {
                 class="form-select"
                 id="fornecedor-select"
                 v-model="selectedFornecedorNome"
-                @click="fillFornecedorForRequest"
+                @click="getCodigoFornecedorForCompraUpdate"
               ><option
                 v-for="(fornecedor, i) in fornecedoresInfo" :key="i" :value="fornecedor.nome"
                 >{{ fornecedor.nome }}</option>
@@ -1251,9 +1287,7 @@ export default {
           >Fechar</button>
 
           <button id="atualizaCompra" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateCompraInfoDB(this.codigo, this.dataCompra, this.dataEntrega,
-              this.dataPagamento, this.dataVencimento,
-              this.valorOriginal, this.valorDesconto, this.valorFinal)"
+            @click="updateCompraInfoDB()"
           >Salvar</button>
         </div>
       </div>
@@ -1570,9 +1604,10 @@ export default {
               title="Editar"
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
-              @click="fillUpdateDeleteModal(compra.codigo, compra.obra, compra.fornecedor, compra.socio,
-                compra.dataCompra, compra.dataEntrega, compra.dataPagamento, compra.dataVencimento,
-                compra.valorOriginal, compra.valorDesconto, compra.valorFinal, compra.fornecedor.nome, compra.socio.nome)"
+              @click="fillUpdateCompraModal(compra.codigo, compra.obra.codigo,
+                compra.dataCompra, compra.dataEntrega, compra.dataPagamento,
+                compra.dataVencimento, compra.valorOriginal, compra.valorDesconto,
+                compra.valorFinal, compra.fornecedor.nome, compra.socio.nome)"
             ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
             <button
               type="button"
@@ -1586,7 +1621,7 @@ export default {
               title="Excluir"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
-              @click="fillUpdateDeleteModal(compra.codigo)"
+              @click="fillDeleteCompraModal(compra.codigo)"
             ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
           </td>
         </tr>
