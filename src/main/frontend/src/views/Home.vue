@@ -694,6 +694,20 @@ export default {
       <div class="card margin-10" style="width: 18rem;">
         <div class="card-body column">
           <div>
+            <h5 class="card-title">Atualização 17.01.24</h5>
+            <p class="card-text">Página de Custos</p>
+            <p>1. Combos corrigidos para enviar apenas o código nas requisições.</p>
+            <p></p>
+            <p></p>
+            <p></p>
+          </div>
+          <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
+        </div>
+      </div>
+
+      <div class="card margin-10" style="width: 18rem;">
+        <div class="card-body column">
+          <div>
             <h5 class="card-title">Atualização 16.01.24</h5>
             <p class="card-text">Página de Produtos</p>
             <p>1. Combo corrigido para enviar apenas o código da Marca ao criar novo Produto ou atualizar.</p>
