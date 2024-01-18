@@ -688,7 +688,6 @@ export default {
 <template>
 
   <main>
-
     <!-- DropDown com as opções de Obra para selecionar e renderizar os gráficos relativos aquela obra -->
     <header class="header middle-margin">
       <div class="dropdown">
@@ -778,7 +777,6 @@ export default {
       </div>
 
     </div>
-
   </main>
   
 </template>
