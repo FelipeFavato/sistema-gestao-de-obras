@@ -786,7 +786,7 @@ export default {
     },
     // Calcula o valor final do item.
     calculaValorItem() {
-      this.valorTotal = this.quantidade * this.valorUnitario;
+      !this.valorUnitario ? '' : this.valorTotal = this.quantidade * this.valorUnitario;
     },
     // Verifica se a soma dos itens passa do total da compra.
     checkValueStatus () {
@@ -1367,7 +1367,8 @@ export default {
                 id="quantidade-input"
                 placeholder="(inserir apenas números)"
                 v-model="quantidade"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorItem">
             </div>
 
             <!-- Unidade de medida -->
@@ -1491,7 +1492,8 @@ export default {
                 id="quantidade-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="quantidade"
-                maxlength="30">
+                maxlength="30"
+                @change="calculaValorItem">
             </div>
 
             <!-- Unidade de medida -->

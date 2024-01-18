@@ -694,6 +694,19 @@ export default {
       <div class="card margin-10" style="width: 18rem;">
         <div class="card-body column">
           <div>
+            <h5 class="card-title">Atualização 18.01.24</h5>
+            <p class="card-text">Página de Custos</p>
+            <p>1. Modal de ITEM corrigida para calcular automaticamente o valor Final dos Itens.</p>
+            <p></p>
+            <p></p>
+            <p></p>
+          </div>
+          <a href="#compra" class="btn btn-success">Ver mudanças (Custos) -></a>
+        </div>
+      </div>
+      <div class="card margin-10" style="width: 18rem;">
+        <div class="card-body column">
+          <div>
             <h5 class="card-title">Atualização 17.01.24</h5>
             <p class="card-text">Página de Custos</p>
             <p>1. Combos corrigidos para enviar apenas o código nas requisições.</p>
@@ -716,36 +729,6 @@ export default {
             <p></p>
           </div>
           <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
-        </div>
-      </div>
-
-      <div class="card margin-10" style="width: 18rem;">
-        <div class="card-body column">
-          <div>
-            <h5 class="card-title">Atualização 15.01.24</h5>
-            <p class="card-text">Página de Custos</p>
-            <!-- <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p> -->
-            <p>1. Ao selecionar uma obra para inserir as compras, ela fica salva. Mesmo recarregando a página, não se perde a obra selecionada.</p>
-            <p>2. Possível abrir o formulário de + Nova Compra e + Novo Item clicando diretamente no ENTER.</p>
-            <p>3. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para as modais de inserção, atualização e exclusão.</p>
-            <p></p>
-          </div>
-          <a href="#compra" class="btn btn-success">Ver mudanças (Custos) -></a>
-        </div>
-      </div>
-
-      <div class="card margin-10" style="width: 18rem;">
-        <div class="card-body column">
-          <div>  
-            <h5 class="card-title">Atualização 15.01.24</h5>
-            <p class="card-text">Página de Local de uso</p>
-            <p>1. Possível abrir o formulário de + Novo Local clicando diretamente no ENTER.</p>
-            <p>2. Possível 'SALVAR' apertando diretamente no ENTER quando a modal está aberta. Vale para todas as modais dessa página.</p>
-            <p>'ENTER' -> abre modal e seleciona o primeiro campo de Input -> 'ENTER' -> 'SALVA', 'ATUALIZA' ou 'EXCLUI'.</p>
-            <p></p>
-            <p></p>
-          </div>
-          <a href="#localuso" class="btn btn-success">Ver mudanças (Local de uso) -></a>
         </div>
       </div>
     </main>
