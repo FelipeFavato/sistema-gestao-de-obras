@@ -69,24 +69,14 @@ public class Obra {
 
   // Uma Obra pode ter muitos Socios.
   // Um Socio pode participar de muitas Obras.
-
-  // @ManyToMany(fetch = FetchType.LAZY)
-  // @JoinTable(name = "socios_obras",
-  // joinColumns = {
-  //   @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
-  // },
-  // inverseJoinColumns = {
-  //   @JoinColumn(name = "id_socio", referencedColumnName = "codigo")
-  // })
-  // @JsonIgnore
-  // private List<Socio> socios;
-
   @JsonIgnore
-  @ManyToMany(mappedBy = "obras"
-  // fetch = FetchType.LAZY
-  )
+  @ManyToMany(mappedBy = "obras")
   private Set<Socio> socios;
 
+  // Uma OBRA pode ter muitas FOTOS.
+  @JsonIgnore
+  @OneToMany(mappedBy = "idObra")
+  private List<ObraArquivo> arquivos;
 
   public Obra(ObraRequestDTO data) {
     this.nome = data.nome();
@@ -98,5 +88,6 @@ public class Obra {
     this.custoPrevisto = data.custoPrevisto();
     this.compras = data.compras();
     this.socios = data.socios();
+    this.arquivos = data.arquivos();
   }
 }

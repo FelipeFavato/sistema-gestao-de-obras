@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.model.Obra;
+import com.gobra.sistemagestaodeobras.model.ObraArquivo;
 import com.gobra.sistemagestaodeobras.model.Socio;
 
 
@@ -29,7 +30,9 @@ public record ObraResponseDTO (
 
   List<Compra> compras,
 
-  Set<Socio> socios
+  Set<Socio> socios,
+
+  List<ObraArquivo> arquivos
 
 ) {
 
@@ -44,7 +47,8 @@ public record ObraResponseDTO (
       obraModel.getCustoMaoDeObra(),
       obraModel.getCustoPrevisto(),
       obraModel.getCompras(),
-      obraModel.getSocios()
+      obraModel.getSocios(),
+      obraModel.getArquivos()
     );
   }
 
