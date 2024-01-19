@@ -14,6 +14,7 @@ import com.gobra.sistemagestaodeobras.interfaces.IObraArquivo;
 import com.gobra.sistemagestaodeobras.model.Obra;
 import com.gobra.sistemagestaodeobras.model.ObraArquivo;
 import com.gobra.sistemagestaodeobras.repository.ObraArquivoRepository;
+import com.gobra.sistemagestaodeobras.repository.ObraRepository;
 import com.gobra.sistemagestaodeobras.utils.HashByteArray;
 
 
@@ -23,6 +24,33 @@ public class ObraArquivoService implements IObraArquivo {
   @Autowired
   private ObraArquivoRepository obraArquivoRepository;
 
+  @Autowired
+  private ObraRepository obraRepository;
+
+  public ObraArquivo saveAttachment(MultipartFile file) throws Exception {
+    byte[] conteudoArquivo = file.getBytes();
+    String descricao = "";
+    String nome = "";
+    Obra idObra = obraRepository.getReferenceById(1);
+    String hashArquivo = HashByteArray.hashByteArray(conteudoArquivo);
+    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+    try {
+
+        if(fileName.contains("..")) {
+            throw  new Exception("Filename contains invalid path sequence " + fileName);
+        }
+         if (file.getBytes().length > (1024 * 1024)) {
+            throw new Exception("File size exceeds maximum limit");
+        }
+      ObraArquivo attachment = new ObraArquivo(conteudoArquivo, descricao, nome, hashArquivo, idObra);
+      return obraArquivoRepository.save(attachment);
+    } catch (MaxUploadSizeExceededException e) {
+      throw new MaxUploadSizeExceededException(file.getSize());
+    } catch (Exception e) {
+      throw new Exception("Could not save File: " + fileName);
+    }
+  }
 
   @Override
   public ObraArquivo saveArquivo(MultipartFile file, String descricao, String nome, Obra idObra) throws Exception {

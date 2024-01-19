@@ -1,9 +1,11 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import com.gobra.sistemagestaodeobras.dto.ObraArquivoRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.ObraArquivoResponseDTO;
 import com.gobra.sistemagestaodeobras.model.ObraArquivo;
 import com.gobra.sistemagestaodeobras.service.ObraArquivoService;
+import com.gobra.sistemagestaodeobras.service.ResponseClass;
 
 
 
@@ -29,39 +32,37 @@ public class ObraArquivoController {
   private ObraArquivoService service;
 
    // for uploading the SINGLE file to the database
-  @PostMapping()
-  public ResponseEntity<ObraArquivo> uploadFile(@RequestParam("file") MultipartFile file, @RequestBody ObraArquivoRequestDTO data) throws Exception {
+  // @PostMapping()
+  // public ResponseEntity<ObraArquivo> uploadFile(@RequestParam("file") MultipartFile file, @RequestBody ObraArquivoRequestDTO data) throws Exception {
+
+  //   ObraArquivo attachment = null;
+  //   String downloadURl = "";
+  //   attachment = service.saveArquivo(file, data.descricao(), data.nomeArquivo(), data.idObra());
+  //   downloadURl = ServletUriComponentsBuilder.fromCurrentContextPath()
+  //     .path("/download/")
+  //     .path(attachment.getCodigo().toString())
+  //     .toUriString();
+
+  //   return ResponseEntity.ok(attachment);
+  // }
+
+  // for uploading the SINGLE file to the File System
+  @PostMapping("/single/base")
+  public ResponseClass uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
 
     ObraArquivo attachment = null;
     String downloadURl = "";
-    attachment = service.saveArquivo(file, data.descricao(), data.nomeArquivo(), data.idObra());
+    attachment = service.saveAttachment(file);
     downloadURl = ServletUriComponentsBuilder.fromCurrentContextPath()
       .path("/download/")
-      .path(attachment.getCodigo().toString())
+      .path(attachment.getCodigo().toString(0))
       .toUriString();
 
-    return ResponseEntity.ok(attachment);
-  }
-
-  //for uploading the SINGLE file to the File System
-  // @PostMapping("/single/file")
-  // public ResponseEntity<ResponseClass> handleFileUpload(@RequestParam("file") MultipartFile file) {
-  //   String fileName = file.getOriginalFilename();
-  //   try {
-  //     file.transferTo(new File("D:\\Folder\\" + fileName));
-  //     String downloadUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-  //       .path("/download/")
-  //       .path(fileName)
-  //       .toUriString();
-  //     ResponseClass response = new ResponseClass(fileName,
-  //       downloadUrl,
-  //       file.getContentType(),
-  //       file.getSize());
-  //     return ResponseEntity.ok(response);
-  //    } catch (Exception e) {
-  //       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-  //      }
-  //    }
+    return new ResponseClass(attachment.getNomeArquivo(),
+      downloadURl,
+      file.getContentType(),
+      file.getSize());
+   }
 
   // @PostMapping
   // public void saveArquivo(@RequestBody ObraArquivoRequestDTO data) {
