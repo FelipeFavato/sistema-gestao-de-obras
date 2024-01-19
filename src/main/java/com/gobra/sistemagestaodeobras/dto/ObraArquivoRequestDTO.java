@@ -1,6 +1,5 @@
 package com.gobra.sistemagestaodeobras.dto;
 
-import org.springframework.web.multipart.MultipartFile;
 
 import com.gobra.sistemagestaodeobras.model.Obra;
 
@@ -8,11 +7,13 @@ public record ObraArquivoRequestDTO (
 
   Integer codigo,
 
-  MultipartFile conteudoImagem,
+  Byte[] conteudoArquivo,
 
   String descricao,
 
-  String nome,
+  String nomeArquivo,
+
+  String hashArquivo,
 
   Obra idObra
 

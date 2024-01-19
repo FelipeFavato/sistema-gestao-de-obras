@@ -7,11 +7,13 @@ public record ObraArquivoResponseDTO (
 
   Integer codigo,
 
-  String conteudoImagem,
+  byte[] conteudoArquivo,
 
   String descricao,
 
-  String nome,
+  String nomeArquivo,
+
+  String hashArquivo,
 
   Obra idObra
 
@@ -20,9 +22,10 @@ public record ObraArquivoResponseDTO (
   public ObraArquivoResponseDTO(ObraArquivo obraArquivoModel) {
     this(
       obraArquivoModel.getCodigo(),
-      obraArquivoModel.getConteudoImagem(),
+      obraArquivoModel.getConteudoArquivo(),
       obraArquivoModel.getDescricao(),
-      obraArquivoModel.getNome(),
+      obraArquivoModel.getNomeArquivo(),
+      obraArquivoModel.getHashArquivo(),
       obraArquivoModel.getIdObra()
     );
   }

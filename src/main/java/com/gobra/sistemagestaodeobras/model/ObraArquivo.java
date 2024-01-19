@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -34,17 +35,30 @@ public class ObraArquivo {
   @SequenceGenerator(name = "seq_gen_obra_arquivo", sequenceName = "SEQ_OBRA_ARQUIVO", initialValue = 1, allocationSize = 1)
   private Integer codigo;
 
-  @Column(name = "conteudo_imagem", columnDefinition = "MEDIUMBLOB")
-  private String conteudoImagem;
+  // @Lob = large objects, Campo binário ou campos muito grandes
+  @Lob()
+  @Column(name = "conteudo_arquivo")
+  private byte[] conteudoArquivo;
 
   @Column(name = "descricao", length = 180)
   private String descricao;
 
-  @Column(name = "nome", length = 80)
-  private String nome;
+  @Column(name = "nome_arquivo", length = 80)
+  private String nomeArquivo;
+
+  @Column(name = "hash_arquivo")
+  private String hashArquivo;
 
   @JsonIgnore
   @ManyToOne  // MUITAS fotos para UMA obra.
   @JoinColumn(name = "id_obra", referencedColumnName = "codigo")
   private Obra idObra;
+
+  public ObraArquivo (byte[] conteudoArquivo, String descricao, String nomeArquivo, String hashArquivo, Obra idObra) {
+    this.conteudoArquivo = conteudoArquivo;
+    this.descricao = descricao;
+    this.nomeArquivo = nomeArquivo;
+    this.hashArquivo = hashArquivo;
+    this.idObra = idObra;
+  }
 }
