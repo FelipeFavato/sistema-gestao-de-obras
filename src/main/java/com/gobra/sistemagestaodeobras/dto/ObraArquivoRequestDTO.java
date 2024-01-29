@@ -5,15 +5,15 @@ import com.gobra.sistemagestaodeobras.model.Obra;
 
 public record ObraArquivoRequestDTO (
 
-  Integer codigo,
+  // Integer codigo,
 
-  Byte[] conteudoArquivo,
+  // Byte[] conteudoArquivo,
 
   String descricao,
 
   String nomeArquivo,
 
-  String hashArquivo,
+  // String hashArquivo,
 
   Obra idObra
 

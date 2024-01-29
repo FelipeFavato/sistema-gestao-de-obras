@@ -1,12 +1,9 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 
-import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,10 +49,11 @@ public class ObraArquivoController {
 
     ObraArquivo attachment = null;
     String downloadURl = "";
-    attachment = service.saveAttachment(file);
+    attachment = service.saveAttachment(file, "descricao", "nome", 1);
+
     downloadURl = ServletUriComponentsBuilder.fromCurrentContextPath()
       .path("/download/")
-      .path(attachment.getCodigo().toString(0))
+      .path(attachment.getCodigo().toString())
       .toUriString();
 
     return new ResponseClass(attachment.getNomeArquivo(),

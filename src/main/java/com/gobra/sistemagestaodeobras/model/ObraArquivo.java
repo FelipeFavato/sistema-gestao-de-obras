@@ -46,7 +46,7 @@ public class ObraArquivo {
   @Column(name = "nome_arquivo", length = 80)
   private String nomeArquivo;
 
-  @Column(name = "hash_arquivo")
+  @Column(name = "hash_arquivo", unique = true)
   private String hashArquivo;
 
   @JsonIgnore

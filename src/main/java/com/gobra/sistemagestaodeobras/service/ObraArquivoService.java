@@ -27,23 +27,22 @@ public class ObraArquivoService implements IObraArquivo {
   @Autowired
   private ObraRepository obraRepository;
 
-  public ObraArquivo saveAttachment(MultipartFile file) throws Exception {
+  public ObraArquivo saveAttachment(MultipartFile file, String descricao, String nomeArquivo, Integer idObra) throws Exception {
     byte[] conteudoArquivo = file.getBytes();
-    String descricao = "";
-    String nome = "";
-    Obra idObra = obraRepository.getReferenceById(1);
-    String hashArquivo = HashByteArray.hashByteArray(conteudoArquivo);
+    // String descricao = "";
+    // String nomeArquivo = nome;
+    Obra codigoObra = obraRepository.getReferenceById(idObra);
+    String hashArquivo = HashByteArray.hashBArray(conteudoArquivo);
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
     try {
-
-        if(fileName.contains("..")) {
-            throw  new Exception("Filename contains invalid path sequence " + fileName);
-        }
-         if (file.getBytes().length > (1024 * 1024)) {
-            throw new Exception("File size exceeds maximum limit");
-        }
-      ObraArquivo attachment = new ObraArquivo(conteudoArquivo, descricao, nome, hashArquivo, idObra);
+      if (fileName.contains("..")) {
+        throw  new Exception("Filename contains invalid path sequence " + fileName);
+      }
+      if (file.getBytes().length > (1024 * 1024)) {
+        throw new Exception("File size exceeds maximum limit");
+      }
+      ObraArquivo attachment = new ObraArquivo(conteudoArquivo, descricao, nomeArquivo, hashArquivo, codigoObra);
       return obraArquivoRepository.save(attachment);
     } catch (MaxUploadSizeExceededException e) {
       throw new MaxUploadSizeExceededException(file.getSize());
@@ -55,7 +54,7 @@ public class ObraArquivoService implements IObraArquivo {
   @Override
   public ObraArquivo saveArquivo(MultipartFile file, String descricao, String nome, Obra idObra) throws Exception {
     byte[] conteudoArquivo = file.getBytes();
-    String hashArquivo = HashByteArray.hashByteArray(conteudoArquivo);
+    String hashArquivo = HashByteArray.hashBArray(conteudoArquivo);
     // 1. String fileName = StringUtils.cleanPath(file.getOriginalFilename()): 
     //    Obtém e limpa o nome original do arquivo usando a classe StringUtils do
     //    Spring para remover caracteres inválidos de caminho do nome do arquivo.

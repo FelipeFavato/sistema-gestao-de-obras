@@ -120,6 +120,7 @@ export default {
               Apoio
             </a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#arquivo">Arquivos</a></li>
               <li><a class="dropdown-item" href="#fornecedor">Fornecedores</a></li>
               <li><a class="dropdown-item" href="#localuso">Local de uso</a></li>
               <li><a class="dropdown-item" href="#obra">Obras</a></li>

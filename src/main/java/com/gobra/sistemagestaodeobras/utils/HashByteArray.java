@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashByteArray {
 
-  public static String hashByteArray(byte[] byteArray) {
+  public static String hashBArray(byte[] byteArray) {
     try {
       // Especifica o algoritmo de hash desejado, por exemplo, SHA-256
       MessageDigest md = MessageDigest.getInstance("SHA-256");
