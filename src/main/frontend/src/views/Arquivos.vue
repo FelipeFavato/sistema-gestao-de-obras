@@ -53,31 +53,13 @@ export default {
         },
       })
       .then(response => {
-          const imageData = response.data[0].conteudoArquivo;
-          // Convert the image data to a base64-encoded string
-          this.imageData = 'data:image/jpeg;base64,' + imageData;
-          console.log(this.imageData)
+        const imageData = response.data[0].conteudoArquivo;
+        console.log(typeof(imageData))
+        // Convert the image data to a base64-encoded string
+        this.imageData = 'data:image/jpeg;base64,' + imageData;
       }).catch(error => {
         console.error('Error fetching image data:', error);
       });
-    },
-    pressButton () {
-      this.fetchInfoDB(() => {
-        this.show = !this.show
-      });
-    },
-    fetchImageData() {
-      axios.get('/api/getImageData')
-        .then(response => {
-          const imageData = response.data[0].conteudoArquivo;
-          console.log()
-          // Convert the image data to a base64-encoded string
-          this.imageData = 'data:image/jpeg;base64,' + imageData;
-          console.log(this.imageData)
-        })
-        .catch(error => {
-          console.error('Error fetching image data:', error);
-        });
     }
   },
 
@@ -97,15 +79,8 @@ export default {
 
   <!-- Arquivos -->
   <div>
-    <button
-    @click="pressButton"
-    >
-    Mostrar fotos
-    </button>
-    <div>
-      <img v-if="imageData" :src="imageData" alt="Image" />
+      <img v-if="imageData" :src="this.imageData"  style="height: 200px; width: 200px;" alt="Image" />
       <div v-else>Loading...</div>
-    </div>
   </div>
 
 </template>
