@@ -103,6 +103,10 @@ export default {
     //////////////////////////////////////////////////////////////////////////////////////
 
     // Métodos de comportamento: --------------------------------------------------------\
+    // Limpa o combo de requisição.
+    cancel() {
+      // Fazer amanhã
+    },
     // Gera a lista de arquivos assim que a página carrega.
     generateArquivos (data) {
       const fotografias = [];
@@ -117,6 +121,7 @@ export default {
     switchInputArchive () {
       this.arquivoSelecionado = !this.arquivoSelecionado;
     },
+    // Preciso estudar essa função.
     handleFileChange(event) {
       this.switchInputArchive(); 
       const file = event.target.files[0]; // Pega o primeiro arquivo selecionado
