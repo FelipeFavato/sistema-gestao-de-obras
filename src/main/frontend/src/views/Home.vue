@@ -70,7 +70,7 @@ export default {
           <p>2. Possível ADICIONAR, EDITAR, EXCLUIR apenas FOTOS por enquanto.</p>
           <p>3. Próxima feature: Fazer com que as fotos sejam clicáveis. Ao clicar na foto,
             expandir um ALBUM sendo possível ver NOME, DESCRIÇÃO e navegar entre as fotos.
-            No mesmo molde de uma MODAL.
+            No mesmo molde de uma MODAL. 
           </p>
           <p></p>
         </div>
