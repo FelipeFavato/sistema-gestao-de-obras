@@ -18,6 +18,7 @@ export default {
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
+      codigo: '',
       conteudoArquivo: '',
       descricao: '',
       nomeArquivo: '',
@@ -108,9 +109,31 @@ export default {
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
+    // Métodos de EXCLUSÃO de dados - DELETE: -------------------------------------------\
+    fillDeleteArquivoModal (cod) {
+      this.codigo = cod;
+    },
+    removeArquivoFromDB (codigo) {
+      axios.delete('/api/obra-arquivos',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        },
+        data: {
+          codigo: Number(codigo)
+        }
+      }).then(res => {
+        this.fetchInfoDB();
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
     // Métodos de comportamento: --------------------------------------------------------\
     // Limpa o combo de requisição.
     cancel() {
+      this.codigo = '';
       this.descricao = '';
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
@@ -166,10 +189,40 @@ export default {
 
 <template>
 
+  <!-- DeleteModalArquivo -->
+  <div class="modal fade" id="deleteArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteArquivoModalLabel">Realmente deseja excluir?</h1>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-footer header">
+          <button
+            type="button"
+            class="btn btn-secondary dark-grey"
+            data-bs-dismiss="modal"
+            @click="cancel"
+          >Não</button>
+
+          <button
+            id="deletaItem"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="removeArquivoFromDB(this.codigo)"
+          >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARDS -->
   <main class="margin-left-top-10">
     <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Card de INSERT -->
       <div class="col"  style="height: 350px; width: 245px;">
-          <!-- Card de INSERT -->
           <div class="card" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
@@ -213,15 +266,41 @@ export default {
           </div>
       </div>
 
-      <!-- Cards de fotos existentes -->
+      <!-- Lista de cards de Fotos. -->
       <div v-for="(foto, i) in arquivos" :key="i" class="col"  style="height: 350px; width: 245px;">
-        <div class="card h-100">
-          <img :src="foto.conteudoArquivo" class="card-img-top" :alt="i"  style="height: 80%; width: 100%;">
-          <div class="card-body">
-            <h5 class="card-title texto-centralizado">{{ foto.nomeArquivo }}</h5>
+        <div class="card h-100" style="height: 100%; width: 100%;">
+          <img :src="foto.conteudoArquivo" class="card-img" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
+          <div class="card-img-overlay space-between-column">
+            <!-- Botões Editar/Excluir -->
+            <div class="space-between">
+              <!-- Editar -->
+              <button
+                type="button"
+                class="btn btn-light btn-sm small grey-background border-radius-5"
+                title="Editar"
+                data-bs-toggle="modal"
+                data-bs-target="#updateModal"
+                @click="fillUpdateArquivoModal(compra.codigo, compra.obra.codigo,
+                  compra.dataCompra, compra.dataEntrega, compra.dataPagamento,
+                  compra.dataVencimento, compra.valorOriginal, compra.valorDesconto,
+                  compra.valorFinal, compra.fornecedor.nome, compra.socio.nome)"
+              ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
+              <!-- Excluir -->
+              <button
+                type="button"
+                class="btn btn-light btn-sm small grey-background border-radius-5"
+                title="Excluir"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteArquivoModal"
+                @click="fillDeleteArquivoModal(foto.codigo)"
+              ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
+              </div>
+            <!-- <h5 class="card-title">Card title</h5> -->
+            <p class="card-text texto-centralizado grey-background border-radius-5">{{ foto.nomeArquivo }}</p>
           </div>
         </div>
       </div>
+
     </div>
   </main>
 
@@ -234,8 +313,17 @@ export default {
   margin-top: 10px;
 }
 
+.border-radius-5 {
+  border-radius: 10px;
+}
+
+.font {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .grey-background {
-  background-color: black;
+  /* background-color: rgba(136, 136, 136, 0.5); */
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .margin-top-160 {
@@ -256,8 +344,10 @@ export default {
   justify-content: space-between;
 }
 
-.flex-end {
+.space-between-column {
   display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 input[type="file"] {
@@ -280,7 +370,11 @@ input[type="file"] {
 }
 
 .label-subir-foto:active {
-  transform: scale(0.9);
+  transform: scale(0.95);
+}
+
+.label-subir-foto:hover {
+  background-color: #2C6D28;
 }
 
 </style>
