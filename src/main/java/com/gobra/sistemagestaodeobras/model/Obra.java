@@ -88,6 +88,6 @@ public class Obra {
     this.custoPrevisto = data.custoPrevisto();
     this.compras = data.compras();
     this.socios = data.socios();
-    this.arquivos = data.arquivos();
+    // this.arquivos = data.arquivos();
   }
 }

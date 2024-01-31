@@ -14,7 +14,12 @@ export default {
       // Variáveis de comportamento: --\
       info: [], // Informação crua
       arquivos: [], // Informação tratada pronta para renderizar imagens
+      obrasInfo: [],
+      selectedArquivosByObra: [],
       arquivoSelecionado: false,
+      selectedObraNome: '',
+      selectedFile: null,
+      imageDataUrl: '',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -22,10 +27,7 @@ export default {
       conteudoArquivo: '',
       descricao: '',
       nomeArquivo: '',
-      idObra: 1,
-
-      selectedFile: null,
-      imageDataUrl: ''
+      idObra: '',
       //////////////////////////////////
 
     }
@@ -75,6 +77,20 @@ export default {
         console.error('Error fetching image data:', error);
       });
     },
+    fetchObrasInfoDB (callback) {
+      axios.get("/api/obra",
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
+        // this.setHttpStatusCode(res.status);
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
+    },
     //////////////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT de dados - POST: -----------------------------------------------\
@@ -96,6 +112,7 @@ export default {
     },
 
     createArquivo () {
+      const self = this;
       const formData = new FormData();
       formData.append("file", this.conteudoArquivo);
       formData.append("descricao", this.descricao);
@@ -103,8 +120,44 @@ export default {
       formData.append("idObra", this.idObra);
       // Cria o arquivo novo e renderiza a lista.
       this.createArquivoInfoDB(formData, () => {
-        this.fetchInfoDB();
+        self.fetchInfoDB(() => {
+          self.selectArquivosByObra(self.idObra);
+        });
         this.limparButtonActions();
+      });
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE de dados - PUT: ------------------------------------------------\
+    fillUpdateArquivoModal(cod, nome, descricao) {
+      this.codigo = cod;
+      this.nomeArquivo = nome;
+      this.descricao = descricao;
+    },
+    updateArquivoInfoDB(callback) {
+      axios.put('/api/obra-arquivos',
+      {
+        codigo: Number(this.codigo),
+        nomeArquivo: this.nomeArquivo,
+        descricao: this.descricao
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.localStorageToken}`
+        }
+      }).then(res => {
+        if (callback) callback();
+      }).catch(error => {
+        console.log(error);
+      })
+    },
+    updateArquivo() {
+      const self = this;
+      this.updateArquivoInfoDB(() => {
+        self.fetchInfoDB(() => {
+          self.selectArquivosByObra(self.idObra)
+        });
+        self.cancel();
       });
     },
     //////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +166,7 @@ export default {
     fillDeleteArquivoModal (cod) {
       this.codigo = cod;
     },
-    removeArquivoFromDB (codigo) {
+    removeArquivoFromDB (codigo, callback) {
       axios.delete('/api/obra-arquivos',
       {
         headers: {
@@ -123,9 +176,18 @@ export default {
           codigo: Number(codigo)
         }
       }).then(res => {
-        this.fetchInfoDB();
+        if (callback) callback();
       }).catch(error => {
         console.log(error);
+      });
+    },
+    removeArquivo (codigo) {
+      const self = this;
+      this.removeArquivoFromDB(codigo, () => {
+        self.fetchInfoDB(() => {
+          self.selectArquivosByObra(self.idObra)
+        });
+        self.cancel();
       });
     },
     //////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +216,7 @@ export default {
         fotografias.push(arquivo);
       }
 
-      return fotografias;
+      return fotografias.sort((s1, s2) => s1['nomeArquivo'].localeCompare(s2['nomeArquivo']));
     },
     // Quando o usuário selecionar um arquivo, deixa de mostrar o input e mostra a imagem.
     switchInputArchive () {
@@ -175,13 +237,86 @@ export default {
           this.imageDataUrl = reader.result;
         };
       }
-    }
+    },
+    selectObra (obraNome, obraCod) {
+      this.selectedObraNome = obraNome;
+      this.idObra = obraCod;
+    },
+    emptyArquivosByObra() {
+      this.selectedArquivosByObra = [];
+    },
+    selectArquivosByObra(obraCod) {
+      const arquivosDestaObra = [];
+      for (let arquivo of this.arquivos) {
+        if (arquivo.idObra.codigo === obraCod) {
+          arquivosDestaObra.push(arquivo)
+        }
+      }
+
+      this.selectedArquivosByObra = arquivosDestaObra;
+    },
+    obrasDropDownActions(obraNome, obraCod) {
+      this.selectObra(obraNome, obraCod);
+      this.emptyArquivosByObra();
+      this.selectArquivosByObra(Number(obraCod));
+    },
     //////////////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ----------------------------------------------------------\
+    // HGPK = Handle Global Press Key: Lida com os cliques de ENTER na página.
+    HGPKEnter () {
+      window.addEventListener('keydown', (event) => {
+        // Confere se o botão apertado foi o 'ENTER' 
+        const e = event;
+        const ENTER = e.keyCode === 13;
+
+        // Recupera botões e elementos da página.
+        let body = document.getElementsByTagName('body');
+        let novaFotoButton = document.getElementById('novaFotoButton');
+
+        let salvaNovaFoto = document.getElementById('salvaNovaFoto');
+        let atualizaFoto = document.getElementById('atualizaFoto');
+        let deletaFoto = document.getElementById('deletaFoto');
+
+        // Modais e comparações se elas estão ativas ou não.
+        let deleteArquivoModal = document.getElementById('deleteArquivoModal');
+        let updateArquivoModal = document.getElementById('updateModalArquivo');
+
+        const noModalOpen = body[0].classList.value === '';
+
+        const isDeleteArquivoModal = deleteArquivoModal.classList.value === 'modal fade show';
+        const isUpdateArquivoModal = updateArquivoModal.classList.value === 'modal fade show';
+
+        // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+        if (noModalOpen && !this.arquivoSelecionado && ENTER) {
+          e.preventDefault();
+          novaFotoButton.click();
+        } else if (noModalOpen && this.arquivoSelecionado && ENTER) {
+          e.preventDefault();
+          salvaNovaFoto.click();
+        } else if (!noModalOpen && isUpdateArquivoModal && ENTER) {
+          e.preventDefault();
+          atualizaFoto.click();
+        } else if (!noModalOpen && isDeleteArquivoModal && ENTER) {
+          e.preventDefault();
+          deletaFoto.click();
+        }
+      });
+    },
+    //////////////////////////////////////////////////////////////////////////////////////
+
   },
 
   mounted () {
     this.getLocalStorageToken();
-    this.fetchInfoDB();
+    this.fetchInfoDB(() => {
+      this.obrasDropDownActions(
+        localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '',
+        localStorage.getItem('codigoObra') ? localStorage.getItem('codigoObra') : 1
+      );
+    });
+    this.fetchObrasInfoDB()
+    this.HGPKEnter();
   }
 }
 
@@ -189,8 +324,36 @@ export default {
 
 <template>
 
+  <!-- Header com o DropDown 'Obras' -->
+  <header class="header middle-margin">
+    <!-- DropDown 'Obras' -->
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ selectedObraNome ? selectedObraNome : 'Obras' }}
+      </button>
+      <ul class="dropdown-menu">
+        <li v-for="(obra, i) in obrasInfo" :key="i">
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="obrasDropDownActions(obra.nome, obra.codigo)"
+            >{{ obra.nome }}</button>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="obrasDropDownActions('', '')"
+          >Limpar</button>
+        </li>
+      </ul>
+    </div>
+  </header>
+
   <!-- DeleteModalArquivo -->
-  <div class="modal fade" id="deleteArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteArquivoModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deleteArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="deleteArquivoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -207,12 +370,72 @@ export default {
           >Não</button>
 
           <button
-            id="deletaItem"
+            id="deletaFoto"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
-            @click="removeArquivoFromDB(this.codigo)"
+            @click="removeArquivo(this.codigo)"
           >Sim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UpdateModalArquivo -->
+  <div class="modal fade" id="updateModalArquivo" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="updateModalArquivoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="updateModalArquivoLabel">Editar Arquivo</h1>
+          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="PUT">
+
+            <!-- Código -->
+            <div class="mb-3">
+              <label for="id-input" class="form-label bold">Código:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id-input"
+                disabled
+                v-model="codigo">
+            </div>
+
+            <!-- NomeArquivo -->
+            <div class="mb-3">
+              <label for="nome-arquivo-input" class="form-label bold">Nome:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nome-arquivo-input"
+                v-model="nomeArquivo">
+            </div>
+
+            <!-- Descrição -->
+            <div class="mb-3">
+              <label for="descricao-input" class="form-label bold">Descrição:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="descricao-input"
+                v-model="descricao">
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
+            @click="cancel"
+          >Fechar</button>
+
+          <button id="atualizaFoto" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+            @click="updateArquivo()"
+          >Salvar</button>
         </div>
       </div>
     </div>
@@ -221,12 +444,13 @@ export default {
   <!-- CARDS -->
   <main class="margin-left-top-10">
     <div class="row row-cols-1 row-cols-md-3 g-4">
+
       <!-- Card de INSERT -->
-      <div class="col"  style="height: 350px; width: 245px;">
+      <div  v-if="this.selectedObraNome" class="col"  style="height: 350px; width: 245px;">
           <div class="card" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
-            <label v-if="!this.arquivoSelecionado" for="file-input" class="label-subir-foto" style="height: 100%; width: 100%;">
+            <label v-if="!this.arquivoSelecionado" for="file-input" id="novaFotoButton" class="label-subir-foto" style="height: 100%; width: 100%;">
               +
             </label>
 
@@ -258,7 +482,7 @@ export default {
                   <!-- Botões de Limpar e Subir arquivo -->
                   <div class="space-between">
                     <button type="button" class="btn btn-secondary" @click="limparButtonActions">Limpar</button>
-                    <button type="button" class="btn btn-success" @click="createArquivo">Subir</button>
+                    <button type="button" class="btn btn-success" id="salvaNovaFoto" @click="createArquivo">Subir</button>
                   </div>
                 </div>
               </form>
@@ -267,7 +491,7 @@ export default {
       </div>
 
       <!-- Lista de cards de Fotos. -->
-      <div v-for="(foto, i) in arquivos" :key="i" class="col"  style="height: 350px; width: 245px;">
+      <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col"  style="height: 350px; width: 245px;">
         <div class="card h-100" style="height: 100%; width: 100%;">
           <img :src="foto.conteudoArquivo" class="card-img" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
           <div class="card-img-overlay space-between-column">
@@ -279,11 +503,8 @@ export default {
                 class="btn btn-light btn-sm small grey-background border-radius-5"
                 title="Editar"
                 data-bs-toggle="modal"
-                data-bs-target="#updateModal"
-                @click="fillUpdateArquivoModal(compra.codigo, compra.obra.codigo,
-                  compra.dataCompra, compra.dataEntrega, compra.dataPagamento,
-                  compra.dataVencimento, compra.valorOriginal, compra.valorDesconto,
-                  compra.valorFinal, compra.fornecedor.nome, compra.socio.nome)"
+                data-bs-target="#updateModalArquivo"
+                @click="fillUpdateArquivoModal(foto.codigo, foto.nomeArquivo, foto.descricao)"
               ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
               <!-- Excluir -->
               <button

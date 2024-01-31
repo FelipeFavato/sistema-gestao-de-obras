@@ -66,7 +66,7 @@ public class ObraController {
       obra.setCustoPrevisto(data.custoPrevisto());
       obra.setCompras(data.compras());
       // obra.setSocios(data.socios());
-      obra.setArquivos(data.arquivos());
+      // obra.setArquivos(data.arquivos());
 
       return ResponseEntity.ok(obra);
     } else {

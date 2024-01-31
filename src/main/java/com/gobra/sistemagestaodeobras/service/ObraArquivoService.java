@@ -1,9 +1,10 @@
 package com.gobra.sistemagestaodeobras.service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -15,6 +16,8 @@ import com.gobra.sistemagestaodeobras.model.ObraArquivo;
 import com.gobra.sistemagestaodeobras.repository.ObraArquivoRepository;
 import com.gobra.sistemagestaodeobras.repository.ObraRepository;
 import com.gobra.sistemagestaodeobras.utils.HashByteArray;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @Service
@@ -52,6 +55,25 @@ public class ObraArquivoService {
   // Método GET.
   public List<ObraArquivoResponseDTO> getAllFiles() {
     return obraArquivoRepository.findAll().stream().map(ObraArquivoResponseDTO::new).toList();
+  }
+
+  // Método PUT.
+  public ResponseEntity<ObraArquivo> updateObraArquivo(Integer codigo, String nomeArquivo, String descricao) {
+    Optional<ObraArquivo> optionalObraArquivo = obraArquivoRepository.findById(codigo);
+
+    if (optionalObraArquivo.isPresent()) {
+      ObraArquivo obraArquivo = optionalObraArquivo.get();
+      // Recupera os valores de CONTEÚDO, HASH e IDOBRA que já estão presentes e atualiza.
+      obraArquivo.setConteudoArquivo(obraArquivo.getConteudoArquivo());
+      obraArquivo.setHashArquivo(obraArquivo.getHashArquivo());
+      obraArquivo.setIdObra(obraArquivo.getIdObra());
+      obraArquivo.setNomeArquivo(nomeArquivo);
+      obraArquivo.setDescricao(descricao);
+
+      return ResponseEntity.ok(obraArquivo);
+    } else {
+      throw new EntityNotFoundException();
+    }
   }
 
   // Método DELETE.
