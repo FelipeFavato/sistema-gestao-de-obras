@@ -26,6 +26,7 @@ public class ObraArquivoService {
   @Autowired
   private ObraRepository obraRepository;
 
+  // Método INSERT.
   public ObraArquivo saveAttachment(MultipartFile file, String descricao, String nomeArquivo, Integer idObra) throws Exception {
     byte[] conteudoArquivo = file.getBytes();
     Obra codigoObra = obraRepository.getReferenceById(idObra);
@@ -48,8 +49,14 @@ public class ObraArquivoService {
     }
   }
 
+  // Método GET.
   public List<ObraArquivoResponseDTO> getAllFiles() {
     return obraArquivoRepository.findAll().stream().map(ObraArquivoResponseDTO::new).toList();
+  }
+
+  // Método DELETE.
+  public void deletaObraArquivo (ObraArquivo arquivo) {
+    obraArquivoRepository.delete(arquivo);
   }
 
 }
