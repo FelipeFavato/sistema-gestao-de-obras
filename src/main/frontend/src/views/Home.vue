@@ -25,6 +25,10 @@ export default {
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
@@ -60,17 +64,20 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
-          <h5 class="card-title">Atualização 18.01.24</h5>
+          <h5 class="card-title">Atualização 31.01.24</h5>
           <p class="card-text">Página de Custos</p>
-          <p>1. Modal de ITEM corrigida para calcular automaticamente o valor Final dos Itens.</p>
-          <p></p>
-          <p></p>
+          <p>1. Tela de ARQUIVOS desenvolvida.</p>
+          <p>2. Possível ADICIONAR, EDITAR, EXCLUIR apenas FOTOS por enquanto.</p>
+          <p>3. Próxima feature: Fazer com que as fotos sejam clicáveis. Ao clicar na foto,
+            expandir um ALBUM sendo possível ver NOME, DESCRIÇÃO e navegar entre as fotos.
+            No mesmo molde de uma MODAL.
+          </p>
           <p></p>
         </div>
-        <a href="#compra" class="btn btn-success">Ver mudanças (Custos) -></a>
+        <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
       </div>
     </div>
-    <div class="card margin-10" style="width: 18rem;">
+    <!-- <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
           <h5 class="card-title">Atualização 17.01.24</h5>
@@ -82,21 +89,7 @@ export default {
         </div>
         <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
       </div>
-    </div>
-
-    <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 16.01.24</h5>
-          <p class="card-text">Página de Produtos</p>
-          <p>1. Combo corrigido para enviar apenas o código da Marca ao criar novo Produto ou atualizar.</p>
-          <p></p>
-          <p></p>
-          <p></p>
-        </div>
-        <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
-      </div>
-    </div>
+    </div> -->
   </main>
   
 </template>
