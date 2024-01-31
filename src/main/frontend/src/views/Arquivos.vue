@@ -19,8 +19,8 @@ export default {
 
       // Variáveis de requisição: -----\
       conteudoArquivo: '',
-      descricao: 'teste',
-      nomeArquivo: 'teste',
+      descricao: '',
+      nomeArquivo: '',
       idObra: 1,
 
       selectedFile: null,
@@ -66,8 +66,7 @@ export default {
         headers: {
           Authorization: `Bearer ${this.localStorageToken}`
         },
-      })
-      .then(response => {
+      }).then(response => {
         this.info = response.data;
         this.arquivos = this.generateArquivos(response.data);
         if (callback) callback();
@@ -78,7 +77,7 @@ export default {
     //////////////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT de dados - POST: -----------------------------------------------\
-    createArquivoInfoDB (formD) {
+    createArquivoInfoDB (formD, callback) {
       axios.post('/api/obra-arquivos', formD,
       {
         headers: {
@@ -86,9 +85,12 @@ export default {
           'Content-Type': 'multipart/form-data'
         },
       }).then(res => {
-        console.log(res);
+        if (callback) callback();
       }).catch(error => {
-        console.log(error);
+        if (error.response.status === 500) {
+          alert("Foto já cadastrada no sistema.");
+          this.limparButtonActions();
+        }
       });
     },
 
@@ -98,14 +100,28 @@ export default {
       formData.append("descricao", this.descricao);
       formData.append("nomeArquivo", this.nomeArquivo);
       formData.append("idObra", this.idObra);
-      this.createArquivoInfoDB(formData)
+      // Cria o arquivo novo e renderiza a lista.
+      this.createArquivoInfoDB(formData, () => {
+        this.fetchInfoDB();
+        this.limparButtonActions();
+      });
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
     // Métodos de comportamento: --------------------------------------------------------\
     // Limpa o combo de requisição.
     cancel() {
-      // Fazer amanhã
+      this.descricao = '';
+      this.conteudoArquivo = '';
+      this.nomeArquivo = '';
+    },
+    limparButtonActions () {
+      // Limpa o combo.
+      this.cancel();
+      // Retira a imagem que está sendo gerada.
+      this.imageDataUrl = '';
+      // Volta a LABEL de novo Upload.
+      this.switchInputArchive();
     },
     // Gera a lista de arquivos assim que a página carrega.
     generateArquivos (data) {
@@ -149,10 +165,11 @@ export default {
 </script>
 
 <template>
+
   <main class="margin-left-top-10">
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col"  style="height: 350px; width: 245px;">
-        <!-- <div class="card h-100"> -->
+          <!-- Card de INSERT -->
           <div class="card" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
@@ -165,6 +182,7 @@ export default {
             <div class="card-img-overlay" v-if="this.arquivoSelecionado" style="height: 100%; width: 100%;">
               <form style="height: 100%; width: 100%;">
                 <div class="card-body margin-top-160">
+                  <!-- Nome -->
                   <div class="mb-3">
                     <input
                       type="text"
@@ -174,6 +192,7 @@ export default {
                       v-model="nomeArquivo"
                     >
                   </div>
+                  <!-- Descrição -->
                   <div class="mb-3">
                     <input
                       type="text"
@@ -183,18 +202,18 @@ export default {
                       v-model="descricao"
                     >
                   </div>
-                  <div class="space-around">
-                    <button type="button" class="btn btn-secondary" @click="cancel">Limpar</button>
+                  <!-- Botões de Limpar e Subir arquivo -->
+                  <div class="space-between">
+                    <button type="button" class="btn btn-secondary" @click="limparButtonActions">Limpar</button>
                     <button type="button" class="btn btn-success" @click="createArquivo">Subir</button>
                   </div>
                 </div>
               </form>
             </div>
           </div>
-
-        <!-- </div> -->
       </div>
 
+      <!-- Cards de fotos existentes -->
       <div v-for="(foto, i) in arquivos" :key="i" class="col"  style="height: 350px; width: 245px;">
         <div class="card h-100">
           <img :src="foto.conteudoArquivo" class="card-img-top" :alt="i"  style="height: 80%; width: 100%;">
@@ -205,14 +224,6 @@ export default {
       </div>
     </div>
   </main>
-
-
-  <!-- Arquivos -->
-  <!-- <div>
-      <img v-if="imageData" :src="this.imageData"  style="height: 200px; width: 200px;" alt="Image" />
-      <div v-else>Loading...</div>
-  </div>
-  <img :src="imageDataUrl" v-if="imageDataUrl" alt="Imagem selecionada"> -->
 
 </template>
 
@@ -240,9 +251,9 @@ export default {
   justify-content: center;
 }
 
-.space-around {
+.space-between {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .flex-end {
