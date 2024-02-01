@@ -121,7 +121,7 @@ export default {
       // Cria o arquivo novo e renderiza a lista.
       this.createArquivoInfoDB(formData, () => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra);
+          self.selectArquivosByObra(Number(self.idObra));
         });
         this.limparButtonActions();
       });
@@ -155,7 +155,7 @@ export default {
       const self = this;
       this.updateArquivoInfoDB(() => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra)
+          self.selectArquivosByObra(Number(self.idObra))
         });
         self.cancel();
       });
@@ -185,7 +185,7 @@ export default {
       const self = this;
       this.removeArquivoFromDB(codigo, () => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra)
+          self.selectArquivosByObra(Number(self.idObra))
         });
         self.cancel();
       });
@@ -495,6 +495,7 @@ export default {
         <div class="card h-100" style="height: 100%; width: 100%;">
           <img :src="foto.conteudoArquivo" class="card-img" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
           <div class="card-img-overlay space-between-column">
+
             <!-- Botões Editar/Excluir -->
             <div class="space-between">
               <!-- Editar -->
@@ -515,7 +516,15 @@ export default {
                 data-bs-target="#deleteArquivoModal"
                 @click="fillDeleteArquivoModal(foto.codigo)"
               ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
-              </div>
+            </div>
+            <!-- Botão Expandir -->
+            <div class="texto-centralizado" style="height: 250px; width: 180px;">
+              <button class="expandir-button no-background-color" style="height: 250px; width: 180px;">
+                <img src="../assets/imagens/expandir.png" class="expandir-button">
+              </button>
+            </div>
+
+            <!-- Nome -->
             <!-- <h5 class="card-title">Card title</h5> -->
             <p class="card-text texto-centralizado grey-background border-radius-5">{{ foto.nomeArquivo }}</p>
           </div>
@@ -540,6 +549,22 @@ export default {
 
 .font {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.expandir-button {
+  opacity: 0; /* Torna o botão invisível por padrão */
+  transition: opacity 0.3s ease; /* Adiciona uma transição suave */
+  height: 70px;
+  width: 70px;
+  border: none;
+}
+
+.expandir-button:hover {
+    opacity: 0.6; /* Torna o botão visível quando o mouse passa por cima */
+}
+
+.no-background-color {
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .grey-background {
