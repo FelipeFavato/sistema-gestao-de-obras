@@ -20,6 +20,7 @@ export default {
       selectedObraNome: '',
       selectedFile: null,
       imageDataUrl: '',
+      fotoModal: '',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -200,6 +201,11 @@ export default {
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
     },
+    closeVisualizacao () {
+      this.conteudoArquivo = '';
+      this.nomeArquivo = '';
+      this.fotoModal = '';
+    },
     limparButtonActions () {
       // Limpa o combo.
       this.cancel();
@@ -260,8 +266,10 @@ export default {
       this.emptyArquivosByObra();
       this.selectArquivosByObra(Number(obraCod));
     },
-    expandirFoto (conteudoArquivo) {
-      alert('foto expandida!')
+    fillVisualizaArquivoModal (conteudoArquivo, nomeArquivo, descricao) {
+      this.fotoModal = conteudoArquivo;
+      this.nomeArquivo = nomeArquivo;
+      this.descricao = descricao;
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -353,6 +361,38 @@ export default {
       </ul>
     </div>
   </header>
+
+  <!-- VisualizaArquivoModal -->
+  <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h1
+            class="modal-title fs-5 texto-centralizado"
+            id="visualizaArquivoModalLabel"
+            style="height: 100%; width: 100%;"
+          >{{ this.nomeArquivo }}</h1>
+          <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body flex-display">
+          <img :src="this.fotoModal" alt="Foto Modal">
+          <div></div>
+          <div class="card margin-left-10" style="height: 100%; width: 100%;">
+            <div class="card-header">
+              <h5>Descrição</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{ this.descricao }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- DeleteModalArquivo -->
   <div class="modal fade" id="deleteArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -523,8 +563,12 @@ export default {
 
             <!-- Botão Expandir -->
             <div class="texto-centralizado" style="height: 245px; width: 185px;">
-              <button @click="expandirFoto(foto.conteudoArquivo)" class="expandir-button no-background-color" style="height: 245px; width: 185px;">
-                <img src="../assets/imagens/expandir.png" class="expandir-button rounded mx-auto d-block">
+              <button
+                @click="fillVisualizaArquivoModal (foto.conteudoArquivo, foto.nomeArquivo, foto.descricao)"
+                class="expandir-button no-background-color" style="height: 245px; width: 185px;"
+                data-bs-toggle="modal"
+                data-bs-target="#visualizaArquivoModal"
+                ><img src="../assets/imagens/expandir.png" class="expandir-button rounded mx-auto d-block">
               </button>
             </div>
 
@@ -580,6 +624,10 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
+.margin-left-10 {
+  margin-left: 10px;
+}
+
 .margin-top-160 {
   margin-top: 160px;
 }
@@ -596,6 +644,11 @@ export default {
 .space-between {
   display: flex;
   justify-content: space-between;
+}
+
+.flex-display {
+  display: flex;
+  /* justify-content: space-evenly; */
 }
 
 .space-between-column {
