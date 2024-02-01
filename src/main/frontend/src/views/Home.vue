@@ -76,6 +76,17 @@ export default {
         </div>
         <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
       </div>
+
+      <div class="card-body column">
+        <div>
+          <h5 class="card-title">Atualização 01.02.24</h5>
+          <p class="card-text">Página de Custos</p>
+          <p>1. Póssivel clicar na foto e expandir a imagem, vendo DESCRIÇÃO e NOME.</p>
+          <p>2. Bug de renderização corrigido</p>
+          <p></p>
+        </div>
+        <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
+      </div>
     </div>
     <!-- <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
