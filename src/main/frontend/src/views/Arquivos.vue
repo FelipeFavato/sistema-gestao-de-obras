@@ -260,6 +260,9 @@ export default {
       this.emptyArquivosByObra();
       this.selectArquivosByObra(Number(obraCod));
     },
+    expandirFoto (conteudoArquivo) {
+      alert('foto expandida!')
+    },
     //////////////////////////////////////////////////////////////////////////////////////
 
     // Métodos de refinamento: ----------------------------------------------------------\
@@ -493,8 +496,8 @@ export default {
       <!-- Lista de cards de Fotos. -->
       <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col"  style="height: 350px; width: 245px;">
         <div class="card h-100" style="height: 100%; width: 100%;">
-          <img :src="foto.conteudoArquivo" class="card-img" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
-          <div class="card-img-overlay space-between-column">
+          <img :src="foto.conteudoArquivo" class="card-img img-thumbnail img-fluid" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
+          <div class="card-img-overlay space-between-column hover-white-background">
 
             <!-- Botões Editar/Excluir -->
             <div class="space-between">
@@ -517,10 +520,11 @@ export default {
                 @click="fillDeleteArquivoModal(foto.codigo)"
               ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
             </div>
+
             <!-- Botão Expandir -->
-            <div class="texto-centralizado" style="height: 250px; width: 180px;">
-              <button class="expandir-button no-background-color" style="height: 250px; width: 180px;">
-                <img src="../assets/imagens/expandir.png" class="expandir-button">
+            <div class="texto-centralizado" style="height: 245px; width: 185px;">
+              <button @click="expandirFoto(foto.conteudoArquivo)" class="expandir-button no-background-color" style="height: 245px; width: 185px;">
+                <img src="../assets/imagens/expandir.png" class="expandir-button rounded mx-auto d-block">
               </button>
             </div>
 
@@ -551,6 +555,10 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.hover-white-background:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
 .expandir-button {
   opacity: 0; /* Torna o botão invisível por padrão */
   transition: opacity 0.3s ease; /* Adiciona uma transição suave */
@@ -560,7 +568,7 @@ export default {
 }
 
 .expandir-button:hover {
-    opacity: 0.6; /* Torna o botão visível quando o mouse passa por cima */
+  opacity: 0.8; /* Torna o botão visível quando o mouse passa por cima */
 }
 
 .no-background-color {
@@ -569,7 +577,7 @@ export default {
 
 .grey-background {
   /* background-color: rgba(136, 136, 136, 0.5); */
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .margin-top-160 {
