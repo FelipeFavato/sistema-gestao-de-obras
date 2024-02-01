@@ -61,6 +61,7 @@ export default {
 
   <!-- Atualizações -->
   <main class="flex">
+  
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
@@ -72,25 +73,23 @@ export default {
             expandir um ALBUM sendo possível ver NOME, DESCRIÇÃO e navegar entre as fotos.
             No mesmo molde de uma MODAL. 
           </p>
-          <p></p>
         </div>
         <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
       </div>
-
-      <div class="card margin-10" style="width: 18rem;">
-        <div class="card-body column">
-          <div>
-            <h5 class="card-title">Atualização 01.02.24</h5>
-            <p class="card-text">Página de Custos</p>
-            <p>1. Póssivel clicar na foto e expandir a imagem, vendo DESCRIÇÃO e NOME.</p>
-            <p>2. Bug de renderização corrigido</p>
-            <p></p>
-          </div>
-          <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
-        </div>
-      </div>
-
     </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
+          <h5 class="card-title">Atualização 01.02.24</h5>
+          <p class="card-text">Página de Custos</p>
+          <p>1. Póssivel clicar na foto e expandir a imagem, vendo DESCRIÇÃO e NOME.</p>
+          <p>2. Bug de renderização corrigido</p>
+        </div>
+        <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
+      </div>
+    </div>
+
     <!-- <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
