@@ -20,6 +20,7 @@ export default {
       selectedObraNome: '',
       selectedFile: null,
       imageDataUrl: '',
+      fotoModal: '',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -121,7 +122,7 @@ export default {
       // Cria o arquivo novo e renderiza a lista.
       this.createArquivoInfoDB(formData, () => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra);
+          self.selectArquivosByObra(Number(self.idObra));
         });
         this.limparButtonActions();
       });
@@ -155,7 +156,7 @@ export default {
       const self = this;
       this.updateArquivoInfoDB(() => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra)
+          self.selectArquivosByObra(Number(self.idObra))
         });
         self.cancel();
       });
@@ -185,7 +186,7 @@ export default {
       const self = this;
       this.removeArquivoFromDB(codigo, () => {
         self.fetchInfoDB(() => {
-          self.selectArquivosByObra(self.idObra)
+          self.selectArquivosByObra(Number(self.idObra))
         });
         self.cancel();
       });
@@ -199,6 +200,11 @@ export default {
       this.descricao = '';
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
+    },
+    closeVisualizacao () {
+      this.conteudoArquivo = '';
+      this.nomeArquivo = '';
+      this.fotoModal = '';
     },
     limparButtonActions () {
       // Limpa o combo.
@@ -259,6 +265,11 @@ export default {
       this.selectObra(obraNome, obraCod);
       this.emptyArquivosByObra();
       this.selectArquivosByObra(Number(obraCod));
+    },
+    fillVisualizaArquivoModal (conteudoArquivo, nomeArquivo, descricao) {
+      this.fotoModal = conteudoArquivo;
+      this.nomeArquivo = nomeArquivo;
+      this.descricao = descricao;
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -350,6 +361,38 @@ export default {
       </ul>
     </div>
   </header>
+
+  <!-- VisualizaArquivoModal -->
+  <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h1
+            class="modal-title fs-5 texto-centralizado"
+            id="visualizaArquivoModalLabel"
+            style="height: 100%; width: 100%;"
+          >{{ this.nomeArquivo }}</h1>
+          <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body flex-display">
+          <img :src="this.fotoModal" alt="Foto Modal">
+          <div></div>
+          <div class="card margin-left-10" style="height: 100%; width: 100%;">
+            <div class="card-header">
+              <h5>Descrição</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{ this.descricao }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- DeleteModalArquivo -->
   <div class="modal fade" id="deleteArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -493,8 +536,9 @@ export default {
       <!-- Lista de cards de Fotos. -->
       <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col"  style="height: 350px; width: 245px;">
         <div class="card h-100" style="height: 100%; width: 100%;">
-          <img :src="foto.conteudoArquivo" class="card-img" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
-          <div class="card-img-overlay space-between-column">
+          <img :src="foto.conteudoArquivo" class="card-img img-thumbnail img-fluid" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
+          <div class="card-img-overlay space-between-column hover-white-background">
+
             <!-- Botões Editar/Excluir -->
             <div class="space-between">
               <!-- Editar -->
@@ -515,7 +559,20 @@ export default {
                 data-bs-target="#deleteArquivoModal"
                 @click="fillDeleteArquivoModal(foto.codigo)"
               ><img src="../assets/imagens/lata-de-lixo.png" alt="lata de lixo"></button>
-              </div>
+            </div>
+
+            <!-- Botão Expandir -->
+            <div class="texto-centralizado" style="height: 245px; width: 185px;">
+              <button
+                @click="fillVisualizaArquivoModal (foto.conteudoArquivo, foto.nomeArquivo, foto.descricao)"
+                class="expandir-button no-background-color" style="height: 245px; width: 185px;"
+                data-bs-toggle="modal"
+                data-bs-target="#visualizaArquivoModal"
+                ><img src="../assets/imagens/expandir.png" class="expandir-button rounded mx-auto d-block">
+              </button>
+            </div>
+
+            <!-- Nome -->
             <!-- <h5 class="card-title">Card title</h5> -->
             <p class="card-text texto-centralizado grey-background border-radius-5">{{ foto.nomeArquivo }}</p>
           </div>
@@ -542,9 +599,33 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.hover-white-background:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.expandir-button {
+  opacity: 0; /* Torna o botão invisível por padrão */
+  transition: opacity 0.3s ease; /* Adiciona uma transição suave */
+  height: 70px;
+  width: 70px;
+  border: none;
+}
+
+.expandir-button:hover {
+  opacity: 0.8; /* Torna o botão visível quando o mouse passa por cima */
+}
+
+.no-background-color {
+  background-color: rgba(255, 255, 255, 0);
+}
+
 .grey-background {
   /* background-color: rgba(136, 136, 136, 0.5); */
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.margin-left-10 {
+  margin-left: 10px;
 }
 
 .margin-top-160 {
@@ -563,6 +644,11 @@ export default {
 .space-between {
   display: flex;
   justify-content: space-between;
+}
+
+.flex-display {
+  display: flex;
+  /* justify-content: space-evenly; */
 }
 
 .space-between-column {
