@@ -21,6 +21,12 @@ export default {
       selectedFile: null,
       imageDataUrl: '',
       fotoModal: '',
+      modalMaxWidth: 0,
+      modalMaxHeight: 0,
+      isPortrait: false,
+      retratoOuPaisagem: '',
+      retratoOuPaisagemImagem: '',
+      retratoOuPaisagemDescricao: '',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -204,6 +210,7 @@ export default {
     closeVisualizacao () {
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
+      this.descricao = '';
       this.fotoModal = '';
     },
     limparButtonActions () {
@@ -270,6 +277,28 @@ export default {
       this.fotoModal = conteudoArquivo;
       this.nomeArquivo = nomeArquivo;
       this.descricao = descricao;
+    },
+    adjustModalSize() {
+      const img = this.$refs.modalImage;
+      this.modalMaxWidth = img.naturalWidth;
+      this.modalMaxHeight = img.naturalHeight;
+      
+      // Verifica se a imagem está no modo retrato ou paisagem.
+      // Seta para true caso seja Retrato (de pé).
+      this.isPortrait = img.naturalHeight > img.naturalWidth;
+
+      this.checkRetratoPaisagemModal(this.isPortrait);
+    },
+    checkRetratoPaisagemModal (retrato) {
+      if (retrato) {
+        this.retratoOuPaisagem = 'retrato'
+        this.retratoOuPaisagemImagem = 'retrato-imagem';
+        this.retratoOuPaisagemDescricao = 'retrato-descricao';
+      } else {
+        this.retratoOuPaisagem = 'paisagem'
+        this.retratoOuPaisagemImagem = 'paisagem-imagem';
+        this.retratoOuPaisagemDescricao = 'paisagem-descricao';
+      }
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -363,33 +392,63 @@ export default {
   </header>
 
   <!-- VisualizaArquivoModal -->
-  <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+  <!-- <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered tamanho-maximo-da-modal">
+      <div class="modal-content" style="height: 100%; width: 100%;">
 
-        <div class="modal-header">
-          <h1
-            class="modal-title fs-5 texto-centralizado"
-            id="visualizaArquivoModalLabel"
-            style="height: 100%; width: 100%;"
-          >{{ this.nomeArquivo }}</h1>
-          <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body flex-display">
-          <img :src="this.fotoModal" alt="Foto Modal">
-          <div></div>
-          <div class="card margin-left-10" style="height: 100%; width: 100%;">
-            <div class="card-header">
-              <h5>Descrição</h5>
-            </div>
-            <div class="card-body">
-              <p class="card-text">{{ this.descricao }}</p>
+        <div class="modal-body">
+          <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img :src="this.fotoModal" class="img-fluid rounded-start" alt="Foto Modal">
+              </div>
+              <div class="col-md-8">
+                <div class="card-header texto-centralizado space-between">
+                  <h3>{{ this.nomeArquivo }}</h3>
+                  <p>{{ this.fotoModal }}</p>
+                  <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ this.descricao }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+      </div>
+    </div>
+  </div> -->
+
+  <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
+    <div :class="this.retratoOuPaisagem" class="modal-dialog modal-dialog-centered" style="height: 100%; width: 100%;">
+      <div class="modal-content" style="height: 100%; width: 100%;">
+        <div class="modal-body" style="height: 100%; width: 100%;">
+          <div class="card mb-3" style="height: 100%; width: 100%;">
+            <div class="row g-0" style="height: 100%; width: 100%;">
+              <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
+                <img
+                  :src="this.fotoModal"
+                  ref="modalImage"
+                  class="img-fluid rounded-start modal-image"
+                  alt="Foto Modal"
+                  @load="adjustModalSize"
+                >
+              </div>
+              <div class="col-md-8" :class="this.retratoOuPaisagemDescricao">
+                <div class="card-header texto-centralizado space-between">
+                  <h3>{{ nomeArquivo }}</h3>
+                  <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ descricao }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -485,23 +544,26 @@ export default {
   </div>
 
   <!-- CARDS -->
-  <main class="margin-left-top-10">
+  <main class="margin-12">
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <!-- Card de INSERT -->
-      <div  v-if="this.selectedObraNome" class="col"  style="height: 350px; width: 245px;">
-          <div class="card" style="height: 100%; width: 100%;">
+      <div
+        v-if="this.selectedObraNome"
+        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
+      >
+          <div class="card h-100" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
-            <label v-if="!this.arquivoSelecionado" for="file-input" id="novaFotoButton" class="label-subir-foto" style="height: 100%; width: 100%;">
+            <label v-if="!this.arquivoSelecionado" for="file-input" id="novaFotoButton" class="label-subir-foto tamanho-cards">
               +
             </label>
 
-            <img  v-if="imageDataUrl" class="card-img" :src="imageDataUrl" alt="Imagem selecionada" style="height: 100%; width: 100%;">
+            <img v-if="imageDataUrl" class="card-img" :src="imageDataUrl" alt="Imagem selecionada" style="height: 100%; width: 100%;">
 
             <div class="card-img-overlay" v-if="this.arquivoSelecionado" style="height: 100%; width: 100%;">
-              <form style="height: 100%; width: 100%;">
-                <div class="card-body margin-top-160">
+              <form  class="flex-display" style="height: 100%; width: 100%;">
+                <div class="card-bodyflex" >
                   <!-- Nome -->
                   <div class="mb-3">
                     <input
@@ -524,19 +586,29 @@ export default {
                   </div>
                   <!-- Botões de Limpar e Subir arquivo -->
                   <div class="space-between">
-                    <button type="button" class="btn btn-secondary" @click="limparButtonActions">Limpar</button>
-                    <button type="button" class="btn btn-success" id="salvaNovaFoto" @click="createArquivo">Subir</button>
+                    <button type="button" class="btn btn-secondary tamanho-font-14" @click="limparButtonActions">Limpar</button>
+                    <button type="button" class="btn btn-success tamanho-font-14" id="salvaNovaFoto" @click="createArquivo">Salvar</button>
                   </div>
                 </div>
               </form>
             </div>
+
           </div>
       </div>
 
       <!-- Lista de cards de Fotos. -->
-      <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col"  style="height: 350px; width: 245px;">
+      <div
+        v-for="(foto, i) in selectedArquivosByObra" :key="i"
+        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
+      >
         <div class="card h-100" style="height: 100%; width: 100%;">
-          <img :src="foto.conteudoArquivo" class="card-img img-thumbnail img-fluid" :alt="foto.nomeArquivo, i" style="height: 100%; width: 100%;">
+          <img
+            :src="foto.conteudoArquivo"
+            class="card-img img-thumbnail img-fluid image-in-cards"
+            :alt="foto.nomeArquivo, i"
+            style="height: 100%; width: 100%;"
+            ref="cardImage"
+          >
           <div class="card-img-overlay space-between-column hover-white-background">
 
             <!-- Botões Editar/Excluir -->
@@ -562,10 +634,11 @@ export default {
             </div>
 
             <!-- Botão Expandir -->
-            <div class="texto-centralizado" style="height: 245px; width: 185px;">
+            <div class="texto-centralizado"
+            >
               <button
-                @click="fillVisualizaArquivoModal (foto.conteudoArquivo, foto.nomeArquivo, foto.descricao)"
-                class="expandir-button no-background-color" style="height: 245px; width: 185px;"
+                @click="fillVisualizaArquivoModal(foto.conteudoArquivo, foto.nomeArquivo, foto.descricao)"
+                class="expandir-button no-background-color"
                 data-bs-toggle="modal"
                 data-bs-target="#visualizaArquivoModal"
                 ><img src="../assets/imagens/expandir.png" class="expandir-button rounded mx-auto d-block">
@@ -573,7 +646,6 @@ export default {
             </div>
 
             <!-- Nome -->
-            <!-- <h5 class="card-title">Card title</h5> -->
             <p class="card-text texto-centralizado grey-background border-radius-5">{{ foto.nomeArquivo }}</p>
           </div>
         </div>
@@ -586,9 +658,66 @@ export default {
 
 <style scope>
 
-.margin-left-top-10 {
-  margin-left: 10px;
-  margin-top: 10px;
+/* Estilos para dispositivos com largura de tela de até 768 pixels (tablets e dispositivos móveis) */
+@media (max-width: 768px) {
+  .tamanho-cards {
+    min-height: 200px;
+    max-height: 200px;
+  }
+}
+
+/* Estilos para dispositivos com largura de tela acima de 768 pixels (desktop) */
+@media (min-width: 769px) {
+  .tamanho-cards {
+    min-height: 280px;
+    max-height: 280px;
+  }
+
+  .tamanho-maximo-da-modal {
+    max-height: 90vh;
+    max-width: 180vh;
+  }
+
+  .retrato {
+    max-width: 90vh;
+    max-height: 90vh;
+  }
+
+  .retrato-imagem {
+    height: 100%;
+    width: 65%;
+  }
+
+  .retrato-descricao {
+    height: 100%;
+    width: 35%;
+  }
+
+  .paisagem {
+    max-height: 90vh;
+    max-width: 180vh;
+  }
+
+  .paisagem-imagem {
+    height: 100%;
+    width: 80%;
+  }
+
+  .paisagem-descricao {
+    height: 100%;
+    width: 20%;
+  }
+}
+
+.vh-heigth {
+  width: 150vh;
+  height: 100vh;
+}
+
+
+
+.margin-12 {
+  margin: 12px;
 }
 
 .border-radius-5 {
@@ -599,6 +728,10 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.tamanho-font-14 {
+  font-size: 14px;
+}
+
 .hover-white-background:hover {
   background-color: rgba(255, 255, 255, 0.5);
 }
@@ -606,8 +739,8 @@ export default {
 .expandir-button {
   opacity: 0; /* Torna o botão invisível por padrão */
   transition: opacity 0.3s ease; /* Adiciona uma transição suave */
-  height: 70px;
-  width: 70px;
+  height: 100%;
+  width: 80%;
   border: none;
 }
 
@@ -617,6 +750,10 @@ export default {
 
 .no-background-color {
   background-color: rgba(255, 255, 255, 0);
+}
+
+.black-background {
+  background-color: #e0e0e0;
 }
 
 .grey-background {
@@ -632,8 +769,8 @@ export default {
   margin-top: 160px;
 }
 
-.border {
-  border: 3px solid black;
+.red-border {
+  border: 1px solid red;
 }
 
 .texto-centralizado {
@@ -648,7 +785,16 @@ export default {
 
 .flex-display {
   display: flex;
-  /* justify-content: space-evenly; */
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.modal-image {
+  object-fit: contain;
+}
+
+.image-in-cards {
+  object-fit: cover;
 }
 
 .space-between-column {
@@ -662,14 +808,12 @@ input[type="file"] {
 }
 
 .label-subir-foto {
-  display: inline-block;
-  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #fff;
   background-color: #3D8B37;
-  text-align: center;
-  padding: 15px 40px;
-  font-size: 180px;
-  letter-spacing: 1.5px;
+  font-size: 100px;
   user-select: none;
   cursor: pointer;
   box-shadow: 5px 15px 25px rgba(0, 0, 0, 0.35);
