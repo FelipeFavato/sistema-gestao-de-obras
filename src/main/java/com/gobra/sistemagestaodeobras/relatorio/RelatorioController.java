@@ -33,7 +33,7 @@ public class RelatorioController {
   @Autowired
   private CSVReport csvReport;
 
-  // Produto PDF/CSV --------------------------------------------------
+  // Produto PDF/CSV ------------------------------------------------------------\
   @GetMapping("/produto/pdf/{categoria}/{marca}")
   public byte[] generatePDFProdutoReport (@PathVariable String categoria, @PathVariable String marca) throws FileNotFoundException, JRException {
     return relatorioService.exportPDFProdutoReport(categoria, marca);
@@ -44,6 +44,7 @@ public class RelatorioController {
     // Define o nome, conteúdo e formato do arquivo.
     String nomeArquivo = "produtos.csv";
     csvReport.formatCSVReport(response, nomeArquivo);
+    // HttpServletResponse formattedResponse = csvReport.formatCSVReport(response, nomeArquivo);
     
     // Cria um 'escritor' que vai escrever as informações no arquivo.
     StatefulBeanToCsv<RelatorioProdutoDTO> writer = csvReport.createProdutoCSVWriter(response);
@@ -58,21 +59,49 @@ public class RelatorioController {
     writer.write(listaProdutos);
 
   }
-  // ------------------------------------------------------------------
 
-  
-  // @GetMapping("/testeDownload")
-  // public ResponseEntity<byte[]> testeDownload() {
-  //   HttpHeaders header = new HttpHeaders();
-  //   header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "teste.csv");
-  //   header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-  //   header.add("Pragma", "no-cache");
-  //   header.add("Expires", "0");
-  //   byte[] conteudo = "nome;idade;telefone\naaaa;23;1142653432\nbbbb;22;11253553452\n".getBytes();
-  //   return ResponseEntity.ok()
-  //       .headers(header)
-  //       .contentLength(conteudo.length)
-  //       .contentType(MediaType.parseMediaType("text/csv"))
-  //       .body(conteudo);
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // CODIGO;NOME;CATEGORIA;MARCA
+  // 193;Adaptador curto 32mmx1;Material;Não informada
+  // 194;adaptador curto 50 mmx 1x1/2;Material;Não informada
+  // 144;Adaptador Flange Sold Krona 25 x 3/4;Material;Krona
+  // 115;Adesivo PVC Pote 175g com Pincel Tigre;Material;Tigre
+  // 99;Adesivo PVC Pote 850G;Material;Tigre
+  // 134;Adesivo PVC Pote 850G - Amanco ;Material;Amanco
+  // 80;Aditivo plastificante Vedalit 18L Vedacit;Material;Vedacit
+  // 234;Aditivo Plastificante Vedalit 3,6L Vedacit;Material;Vedacit
+  // 62;Água;Serviço;Sabesp
+  // 103;Amanco Cx sifão GR Vort Br Red DN100xDN100xDN50;Material;Amanco
+  // 89;Amanco Esg cotovelo 45 100mm 4;Material;Amanco
+  // 86;Amanco Esg cotovelo 45 40mm 11/2;Material;Amanco
+  // 87;Amanco Esg cotovelo 45 50mm 2;Material;Amanco
+
+  // Produto TESTE --------------------------------------------------------------\
+  // @GetMapping("/produto/csv/{categoria}/{marca}")
+  // public StringBuilder generateCSVProdutoReport (HttpServletResponse response, @PathVariable String categoria, @PathVariable String marca) throws Exception {
+  //   String nomeArquivo = "produtos.csv";
+  //   csvReport.formatCSVReport(response, nomeArquivo);
+
+  //   // Cria o StringBuilder necessário para montar o arquivo.
+  //   StringBuilder result = new StringBuilder();
+  //   result.append("CODIGO;NOME;CATEGORIA;MARCA\n");   
+
+  //   // Gera a lista de produtos a ser gravada.
+  //   List<RelatorioProdutoDTO> listaProdutos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
+
+  //   // Retorna as linhas e colunas do arquivo CSV.
+  //   for (RelatorioProdutoDTO produto : listaProdutos) {
+  //     result.append(produto.getCodigo()).append(";")
+  //       .append(produto.getNome()).append(";")
+  //       .append(produto.getCategoria()).append(";")
+  //       .append(produto.getMarca()).append("\n");
+  //   }
+
+  //   // Retorna o StringBuilder.
+  //   return result;
   // }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
 }

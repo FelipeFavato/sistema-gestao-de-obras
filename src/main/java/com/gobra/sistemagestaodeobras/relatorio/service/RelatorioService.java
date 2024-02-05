@@ -24,7 +24,7 @@ public class RelatorioService {
   @Autowired
   private ProdutoRepository produtoRepository;
 
-  // Produto PDF -------------------------------------------------------
+  // Produto PDF ------------------------------------------------------------------\
   public byte[] exportPDFProdutoReport (String categoria, String marca) throws FileNotFoundException, JRException {
     List<RelatorioProdutoDTO> produtos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
 
@@ -32,7 +32,6 @@ public class RelatorioService {
 
     return pdfBytes;
   }
-
-  // ------------------------------------------------------------------------
+  //////////////////////////////////////////////////////////////////////////////////
 
 }
