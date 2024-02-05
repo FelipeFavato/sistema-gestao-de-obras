@@ -78,7 +78,7 @@ export default {
         },
       }).then(response => {
         this.info = response.data;
-        this.arquivos = this.generateArquivos(response.data);
+        this.arquivos = this.generateArquivos(this.info);
         if (callback) callback();
       }).catch(error => {
         console.error('Error fetching image data:', error);
@@ -224,13 +224,35 @@ export default {
     // Gera a lista de arquivos assim que a página carrega.
     generateArquivos (data) {
       const fotografias = [];
-      for (let arquivo of data) {
-        arquivo.conteudoArquivo = 'data:image/jpeg;base64,' + arquivo.conteudoArquivo;
-        fotografias.push(arquivo);
+      // Separa oque é PDF do que é imagem.
+      for (let a of data) {
+        if (`${a.conteudoArquivo[0]}${a.conteudoArquivo[1]}${a.conteudoArquivo[2]}${a.conteudoArquivo[3]}${a.conteudoArquivo[4]}` === "JVBER") {
+          fotografias.push(a);
+        } else {
+          a.conteudoArquivo = 'data:image/jpeg;base64,' + a.conteudoArquivo;
+          fotografias.push(a);
+        }
       }
 
       return fotografias.sort((s1, s2) => s1['nomeArquivo'].localeCompare(s2['nomeArquivo']));
     },
+    // exibirPDF(pdfBytes) {
+    //   const jsonString = JSON.stringify(pdfBytes);
+    //   // Crie um Blob a partir dos bytes do PDF
+    //   const blob = new Blob([jsonString], { type: 'application/pdf' });
+    //   console.log(blob)
+
+    //   // Crie uma URL temporária para o Blob
+    //   const url = URL.createObjectURL(blob);
+    //   console.log(url)
+    //   // Recupera um iframe
+    //   const iframe = document.getElementById('iframe');
+
+    //   // Defina a fonte do iframe como a URL temporária do Blob
+    //   iframe.src = url;
+
+    //   console.log(iframe)
+    // },
     // Quando o usuário selecionar um arquivo, deixa de mostrar o input e mostra a imagem.
     switchInputArchive () {
       this.arquivoSelecionado = !this.arquivoSelecionado;
@@ -277,6 +299,17 @@ export default {
       this.fotoModal = conteudoArquivo;
       this.nomeArquivo = nomeArquivo;
       this.descricao = descricao;
+
+      // let chosenArquivo = {};
+      // for (let arq of this.info) {
+      //   if (arq.conteudoArquivo === this.fotoModal) {
+      //     chosenArquivo = arq;
+      //   }
+      // }
+
+      // if (this.fotoModal[0] === 'J') {
+      //   this.exibirPDF(chosenArquivo)
+      // }
     },
     adjustModalSize() {
       const img = this.$refs.modalImage;
@@ -421,11 +454,14 @@ export default {
     </div>
   </div> -->
 
+  <!-- VisualizaArquivoModal -->
   <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
     <div :class="this.retratoOuPaisagem" class="modal-dialog modal-dialog-centered" style="height: 100%; width: 100%;">
       <div class="modal-content" style="height: 100%; width: 100%;">
-        <div class="modal-body" style="height: 100%; width: 100%;">
+
+        <!-- FOTO -->
+        <div v-if="this.fotoModal[0] === 'd'" class="modal-body" style="height: 100%; width: 100%;">
           <div class="card mb-3" style="height: 100%; width: 100%;">
             <div class="row g-0" style="height: 100%; width: 100%;">
               <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
@@ -449,6 +485,31 @@ export default {
             </div>
           </div>
         </div>
+
+        <!-- PDF -->
+        <!-- <div v-if="this.fotoModal[0] === 'J'" class="modal-body" style="height: 100%; width: 100%;">
+          <div class="card mb-3" style="height: 100%; width: 100%;">
+            <div class="row g-0" style="height: 100%; width: 100%;">
+              <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
+                <iframe
+                  id="iframe"
+                  height="100%"
+                  width="100%"
+                ></iframe>
+              </div>
+              <div class="col-md-8" :class="this.retratoOuPaisagemDescricao">
+                <div class="card-header texto-centralizado space-between">
+                  <h3>{{ nomeArquivo }}</h3>
+                  <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ descricao }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
       </div>
     </div>
   </div>
@@ -548,10 +609,7 @@ export default {
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <!-- Card de INSERT -->
-      <div
-        v-if="this.selectedObraNome"
-        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
-      >
+      <div v-if="this.selectedObraNome" class="col col-6 col-md-4 col-lg-2 tamanho-cards">
           <div class="card h-100" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
@@ -597,18 +655,24 @@ export default {
       </div>
 
       <!-- Lista de cards de Fotos. -->
-      <div
-        v-for="(foto, i) in selectedArquivosByObra" :key="i"
-        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
-      >
+      <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col col-6 col-md-4 col-lg-2 tamanho-cards">
         <div class="card h-100" style="height: 100%; width: 100%;">
-          <img
+          <!-- Caso seja imagem - Renderizar IMAGEM -->
+          <img v-if="foto.conteudoArquivo[0] === 'd'"
             :src="foto.conteudoArquivo"
             class="card-img img-thumbnail img-fluid image-in-cards"
             :alt="foto.nomeArquivo, i"
             style="height: 100%; width: 100%;"
             ref="cardImage"
           >
+          <!-- Caso seja PDF - Renderizar PDF -->
+          <img v-if="foto.conteudoArquivo[0] === 'J'"
+            src="../assets/imagens/ficheiro-pdf-2.png"
+            class="card-img img-thumbnail img-fluid image-in-cards"
+            :alt="foto.nomeArquivo, i"
+            style="height: 100%; width: 100%;"
+          >
+
           <div class="card-img-overlay space-between-column hover-white-background">
 
             <!-- Botões Editar/Excluir -->
@@ -653,6 +717,12 @@ export default {
 
     </div>
   </main>
+
+  <!-- <iframe
+    id="iframe"
+    height="100%"
+    width="100%"
+  ></iframe> -->
 
 </template>
 
