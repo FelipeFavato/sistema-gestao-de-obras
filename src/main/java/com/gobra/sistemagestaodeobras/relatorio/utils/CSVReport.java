@@ -1,5 +1,6 @@
 package com.gobra.sistemagestaodeobras.relatorio.utils;
 
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,13 @@ public class CSVReport {
     response.setContentType("text/csv;charset=UTF-8");
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo);
 
-    // return formattedResponse;
+    // Escrevendo a linha de configuração para o Excel ler corretamente o CSV em UTF-8
+    // PrintWriter writer = response.getWriter();
+    // writer.println("sep=");
+
+    // Fechando o escritor para garantir que os dados sejam escritos após a linha de configuração
+    // writer.flush();
+    // writer.close();
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +39,7 @@ public class CSVReport {
   // Produto ---------------------------------------------------------------------------------------\
   public StatefulBeanToCsv<RelatorioProdutoDTO> createProdutoCSVWriter(HttpServletResponse response) throws Exception {
   StatefulBeanToCsv<RelatorioProdutoDTO> writer = new StatefulBeanToCsvBuilder<RelatorioProdutoDTO>(response.getWriter())
-        .withOrderedResults(true)
+        .withOrderedResults(false)
         .withMappingStrategy(this.mapeiaColunasProduto())
         .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER) // Desativa o uso de aspas
         .withSeparator(';') // Define o ponto e vírgula como separador
