@@ -61,11 +61,25 @@ export default {
 
   <!-- Atualizações -->
   <main class="flex">
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
+          <h5 class="card-title">Atualização 06.02.24</h5>
+          <p class="card-text">Página de Arquivos</p>
+          <p>1. Tela de ARQUIVOS quase 100% finalizada.</p>
+          <p>2. Possível ADICIONAR, EDITAR, EXCLUIR FOTOS E PDF.</p>
+          <p>3. Possível filtrar entre IMAGENS e PDFs.</p>
+        </div>
+        <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
+      </div>
+    </div>
+  
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
           <h5 class="card-title">Atualização 02.02.24</h5>
-          <p class="card-text">Página de Custos</p>
+          <p class="card-text">Página de Arquivos</p>
           <p>1. Tamanho das fotos ajustadas.</p>
           <p>2. Bug de preenchimento corridigo</p>
           <p>3. Ajustado para celular</p>
@@ -73,11 +87,12 @@ export default {
         <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
       </div>
     </div>
+
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
           <h5 class="card-title">Atualização 01.02.24</h5>
-          <p class="card-text">Página de Custos</p>
+          <p class="card-text">Página de Arquivos</p>
           <p>1. Póssivel clicar na foto e expandir a imagem, vendo DESCRIÇÃO e NOME.</p>
           <p>2. Bug de renderização corrigido</p>
         </div>
@@ -89,7 +104,7 @@ export default {
       <div class="card-body column">
         <div>
           <h5 class="card-title">Atualização 31.01.24</h5>
-          <p class="card-text">Página de Custos</p>
+          <p class="card-text">Página de Arquivos</p>
           <p>1. Tela de ARQUIVOS desenvolvida.</p>
           <p>2. Possível ADICIONAR, EDITAR, EXCLUIR apenas FOTOS por enquanto.</p>
           <p>3. Próxima feature: Fazer com que as fotos sejam clicáveis. Ao clicar na foto,
