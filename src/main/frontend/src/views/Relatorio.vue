@@ -65,11 +65,9 @@ export default {
         responseType: 'blob'
       }).then(res => {
         this.exibirPDF(res.data);
-        // console.log(res)
         if (callback) callback();
       }).catch(error => {
         this.retorno = error.response;
-        // if (callback) callback();
       });
     },
     limparButtonActions() {
@@ -299,14 +297,9 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* height: 85vh; */
-  /* border: 5px solid #2b3035; */
-  /* background-color: white; */
   width: 12%;
   border-right: 3px solid #2b3035;
   height: 100%;
-  /* border-bottom: 3px solid #2b3035; */
-  /* background-color: #BBBBBB; */
 }
 
 .title {

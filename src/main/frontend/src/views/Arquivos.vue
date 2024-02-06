@@ -27,6 +27,7 @@ export default {
       retratoOuPaisagem: '',
       retratoOuPaisagemImagem: '',
       retratoOuPaisagemDescricao: '',
+      selectedFiltro: '',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -75,10 +76,12 @@ export default {
       {
         headers: {
           Authorization: `Bearer ${this.localStorageToken}`
+          // 'Content-Type': 'application/pdf',
         },
+        // responseType: 'blob'
       }).then(response => {
         this.info = response.data;
-        this.arquivos = this.generateArquivos(response.data);
+        this.arquivos = this.generateArquivos(this.info);
         if (callback) callback();
       }).catch(error => {
         console.error('Error fetching image data:', error);
@@ -224,12 +227,42 @@ export default {
     // Gera a lista de arquivos assim que a página carrega.
     generateArquivos (data) {
       const fotografias = [];
-      for (let arquivo of data) {
-        arquivo.conteudoArquivo = 'data:image/jpeg;base64,' + arquivo.conteudoArquivo;
-        fotografias.push(arquivo);
+      // Separa oque é PDF do que é imagem.
+      for (let a of data) {
+        if (`${a.conteudoArquivo[0]}${a.conteudoArquivo[1]}${a.conteudoArquivo[2]}${a.conteudoArquivo[3]}${a.conteudoArquivo[4]}` === "JVBER") {
+          fotografias.push(a);
+        } else {
+          a.conteudoArquivo = 'data:image/jpeg;base64,' + a.conteudoArquivo;
+          fotografias.push(a);
+        }
       }
 
       return fotografias.sort((s1, s2) => s1['nomeArquivo'].localeCompare(s2['nomeArquivo']));
+    },
+    exibirPDF(pdfBytes) {
+      // String Base64 do PDF.
+      let pdfBase64String = pdfBytes; // String 'JVBER...' completa
+
+      // Decodificar a string Base64 para um array de bytes.
+      let pdfData = atob(pdfBase64String);
+
+      // Criar um array de bytes
+      let dataArray = new Uint8Array(pdfData.length);
+      for (let i = 0; i < pdfData.length; i++) {
+        dataArray[i] = pdfData.charCodeAt(i);
+      }
+
+      // Criar um blob a partir do array de bytes
+      let blob = new Blob([dataArray], { type: 'application/pdf' });
+
+      // Criar uma URL para o blob
+      let url = URL.createObjectURL(blob);
+
+      // Usar a URL no src de um elemento iframe
+      let iframe = document.getElementById('iframe');
+      iframe.src = url;
+      iframe.style.width = '80%';
+      iframe.style.height = '100%';
     },
     // Quando o usuário selecionar um arquivo, deixa de mostrar o input e mostra a imagem.
     switchInputArchive () {
@@ -273,10 +306,30 @@ export default {
       this.emptyArquivosByObra();
       this.selectArquivosByObra(Number(obraCod));
     },
+    filtroDropDownActions(selectedFiltro) {
+      this.selectedFiltro = selectedFiltro;
+
+      if (this.selectedFiltro === 'Imagens') {
+        this.selectArquivosByObra(Number(this.idObra));
+        this.selectedArquivosByObra = this.selectedArquivosByObra.filter(arq => arq.conteudoArquivo[0] !== 'J');
+      } else if (this.selectedFiltro === 'PDF') {
+        this.selectArquivosByObra(Number(this.idObra));
+        this.selectedArquivosByObra = this.selectedArquivosByObra.filter(arq => arq.conteudoArquivo[0] !== 'd');
+      } else if (this.selectedFiltro === 'Todos') {
+        this.selectArquivosByObra(Number(this.idObra));
+      }
+    },
     fillVisualizaArquivoModal (conteudoArquivo, nomeArquivo, descricao) {
       this.fotoModal = conteudoArquivo;
       this.nomeArquivo = nomeArquivo;
       this.descricao = descricao;
+
+      if (this.fotoModal[0] === 'J') {
+        this.checkRetratoPaisagemModal(false);
+        setTimeout(() => {
+          this.exibirPDF(conteudoArquivo);
+        }, 1500);
+      }
     },
     adjustModalSize() {
       const img = this.$refs.modalImage;
@@ -389,43 +442,49 @@ export default {
         </li>
       </ul>
     </div>
+
+    <!-- Filtro tipo de ARQUIVO -->
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ this.selectedFiltro ? this.selectedFiltro : 'Todos' }}
+      </button>
+      <ul class="dropdown-menu">
+        <!-- Imagens -->
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="filtroDropDownActions('Imagens')"
+            >Imagens</button>
+        </li>
+        <!-- PDF -->
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="filtroDropDownActions('PDF')"
+            >PDF</button>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            @click="filtroDropDownActions('Todos')"
+          >Todos</button>
+        </li>
+      </ul>
+    </div>
   </header>
 
   <!-- VisualizaArquivoModal -->
-  <!-- <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
-    tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered tamanho-maximo-da-modal">
-      <div class="modal-content" style="height: 100%; width: 100%;">
-
-        <div class="modal-body">
-          <div class="card mb-3">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img :src="this.fotoModal" class="img-fluid rounded-start" alt="Foto Modal">
-              </div>
-              <div class="col-md-8">
-                <div class="card-header texto-centralizado space-between">
-                  <h3>{{ this.nomeArquivo }}</h3>
-                  <p>{{ this.fotoModal }}</p>
-                  <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="card-body">
-                  <p class="card-text">{{ this.descricao }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div> -->
-
   <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
     <div :class="this.retratoOuPaisagem" class="modal-dialog modal-dialog-centered" style="height: 100%; width: 100%;">
       <div class="modal-content" style="height: 100%; width: 100%;">
-        <div class="modal-body" style="height: 100%; width: 100%;">
+
+        <!-- FOTO -->
+        <div v-if="this.fotoModal[0] === 'd'" class="modal-body" style="height: 100%; width: 100%;">
           <div class="card mb-3" style="height: 100%; width: 100%;">
             <div class="row g-0" style="height: 100%; width: 100%;">
               <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
@@ -449,6 +508,31 @@ export default {
             </div>
           </div>
         </div>
+
+        <!-- PDF -->
+        <div v-if="this.fotoModal[0] === 'J'" class="modal-body" style="height: 100%; width: 100%;">
+          <div class="card mb-3" style="height: 100%; width: 100%;">
+            <div class="row g-0 space-between" style="height: 100%; width: 100%;">
+              <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
+                <iframe
+                id="iframe"
+                height="100%"
+                width="80%"
+                ></iframe>
+              </div>
+              <div class="col-md-8" :class="this.retratoOuPaisagemDescricao" style="height: 100%; width: 20%;">
+                <div class="card-header texto-centralizado space-between">
+                  <h3>{{ nomeArquivo }}</h3>
+                  <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ descricao }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -548,10 +632,7 @@ export default {
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <!-- Card de INSERT -->
-      <div
-        v-if="this.selectedObraNome"
-        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
-      >
+      <div v-if="this.selectedObraNome" class="col col-6 col-md-4 col-lg-2 tamanho-cards">
           <div class="card h-100" style="height: 100%; width: 100%;">
 
             <input v-if="!this.arquivoSelecionado" id="file-input" type="file" @change="handleFileChange"/>
@@ -597,18 +678,24 @@ export default {
       </div>
 
       <!-- Lista de cards de Fotos. -->
-      <div
-        v-for="(foto, i) in selectedArquivosByObra" :key="i"
-        class="col col-6 col-md-4 col-lg-2 tamanho-cards"
-      >
-        <div class="card h-100" style="height: 100%; width: 100%;">
-          <img
+      <div v-for="(foto, i) in selectedArquivosByObra" :key="i" class="col col-6 col-md-4 col-lg-2 tamanho-cards">
+        <div class="card h-100 align-center" style="height: 100%; width: 100%;">
+          <!-- Caso seja imagem - Renderizar IMAGEM -->
+          <img v-if="foto.conteudoArquivo[0] === 'd'"
             :src="foto.conteudoArquivo"
             class="card-img img-thumbnail img-fluid image-in-cards"
             :alt="foto.nomeArquivo, i"
             style="height: 100%; width: 100%;"
             ref="cardImage"
           >
+          <!-- Caso seja PDF - Renderizar PDF -->
+          <img v-if="foto.conteudoArquivo[0] === 'J'"
+            src="../assets/imagens/ficheiro-pdf-2.png"
+            class="card-img img-thumbnail img-fluid no-border"
+            :alt="foto.nomeArquivo, i"
+            style="height: 65%; width: 70%;"
+          >
+
           <div class="card-img-overlay space-between-column hover-white-background">
 
             <!-- Botões Editar/Excluir -->
@@ -634,8 +721,7 @@ export default {
             </div>
 
             <!-- Botão Expandir -->
-            <div class="texto-centralizado"
-            >
+            <div class="texto-centralizado">
               <button
                 @click="fillVisualizaArquivoModal(foto.conteudoArquivo, foto.nomeArquivo, foto.descricao)"
                 class="expandir-button no-background-color"
@@ -714,8 +800,6 @@ export default {
   height: 100vh;
 }
 
-
-
 .margin-12 {
   margin: 12px;
 }
@@ -753,7 +837,7 @@ export default {
 }
 
 .black-background {
-  background-color: #e0e0e0;
+  background-color: #808080;
 }
 
 .grey-background {
@@ -776,6 +860,16 @@ export default {
 .texto-centralizado {
   display: flex;
   justify-content: center;
+}
+
+.no-border {
+  border: none;
+}
+
+.align-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .space-between {
