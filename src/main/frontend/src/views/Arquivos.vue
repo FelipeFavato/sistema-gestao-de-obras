@@ -75,8 +75,11 @@ export default {
       {
         headers: {
           Authorization: `Bearer ${this.localStorageToken}`
+          // 'Content-Type': 'application/pdf',
         },
+        // responseType: 'blob'
       }).then(response => {
+        console.log(response.data)
         this.info = response.data;
         this.arquivos = this.generateArquivos(this.info);
         if (callback) callback();
@@ -236,23 +239,31 @@ export default {
 
       return fotografias.sort((s1, s2) => s1['nomeArquivo'].localeCompare(s2['nomeArquivo']));
     },
-    // exibirPDF(pdfBytes) {
-    //   const jsonString = JSON.stringify(pdfBytes);
-    //   // Crie um Blob a partir dos bytes do PDF
-    //   const blob = new Blob([jsonString], { type: 'application/pdf' });
-    //   console.log(blob)
+    exibirPDF(pdfBytes) {
+      // String Base64 do PDF.
+      let pdfBase64String = pdfBytes; // String 'JVBER...' completa
 
-    //   // Crie uma URL temporária para o Blob
-    //   const url = URL.createObjectURL(blob);
-    //   console.log(url)
-    //   // Recupera um iframe
-    //   const iframe = document.getElementById('iframe');
+      // Decodificar a string Base64 para um array de bytes.
+      let pdfData = atob(pdfBase64String);
 
-    //   // Defina a fonte do iframe como a URL temporária do Blob
-    //   iframe.src = url;
+      // Criar um array de bytes
+      let dataArray = new Uint8Array(pdfData.length);
+      for (let i = 0; i < pdfData.length; i++) {
+        dataArray[i] = pdfData.charCodeAt(i);
+      }
 
-    //   console.log(iframe)
-    // },
+      // Criar um blob a partir do array de bytes
+      let blob = new Blob([dataArray], { type: 'application/pdf' });
+
+      // Criar uma URL para o blob
+      let url = URL.createObjectURL(blob);
+
+      // Usar a URL no src de um elemento iframe
+      let iframe = document.getElementById('iframe');
+      iframe.src = url;
+      iframe.style.width = '80%';
+      iframe.style.height = '100%';
+    },
     // Quando o usuário selecionar um arquivo, deixa de mostrar o input e mostra a imagem.
     switchInputArchive () {
       this.arquivoSelecionado = !this.arquivoSelecionado;
@@ -300,16 +311,12 @@ export default {
       this.nomeArquivo = nomeArquivo;
       this.descricao = descricao;
 
-      // let chosenArquivo = {};
-      // for (let arq of this.info) {
-      //   if (arq.conteudoArquivo === this.fotoModal) {
-      //     chosenArquivo = arq;
-      //   }
-      // }
-
-      // if (this.fotoModal[0] === 'J') {
-      //   this.exibirPDF(chosenArquivo)
-      // }
+      if (this.fotoModal[0] === 'J') {
+        this.checkRetratoPaisagemModal(false);
+        setTimeout(() => {
+          this.exibirPDF(conteudoArquivo);
+        }, 1500);
+      }
     },
     adjustModalSize() {
       const img = this.$refs.modalImage;
@@ -457,7 +464,7 @@ export default {
   <!-- VisualizaArquivoModal -->
   <div class="modal fade" id="visualizaArquivoModal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="visualizaArquivoModalLabel" aria-hidden="true">
-    <div :class="this.retratoOuPaisagem" class="modal-dialog modal-dialog-centered" style="height: 100%; width: 100%;">
+    <div :class="this.retratoOuPaisagem" class="modal-dialog modal-dialog-centered modal-xl" style="height: 100%; width: 100%;">
       <div class="modal-content" style="height: 100%; width: 100%;">
 
         <!-- FOTO -->
@@ -487,17 +494,16 @@ export default {
         </div>
 
         <!-- PDF -->
-        <!-- <div v-if="this.fotoModal[0] === 'J'" class="modal-body" style="height: 100%; width: 100%;">
+        <div v-if="this.fotoModal[0] === 'J'" class="modal-body" style="height: 100%; width: 100%;">
           <div class="card mb-3" style="height: 100%; width: 100%;">
-            <div class="row g-0" style="height: 100%; width: 100%;">
-              <div class="col-md-4 texto-centralizado black-background" :class="this.retratoOuPaisagemImagem">
-                <iframe
-                  id="iframe"
-                  height="100%"
-                  width="100%"
-                ></iframe>
-              </div>
-              <div class="col-md-8" :class="this.retratoOuPaisagemDescricao">
+            <div class="row g-0 space-between" style="height: 100%; width: 100%;">
+              <iframe
+                id="iframe"
+                height="100%"
+                width="80%"
+              ></iframe>
+              <!-- </div> -->
+              <div class="col-md-8" :class="this.retratoOuPaisagemDescricao" style="height: 100%; width: 20%;">
                 <div class="card-header texto-centralizado space-between">
                   <h3>{{ nomeArquivo }}</h3>
                   <button @click="closeVisualizacao" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -508,7 +514,7 @@ export default {
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
 
       </div>
     </div>
@@ -718,12 +724,6 @@ export default {
     </div>
   </main>
 
-  <!-- <iframe
-    id="iframe"
-    height="100%"
-    width="100%"
-  ></iframe> -->
-
 </template>
 
 <style scope>
@@ -783,8 +783,6 @@ export default {
   width: 150vh;
   height: 100vh;
 }
-
-
 
 .margin-12 {
   margin: 12px;
