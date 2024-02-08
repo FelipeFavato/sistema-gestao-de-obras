@@ -1,5 +1,6 @@
 package com.gobra.sistemagestaodeobras.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,6 @@ import com.gobra.sistemagestaodeobras.dto.CompraRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.CompraResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Compra;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
-// import com.gobra.sistemagestaodeobras.repository.FornecedorRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -28,9 +28,6 @@ public class CompraController {
 
   @Autowired
   private CompraRepository compraRepository;
-
-  // @Autowired
-  // private FornecedorRepository fornecedorRepository;
 
   @PostMapping
   public void saveCompra(@RequestBody CompraRequestDTO data) {
@@ -71,5 +68,16 @@ public class CompraController {
   @DeleteMapping
   public void deletaCompra(@RequestBody Compra compra) {
     compraRepository.delete(compra);
+  }
+
+  @GetMapping("/teste")
+  public String principal (Principal principal) {
+
+    // System.out.println(principal);
+
+    String retorno = principal.toString();
+
+    return retorno;
+
   }
 }
