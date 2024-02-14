@@ -1,10 +1,12 @@
 package com.gobra.sistemagestaodeobras.infra.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,9 +24,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+  // https://www.youtube.com/watch?v=us0VjFiHogo&t=1s&ab_channel=DanVega
 
   @Autowired
   SecurityFilter securityFilter;
+
+  @Value("${spring.security.oauth2.client.registration.google.client-id}")
+  private String CLIENTID;
+
+  @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+  private String CLIENTSECRET;
   
   // Método de 'CorrenteDeFiltroDeSegurança': Corrente de filtros que eu vou aplicar
   // minha requisição para fazer a segurança da minha aplicação. Os filtros seriam
@@ -52,6 +61,8 @@ public class SecurityConfig {
               .requestMatchers("/api/**").authenticated()
               .anyRequest().permitAll()
             )
+            .oauth2Login(Customizer.withDefaults())
+            .formLogin(Customizer.withDefaults())
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
   }
@@ -66,17 +77,23 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // Tudo relacionado ao Google
   // @Bean
-  // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-  //     http.authorizeRequests()
-  //       .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
-  //       .anyRequest()
-  //       .authenticated()
-  //       .and()
-  //       .oauth2Login()
-  //       .loginPage("/api/auth/login");
-  //     return http.build();
+  // public ClientRegistrationRepository clientRegistrationRepository() {
+  //   return new InMemoryClientRegistrationRepository(
+  //     ClientRegistration.withRegistrationId("google")
+  //       .clientId(CLIENTID)
+  //       .clientSecret(CLIENTSECRET)
+  //       .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+  //       .redirectUriTemplate("{baseUrl}/login/oauth2/code/{registrationId}")
+  //       .scope("openid", "profile", "email")
+  //       .authorizationUri("https://accounts.google.com/o/oauth2/auth")
+  //       .tokenUri("https://oauth2.googleapis.com/token")
+  //       .userInfoUri("https://openidconnect.googleapis.com/v1/userinfo")
+  //       .userNameAttributeName(IdTokenClaimNames.SUB)
+  //       .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
+  //       .clientName("Google")
+  //       .build()
+  //   );
   // }
 
 }
