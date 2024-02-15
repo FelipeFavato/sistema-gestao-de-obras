@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,4 +64,11 @@ public class AuthenticationController {
     return ResponseEntity.ok(newUsuario);
     // return ResponseEntity.ok().build();
   }
+
+  // Login com Google
+  @GetMapping("/login/oauth2/code/google")
+  public String secured () {
+    return "Hello, secured";
+  }
+
 }

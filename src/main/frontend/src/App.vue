@@ -45,5 +45,11 @@ export default {
   </main>
 </template>
 
-<style scoped>
+<style setup>
+body {
+  /* background-color: rgb(171, 180, 178); */
+  /* background-color: rgb(191, 200, 198); */
+  /* background-color: rgb(211, 220, 218); */
+  background-color: rgb(240, 240, 240);
+}
 </style>

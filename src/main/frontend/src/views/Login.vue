@@ -44,6 +44,16 @@ export default {
         this.setHttpStatusCode(error.response.status);
       })
     },
+    loginGoogle () {
+      axios.get("/api/auth/oauth2/authorization/google",
+      {
+
+      }).then(res => {
+        console.log(res)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     // Método que mostra a senha.
     changeShowPassword () {
       this.showPassword = !this.showPassword;
@@ -126,6 +136,11 @@ export default {
                 </div>
 
                 <!-- Entrar -->
+                <div class="mb-3">
+                  <button>
+                    Google
+                  </button>
+                </div>
                 <div class="mb-3">
                   <button
                     type="button"
