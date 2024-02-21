@@ -5,13 +5,17 @@ import { useRouter } from 'vue-router';
 export default {
   data () {
     return {
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
       localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis de requisição/auxiliares: -----\
       info: [],
       codigoLocalUsoObra: '',
       nomeLocalUsoObra: '',
       dataDesativacao: null,
+      /////////////////////////////////////////////
     };
   },
 
@@ -33,33 +37,36 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
-      this.httpStatus === 403 ? this.redirectToLogin(): null;
+      this.httpStatus === 403 ? this.redirectToLogin(): 'Usuário autenticado.';
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
-      !this.localStorageToken ? this.redirectToLogin() : null;
+      !this.localStorageToken ? this.redirectToLogin() : 'Usuário autenticado.';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel() {
       this.codigoLocalUsoObra = '';
       this.nomeLocalUsoObra = '';
+      this.dataDesativacao = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB () {
-      axios.get("/api/localuso",
+      axios.get('/api/localuso',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -71,51 +78,61 @@ export default {
         this.validateHttpStatus(error.response.status);
       })
     },
+    ///////////////////////////////////////////////////////////////////////////////
+    
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
-      axios.post("/api/localuso", 
-      {
-        nomeLocalUsoObra: this.nomeLocalUsoObra,
-        dataDesativacao: null
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then((res) => {
-        this.fetchInfoDB();
-        this.setHttpStatusCode(res.status);
-      }).catch(error => {
-        this.validateHttpStatus(error.response.status);
-        console.log(error)
-      });
-      this.cancel();
-    },
-    fillUpdateDeleteModal (codigo, nome, data) {
-      this.codigoLocalUsoObra = codigo;
-      this.nomeLocalUsoObra = nome;
-      this.dataDesativacao = data;
-    },
-    updateInfoDB (codigo, nome, data) {
-      axios.put("/api/localuso",
+      axios.post('/api/localuso', 
         {
-          codigoLocalUsoObra: Number(codigo),
-          nomeLocalUsoObra: nome,
-          dataDesativacao: data
+          nomeLocalUsoObra: this.nomeLocalUsoObra,
+          dataDesativacao: null
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-        });
+        }
+      );
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (cod, nome, data) {
+      this.codigoLocalUsoObra = cod;
+      this.nomeLocalUsoObra = nome;
+      this.dataDesativacao = data;
+    },
+    updateInfoDB () {
+      axios.put('/api/localuso',
+        {
+          codigoLocalUsoObra: Number(this.codigoLocalUsoObra),
+          nomeLocalUsoObra: this.nomeLocalUsoObra,
+          dataDesativacao: this.dataDesativacao
+        },
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          }
+        }).then((res) => {
+          this.fetchInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        }
+      );
+      this.cancel();
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/localuso",
+      axios.delete('/api/localuso',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -131,6 +148,13 @@ export default {
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de comportamento: -------------------------------------------------\
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     brazilDate (data) {
       if (data === null) {
         return null
@@ -140,12 +164,15 @@ export default {
 
       return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
     // HGPK = Handle Global Press Key
     HGPKEnter () {
-      window.addEventListener('keydown', (event) => {
+      window.addEventListener('keyup', (event) => {
         const e = event;
         // Confere se o botão apertado foi o 'ENTER'.
-        const ENTER = e.keyCode === 13;
+        const ENTER = e.key === 'Enter';
 
         // Recupera botões e elementos da página.
         let body = document.getElementsByTagName('body');
@@ -215,13 +242,14 @@ export default {
         }
       });
     },
-    // ------------------------------
     // Precisa ser melhorado:
-    focusFirstInput () {
-      setTimeout(() => {
-        document.getElementById('nameInput').focus();
-      }, 500);
-    }
+    // focusFirstInput () {
+    //   setTimeout(() => {
+    //     document.getElementById('nameInput').focus();
+    //   }, 500);
+    // }
+    ///////////////////////////////////////////////////////////////////////////////
+
   },
 
   mounted () {
@@ -377,7 +405,7 @@ export default {
           >Fechar</button>
 
           <button id="atualizarButton" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigoLocalUsoObra, this.nomeLocalUsoObra, this.dataDesativacao)"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

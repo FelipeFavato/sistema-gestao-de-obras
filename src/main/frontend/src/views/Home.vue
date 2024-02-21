@@ -6,22 +6,16 @@ import axios from 'axios';
 export default {
   data () {
     return {
-      // Arrays auxiliares
-      obrasInfo: [],
-      usuarios: [],
-      custoLocalUsoInfo: [],
-      gastoAcumuladoInfo: [],
-      gastoPorSocioInfo: [],
-      gastoPorFornecedor: [],
-      mdoOrcamentoInfo: [],
-      descontoInfo: [],
-      // Variaveis auxiliares
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
       httpStatus: '',
-      selectedObraNome: '',
-      selectedObraID: '',
-      // Variaveis de requisição
       localStorageToken: null,
+      /////////////////////////////////////////////
+      // Variáveis de comportamento: -------------\
+      users: [],
+      localStorageEmail: '',
+      sessionUser: {},
+      /////////////////////////////////////////////
     }
   },
 
@@ -32,25 +26,61 @@ export default {
   methods: {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
-      this.useRouter.push('/login')
+      this.useRouter.push('/login');
     },
     setHttpStatusCode (successError) {
-      this.httpStatus = successError
+      this.httpStatus = successError;
     },
-    getLocalStorageToken () {
+    getLocalStorageToken (callback) {
       this.localStorageToken = localStorage.getItem('token');
+      if (callback) callback();
     },
     validateLogin () {
-      !this.localStorageToken ? this.redirectToLogin() : null;
+      !this.localStorageToken ? this.redirectToLogin() : 'Usuário autenticado.';
     },
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
-      this.httpStatus === 403 ? this.redirectToLogin(): null;
+      this.httpStatus === 403 ? this.redirectToLogin(): 'Usuário autenticado.';
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
+    fetchUsuariosInfoDB () {
+      axios.get('/api/usuario',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.users = res.data;
+        this.validateHttpStatus(res.status);
+        this.getSessionUser();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status)
+      })
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de comportamento: -------------------------------------------------\
+    getLocalStorageEmail () {
+      this.localStorageEmail = localStorage.getItem('email');
+    },
+    getSessionUser () {
+      this.getLocalStorageEmail();
+      for (let user of this.users) {
+        if (this.localStorageEmail === user['email']) {
+          this.sessionUser = user;
+        }
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
+    this.getLocalStorageToken(() => {
+      this.validateLogin();
+    });
+    this.fetchUsuariosInfoDB()
   }
 }
 

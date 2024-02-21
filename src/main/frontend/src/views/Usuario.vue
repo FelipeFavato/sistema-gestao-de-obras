@@ -30,7 +30,7 @@ export default {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
-      this.clearLocalStorage();
+      // this.clearLocalStorage();
     },
     // Método para limpar o localStorage.
     clearLocalStorage () {
