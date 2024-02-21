@@ -1,5 +1,8 @@
 <script>
 
+// https://hub-construcoes-4ec24fdcaec4.herokuapp.com
+// https://hub-construcoes-4ec24fdcaec4.herokuapp.com/login/oauth2/code/google
+
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -45,13 +48,11 @@ export default {
       })
     },
     loginGoogle () {
-      axios.get("/api/auth/oauth2/authorization/google",
-      {
-
-      }).then(res => {
-        console.log(res)
+      axios.get("/api/auth/secured"
+      ).then(res => {
+        console.log('resposta: ', res)
       }).catch(error => {
-        console.log(error)
+        console.log('erro: ', error)
       })
     },
     // Método que mostra a senha.
@@ -59,18 +60,25 @@ export default {
       this.showPassword = !this.showPassword;
     },
     // Lida com o clique do botão ENTER.
-    handleGlobalKeyPress(event) {
-      // Verifica se a tecla pressionada é 'Enter'
-      if (event.key === 'Enter') {
-        // Aciona o método de login
-        this.login();
-      }
+    HGPKEnter(event) {
+      document.body.addEventListener('keyup', () => {
+        const e = event;
+        console.log(event)
+        // Confere se o botão apertado foi o 'ENTER'.
+        const ENTER = e.keyCode === 13;
+
+        // Verifica se a tecla pressionada é 'Enter'
+        if (ENTER) {
+          // Aciona o método de login
+          this.login();
+        }
+      });
     }
   },
 
   mounted () {
     // Adiciona um ouvinte de evento global no elemento 'body'
-    document.body.addEventListener('keyup', this.handleGlobalKeyPress);
+    this.HGPKEnter();
   },
 
 }
@@ -92,6 +100,7 @@ export default {
           <p class="text-white fs-2" style="font-family:'Courier New', Courier, monospace; font-weight: 700;">HUB Construções</p>
           <!-- <small class="text-white text-warp text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;"></small> -->
         </div>
+
         <!-- Right Box -->
         <div class="col-md-6 rounded-4 d-flex flex-column right-box">
           <div class="ajuste-tamanho">
@@ -137,10 +146,14 @@ export default {
 
                 <!-- Entrar -->
                 <div class="mb-3">
-                  <button>
+                  <button
+                    type="button"
+                    @click="loginGoogle"
+                  >
                     Google
                   </button>
                 </div>
+
                 <div class="mb-3">
                   <button
                     type="button"

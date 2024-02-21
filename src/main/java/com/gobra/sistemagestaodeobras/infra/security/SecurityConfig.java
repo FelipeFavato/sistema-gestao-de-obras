@@ -56,14 +56,15 @@ public class SecurityConfig {
               .requestMatchers("/api/**").authenticated()
               .anyRequest().permitAll()
             )
-            .oauth2Login(oauth2 -> oauth2
-            .loginPage("/login")
-            .authorizationEndpoint()
-                .baseUri("/oauth2/authorization")
-                .and()
-            .defaultSuccessUrl("/api/auth/success")
-            .failureUrl("/login?error")
-            )
+            .oauth2Login(Customizer.withDefaults())
+            // .oauth2Login(oauth2 -> oauth2
+            // .loginPage("/login")
+            // .authorizationEndpoint()
+            //     .baseUri("api/auth/google-login")
+            //     .and()
+            // .defaultSuccessUrl("/api/auth/success")
+            // .failureUrl("/login?error")
+            // )
             .formLogin(Customizer.withDefaults())
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

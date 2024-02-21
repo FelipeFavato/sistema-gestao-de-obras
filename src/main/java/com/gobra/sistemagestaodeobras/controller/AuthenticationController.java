@@ -66,7 +66,7 @@ public class AuthenticationController {
   }
 
   // Login com Google
-  @GetMapping("/login/oauth2/code/google")
+  @GetMapping("/secured")
   public String secured () {
     return "Hello, secured";
   }
