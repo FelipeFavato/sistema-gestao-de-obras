@@ -80,7 +80,7 @@ export default {
     this.getLocalStorageToken(() => {
       this.validateLogin();
     });
-    this.fetchUsuariosInfoDB()
+    this.fetchUsuariosInfoDB();
   }
 }
 

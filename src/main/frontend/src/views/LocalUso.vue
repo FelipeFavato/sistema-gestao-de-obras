@@ -16,6 +16,9 @@ export default {
       nomeLocalUsoObra: '',
       dataDesativacao: null,
       /////////////////////////////////////////////
+      // Variáveis de comportamento: -------------\
+      recarregarPagina: true,
+      /////////////////////////////////////////////
     };
   },
 
@@ -151,7 +154,6 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de comportamento: -------------------------------------------------\
-
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de renderização: --------------------------------------------------\
@@ -168,46 +170,51 @@ export default {
 
     // Métodos de refinamento: ---------------------------------------------------\
     // HGPK = Handle Global Press Key
-    HGPKEnter () {
-      window.addEventListener('keyup', (event) => {
-        const e = event;
-        // Confere se o botão apertado foi o 'ENTER'.
-        const ENTER = e.key === 'Enter';
+    HGPKEnter (event) {
+      const e = event;
+      // Confere se o botão apertado foi o 'ENTER'.
+      const ENTER = e.key === 'Enter';
 
-        // Recupera botões e elementos da página.
-        let body = document.getElementsByTagName('body');
-        let novoLocalButton = document.getElementById('novoLocalButton');
-        let salvarNovoButton = document.getElementById('salvarNovoButton');
-        let atualizarButton = document.getElementById('atualizarButton');
-        let confirmarDeleteButton = document.getElementById('confirmarDeleteButton');
+      // Recupera botões e elementos da página.
+      let body = document.getElementsByTagName('body');
+      let novoLocalButton = document.getElementById('novoLocalButton');
+      let salvarNovoButton = document.getElementById('salvarNovoButton');
+      let atualizarButton = document.getElementById('atualizarButton');
+      let confirmarDeleteButton = document.getElementById('confirmarDeleteButton');
 
-        // Modais para comparar se elas estão aparecendo ou não.
-        let deleteModal = document.getElementById('deleteModal');
-        let insertModal = document.getElementById('insertModal');
-        let updateModal = document.getElementById('updateModal');
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
 
-        const noModalOpen = body[0].classList.value === '';
-        const isDeleteModal = deleteModal.classList.value === 'modal fade show';
-        const isInsertModal = insertModal.classList.value === 'modal fade show';
-        const isUpdateModal = updateModal.classList.value === 'modal fade show';
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
 
-        // Se não houver nenhuma modal aberta, ao clicar ENTER deve ser acionado o
-        // botão de '+ Novo Local'.
-        if (noModalOpen && ENTER) {
-          e.preventDefault();
-          novoLocalButton.click();
-        } else if (!noModalOpen && isInsertModal && ENTER) {
-          e.preventDefault();
-          salvarNovoButton.click();
-        } else if (!noModalOpen && isUpdateModal && ENTER) {
-          e.preventDefault();
-          atualizarButton.click();
-        } else if (!noModalOpen && isDeleteModal && ENTER) {
-          e.preventDefault();
-          confirmarDeleteButton.click();
-        }
-      });
+      // Se não houver nenhuma modal aberta, ao clicar ENTER deve ser acionado o
+      // botão de '+ Novo Local'.
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novoLocalButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvarNovoButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizarButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmarDeleteButton.click();
+      }
     },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
+    },
+
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;
@@ -256,7 +263,13 @@ export default {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
-    this.HGPKEnter();
+    // Adiciona os escutadores de evento relacionados a tecla 'Enter'.
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    // remove os escutadores de evento relacionados a tecla 'Enter'.
+    this.removeHGPKEnter();
   }
 }
 

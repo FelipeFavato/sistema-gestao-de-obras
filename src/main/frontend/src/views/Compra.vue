@@ -701,71 +701,75 @@ export default {
 
     // Métodos de refinamento: ----------------------------------------------------------\
     // HGPK = Handle Global Press Key: Lida com os cliques de ENTER na página.
-    HGPKEnter () {
-      window.addEventListener('keydown', (event) => {
-        // Confere se o botão apertado foi o 'ENTER' 
-        const e = event;
-        const ENTER = e.keyCode === 13;
+    HGPKEnter (event) {
+      // Confere se o botão apertado foi o 'ENTER' 
+      const e = event;
+      const ENTER = e.key === 'Enter';
 
-        // Recupera botões e elementos da página.
-        let body = document.getElementsByTagName('body');
-        let novaCompraButton = document.getElementById('novaCompraButton');
-        let novoItemButton = document.getElementById('novoItemButton');
+      // Recupera botões e elementos da página.
+      let body = document.getElementsByTagName('body');
+      let novaCompraButton = document.getElementById('novaCompraButton');
+      let novoItemButton = document.getElementById('novoItemButton');
 
-        let salvaNovaCompra = document.getElementById('salvaNovaCompra');
-        let atualizaCompra = document.getElementById('atualizaCompra');
-        let deletaCompra = document.getElementById('deletaCompra');
+      let salvaNovaCompra = document.getElementById('salvaNovaCompra');
+      let atualizaCompra = document.getElementById('atualizaCompra');
+      let deletaCompra = document.getElementById('deletaCompra');
 
-        let salvaNovoItem = document.getElementById('salvaNovoItem');
-        let atualizaItem = document.getElementById('atualizaItem');
-        let deletaItem = document.getElementById('deletaItem');
+      let salvaNovoItem = document.getElementById('salvaNovoItem');
+      let atualizaItem = document.getElementById('atualizaItem');
+      let deletaItem = document.getElementById('deletaItem');
 
-        // Modais e comparações se elas estão ativas ou não.
-        let deleteCompraModal = document.getElementById('deleteModal');
-        let insertCompraModal = document.getElementById('insertModal');
-        let updateCompraModal = document.getElementById('updateModal');
+      // Modais e comparações se elas estão ativas ou não.
+      let deleteCompraModal = document.getElementById('deleteModal');
+      let insertCompraModal = document.getElementById('insertModal');
+      let updateCompraModal = document.getElementById('updateModal');
 
-        let deleteItemModal = document.getElementById('deleteItemModal');
-        let insertItemModal = document.getElementById('insertItemModal');
-        let updateItemModal = document.getElementById('updateItemModal');
+      let deleteItemModal = document.getElementById('deleteItemModal');
+      let insertItemModal = document.getElementById('insertItemModal');
+      let updateItemModal = document.getElementById('updateItemModal');
 
-        const noModalOpen = body[0].classList.value === '';
+      const noModalOpen = body[0].classList.value === '';
 
-        const isDeleteCompraModal = deleteCompraModal.classList.value === 'modal fade show';
-        const isInsertCompraModal = insertCompraModal.classList.value === 'modal fade show';
-        const isUpdateCompraModal = updateCompraModal.classList.value === 'modal fade show';
+      const isDeleteCompraModal = deleteCompraModal.classList.value === 'modal fade show';
+      const isInsertCompraModal = insertCompraModal.classList.value === 'modal fade show';
+      const isUpdateCompraModal = updateCompraModal.classList.value === 'modal fade show';
 
-        const isDeleteItemModal = deleteItemModal.classList.value === 'modal fade show';
-        const isInsertItemModal = insertItemModal.classList.value === 'modal fade show';
-        const isUpdateItemModal = updateItemModal.classList.value === 'modal fade show';
+      const isDeleteItemModal = deleteItemModal.classList.value === 'modal fade show';
+      const isInsertItemModal = insertItemModal.classList.value === 'modal fade show';
+      const isUpdateItemModal = updateItemModal.classList.value === 'modal fade show';
 
-        // Ativa o comportamento desejado baseado no momento que o usuário está na página:
-        if (noModalOpen && !this.showItems && ENTER) {
-          e.preventDefault();
-          novaCompraButton.click();
-        } else if (!noModalOpen && isInsertCompraModal && !this.showItems && ENTER) {
-          e.preventDefault();
-          salvaNovaCompra.click();
-        } else if (!noModalOpen && isUpdateCompraModal && !this.showItems && ENTER) {
-          e.preventDefault();
-          atualizaCompra.click();
-        } else if (!noModalOpen && isDeleteCompraModal && !this.showItems && ENTER) {
-          e.preventDefault();
-          deletaCompra.click();
-        } else if (noModalOpen && this.showItems && ENTER) {
-          e.preventDefault();
-          novoItemButton.click();
-        } else if (!noModalOpen && isInsertItemModal && this.showItems && ENTER) {
-          e.preventDefault();
-          salvaNovoItem.click();
-        } else if (!noModalOpen && isUpdateItemModal && this.showItems && ENTER) {
-          e.preventDefault();
-          atualizaItem.click();
-        } else if (!noModalOpen && isDeleteItemModal && this.showItems && ENTER) {
-          e.preventDefault();
-          deletaItem.click();
-        }
-      });
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+      if (noModalOpen && !this.showItems && ENTER) {
+        e.preventDefault();
+        novaCompraButton.click();
+      } else if (!noModalOpen && isInsertCompraModal && !this.showItems && ENTER) {
+        e.preventDefault();
+        salvaNovaCompra.click();
+      } else if (!noModalOpen && isUpdateCompraModal && !this.showItems && ENTER) {
+        e.preventDefault();
+        atualizaCompra.click();
+      } else if (!noModalOpen && isDeleteCompraModal && !this.showItems && ENTER) {
+        e.preventDefault();
+        deletaCompra.click();
+      } else if (noModalOpen && this.showItems && ENTER) {
+        e.preventDefault();
+        novoItemButton.click();
+      } else if (!noModalOpen && isInsertItemModal && this.showItems && ENTER) {
+        e.preventDefault();
+        salvaNovoItem.click();
+      } else if (!noModalOpen && isUpdateItemModal && this.showItems && ENTER) {
+        e.preventDefault();
+        atualizaItem.click();
+      } else if (!noModalOpen && isDeleteItemModal && this.showItems && ENTER) {
+        e.preventDefault();
+        deletaItem.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
     },
     // Soma o valor total dos itens de uma compra.
     sumValorTotalCompra () {
@@ -832,7 +836,11 @@ export default {
     this.fetchLocalUsoInfoDB();
     this.fetchUnidadeMedidaInfoDB();
     this.fetchSociosInfoDB();
-    this.HGPKEnter();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 </script>

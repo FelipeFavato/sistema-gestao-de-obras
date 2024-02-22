@@ -5,16 +5,22 @@ import axios from 'axios';
 export default {
   data () {
     return {
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
       localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis auxiliares: -------------------\
       info: [],
+      /////////////////////////////////////////////
+      // Variáveis de requisição: ----------------\
       codigo: '',
       nome: '',
       tipoFornecedor: '',
       telefone: '',
       endereco: '',
       email: ''
+      /////////////////////////////////////////////
     };
   },
 
@@ -23,27 +29,26 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel() {
       this.nome = '';
       this.telefone = '';
@@ -51,8 +56,11 @@ export default {
       this.email = '';
       this.tipoFornecedor = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB () {
-      axios.get("/api/fornecedor",
+      axios.get('/api/fornecedor',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -64,8 +72,11 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
-      axios.post("/api/fornecedor",
+      axios.post('/api/fornecedor',
         {
           nome: this.nome,
           tipoFornecedor: this.tipoFornecedor,
@@ -75,7 +86,7 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then((res) => {
           this.fetchInfoDB();
@@ -85,27 +96,30 @@ export default {
         });
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, tipoFornecedor, telefone, endereco, email) {
-      this.codigo = codigo;
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (cod, nome, tipoF, tel, endereco, email) {
+      this.codigo = cod;
       this.nome = nome;
-      this.tipoFornecedor = tipoFornecedor;
-      this.telefone = telefone,
+      this.tipoFornecedor = tipoF;
+      this.telefone = tel,
       this.endereco = endereco;
       this.email = email;
     },
-    updateInfoDB (codigo, nome, tipo, telefone, endereco, email) {
-      axios.put("/api/fornecedor",
+    updateInfoDB () {
+      axios.put('/api/fornecedor',
         {
-          codigo: Number(codigo),
-          nome: nome,
-          tipoFornecedor: tipo,
-          telefone: telefone,
-          endereco: endereco,
-          email: email
+          codigo: Number(this.codigo),
+          nome: this.nome,
+          tipoFornecedor: this.tipoFornecedor,
+          telefone: this.telefone,
+          endereco: this.endereco,
+          email: this.email
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then((res) => {
           this.fetchInfoDB();
@@ -115,8 +129,11 @@ export default {
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/fornecedor",
+      axios.delete('/api/fornecedor',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -133,6 +150,12 @@ export default {
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de comportamento: -------------------------------------------------\
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     fixTelNumber(numero) {
       if (numero === null) {
         return ''
@@ -155,12 +178,64 @@ export default {
         return (`${numeroLimpo.slice(0, 4)}-${numeroLimpo.slice(4)}`)
       }
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      // Recupera botões e elementos da página.
+      let body = document.getElementsByTagName('body');
+      let novoFornecedorButton = document.getElementById('novo-fornecedor-button');
+      let salvarNovoButton = document.getElementById('salvar-novo-button');
+      let atualizarButton = document.getElementById('atualizar-button');
+      let confirmarDeleteButton = document.getElementById('confirmar-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      // Comparações e ações.
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novoFornecedorButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvarNovoButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizarButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmarDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 
@@ -172,6 +247,7 @@ export default {
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
     <button
+      id="novo-fornecedor-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -197,6 +273,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirmar-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -292,6 +369,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salvar-novo-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -393,8 +471,12 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.tipoFornecedor, this.telefone, this.endereco, this.email)"
+          <button
+            id="atualizar-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

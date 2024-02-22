@@ -10,7 +10,8 @@ export default {
       emailLogin: '',
       senhaLogin: '',
       httpStatusCode: '',
-      showPassword: false
+      showPassword: false,
+      recarregarPagina: true
     }
   },
 
@@ -49,19 +50,34 @@ export default {
       this.showPassword = !this.showPassword;
     },
     // Lida com o clique do botão ENTER.
-    handleGlobalKeyPress(event) {
-      // Verifica se a tecla pressionada é 'Enter'
-      if (event.key === 'Enter') {
-        // Aciona o método de login
-        this.login();
+    HGPKEnterLogin (event) {
+      const e = event;
+      // Confere se o botão apertado foi o 'ENTER'.
+      const ENTER = e.key === 'Enter';
+
+      // Recupera botões e elementos da página.
+      let loginButton = document.getElementById('login-button');
+
+      if (ENTER) {
+        e.preventDefault();
+        loginButton.click();
       }
-    }
+    },
+    addHGPKEnterLogin () {
+      window.addEventListener('keydown', this.HGPKEnterLogin);
+    },
+    removeHGPKEnterLogin () {
+      window.removeEventListener('keydown', this.HGPKEnterLogin);
+    },
   },
 
   mounted () {
-    // Adiciona um ouvinte de evento global no elemento 'body'
-    document.body.addEventListener('keyup', this.handleGlobalKeyPress);
+    this.addHGPKEnterLogin();
   },
+
+  unmounted () {
+    this.removeHGPKEnterLogin();
+  }
 
 }
 
@@ -74,6 +90,7 @@ export default {
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
       <!-- Login Container -->
       <div class="row border rounded-5 p-3 bg-white shadow box-area">
+
         <!-- Left Box -->
         <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #252925;">
           <div class="featured-image mb-3 mt-3">
@@ -82,12 +99,14 @@ export default {
           <p class="text-white fs-2" style="font-family:'Courier New', Courier, monospace; font-weight: 700;">HUB Construções</p>
           <!-- <small class="text-white text-warp text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;"></small> -->
         </div>
+
         <!-- Right Box -->
         <div class="col-md-6 rounded-4 d-flex flex-column right-box">
           <div class="ajuste-tamanho">
               <form action="POST" class="ajuste-tamanho">
 
                 <div>
+                  <!-- @keyup.enter="login" -->
                   <!-- Email -->
                   <div class="mb-3">
                     <label for="email-login-input" class="form-label bold">Email:</label>
@@ -97,11 +116,11 @@ export default {
                         id="email-login-input"
                         placeholder="usuario@email.com"
                         v-model="emailLogin"
-                        @keyup.enter="login"
                       >
                   </div>
 
                   <!-- Senha -->
+                  <!-- @keyup.enter="login" -->
                   <div class="mb-3">
                     <label for="senha-login-input" class="form-label bold">Senha:</label>
                       <input
@@ -110,7 +129,6 @@ export default {
                         id="senha-login-input"
                         placeholder="******"
                         v-model="senhaLogin"
-                        @keyup.enter="login"
                       >
                   </div>
                 </div>
@@ -128,6 +146,7 @@ export default {
                 <!-- Entrar -->
                 <div class="mb-3">
                   <button
+                    id="login-button"
                     type="button"
                     class="btn btn-success  light-green w-100 fs-6"
                     @click="login"

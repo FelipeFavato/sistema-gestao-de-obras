@@ -1,46 +1,4 @@
 <script>
-// Requisição de atualização: Preciso reincluir na requisição os que ja estavam
-//  {
-//     "codigo": 7,
-//     "nome": "Obra Teste 5",
-//     "endereco": "Rua Obra Teste, 5000",
-//     "dataInicio": "2023-05-04",
-//     "dataPrevistaFim": "2023-05-09",
-//     "dataRealFim": "2023-05-14",
-//     "custoPrevisto": 100000,
-//     "compras": [],
-//     "socios": [{
-//       "codigo": 3,
-//       "nome": "Felipe",
-//       "dataDesativacao": null
-//     }]
-//   }
-
-// {
-//     "codigo": 7,
-//     "nome": "Obra Teste 5",
-//     "endereco": "Rua Obra Teste, 5000",
-//     "dataInicio": "2023-05-02",
-//     "dataPrevistaFim": "2023-05-07",
-//     "dataRealFim": "2023-05-12",
-//     "custoMaoDeObra": 20000,
-//     "custoPrevisto": 100000,
-//     "socios": [
-//       {
-//         "codigo": 7,
-//         "nome": "Pedro",
-//         "dataDesativacao": null,
-//         "telegramID": null
-//       },
-//       {
-//         "codigo": 11,
-//         "nome": "Carla",
-//         "dataDesativacao": null,
-//         "telegramID": null
-//       }
-//     ]
-//   }
-  
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -48,20 +6,22 @@ import { useRouter } from 'vue-router';
 export default {
   data () {
     return {
+      // Variáveis de autenticação/autorização: --\
+      useRouter: useRouter(),
+      localStorageToken: null,
+      httpStatus: '',
+      ///////////////////////////////////////////// 
       // Arrays auxiliares
       obrasInfo: [],
       sociosInfo: [],
       selectedSociosInfo: [],
       selectedSocioByObra: [],
       // Variaveis auxiliares
-      useRouter: useRouter(),
-      httpStatus: '',
       showSocios: false,
       getObraInfo: {},
       selectedSocioID: '',
       sociosNotYetAssigned: [],
       // Variáveis para requisição
-      localStorageToken: null,
       codigo: '',
       nome: '',
       endereco: '',
@@ -92,29 +52,27 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
+      // this.httpStatus === 500 ? alert("Essa obra não pode ser excluída, pois possui COMPRAS vinculadas.") : null;
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // -----------------------------------------------------------------------------------------
-    // Método para limpar os dados preenchidos caso o usuário desista da requisição.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.codigo = '';
       this.nome = '';
@@ -128,6 +86,169 @@ export default {
     cancelAtribuir () {
       this.selectedSocioID = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
+    fetchSociosInfoDB () {
+      axios.get('/api/socio',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.sociosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
+    fetchObrasInfoDB (callback) {
+      axios.get('/api/obra',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.obrasInfo = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
+        this.setHttpStatusCode(res.status);
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      })
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
+    createInfoDB () {
+      axios.post('/api/obra',
+        {
+          nome: this.nome,
+          endereco: this.endereco,
+          dataInicio: this.dataInicio,
+          dataPrevistaFim: this.dataPrevistaFim,
+          dataRealFim: this.dataRealFim,
+          custoMaoDeObra: this.custoMaoDeObra,
+          custoPrevisto: this.custoPrevisto
+        },
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          }
+        }).then((res) => {
+          this.fetchObrasInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
+      this.cancel();
+    },
+    assignSocio (codigoSocio) {
+      this.cancelAtribuir();
+      axios.post('/api/obra/associar-socio-obra',
+      {
+        idSocio: codigoSocio,
+        idObra: this.getObraInfo.codigo
+      },
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        const self = this;
+        this.fetchObrasInfoDB(() => {
+          self.fillObraForRequest(this.getObraInfo.codigo);
+          self.fillSociosSelecionadosByObra();
+          self.selectNotYetAssignedSocios();
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    fillDesatribuirModal(codigoSocio) {
+      this.selectedSocioID = codigoSocio;
+    },
+    unAssignSocio () {
+      axios.post('/api/obra/desassociar-socio-obra',
+      {
+        idSocio: this.selectedSocioID,
+        idObra: this.getObraInfo.codigo
+      },
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        const self = this;
+        this.fetchObrasInfoDB(() => {
+          self.fillObraForRequest(this.getObraInfo.codigo);
+          self.fillSociosSelecionadosByObra();
+          self.selectNotYetAssignedSocios();
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+      this.cancelAtribuir();
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (cod, nome, endereco, dataI, dataPFim, dataRFim, custoMDO, custoP) {
+      this.codigo = cod;
+      this.nome = nome;
+      this.endereco = endereco;
+      this.dataInicio = dataI;
+      this.dataPrevistaFim = dataPFim;
+      this.dataRealFim = dataRFim;
+      this.custoMaoDeObra = custoMDO;
+      this.custoPrevisto = custoP;
+    },
+    updateInfoDB () {
+      axios.put('/api/obra',
+        {
+          codigo: this.codigo,
+          nome: this.nome,
+          endereco: this.endereco,
+          dataInicio: this.dataInicio,
+          dataPrevistaFim: this.dataPrevistaFim,
+          dataRealFim: this.dataRealFim,
+          custoMaoDeObra: this.custoMaoDeObra,
+          custoPrevisto: this.custoPrevisto
+        },
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          }
+        }).then((res) => {
+          this.fetchObrasInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
+      this.cancel();
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
+    removeFromDB (codigo) {
+      axios.delete('/api/obra',
+        {
+          headers: {
+            Authorization: this.localStorageToken
+          },
+          data: {
+            codigo: Number(codigo)
+          }
+        }).then((res) => {
+          this.fetchObrasInfoDB();
+          this.setHttpStatusCode(res.status);
+        }).catch(error => {
+          this.validateHttpStatus(error.response.status);
+        });
+      this.cancel();
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de comportamento: -------------------------------------------------\
     // Método para limpar a lista de sócios selecionados por obra.
     clearSelectedSocioByObra () {
       this.selectedSocioByObra = [];
@@ -190,154 +311,9 @@ export default {
       this.fillSociosSelecionadosByObra();
       this.selectNotYetAssignedSocios();
     },
-    // Atribui e desatribui um Socio a uma Obra. ---------------------------
-    assignSocio (codigoSocio) {
-      this.cancelAtribuir();
-      axios.post("/api/obra/associar-socio-obra",
-      {
-        idSocio: codigoSocio,
-        idObra: this.getObraInfo.codigo
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then(res => {
-        const self = this;
-        this.fetchObrasInfoDB(() => {
-          self.fillObraForRequest(this.getObraInfo.codigo);
-          self.fillSociosSelecionadosByObra();
-          self.selectNotYetAssignedSocios();
-        });
-      }).catch(error => {
-      });
-    },
-    fillDesatribuirModal(codigoSocio) {
-      this.selectedSocioID = codigoSocio;
-    },
-    unAssignSocio () {
-      axios.post('/api/obra/desassociar-socio-obra',
-      {
-        idSocio: this.selectedSocioID,
-        idObra: this.getObraInfo.codigo
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then(res => {
-        const self = this;
-        this.fetchObrasInfoDB(() => {
-          self.fillObraForRequest(this.getObraInfo.codigo);
-          self.fillSociosSelecionadosByObra();
-          self.selectNotYetAssignedSocios();
-        });
-      }).catch(error => {
-        console.log(error);
-      })
-    },
-    // ---------------------------------------------------------------------
-    fetchSociosInfoDB () {
-      axios.get('/api/socio',
-      {
-        headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
-        }
-      }).then(res => {
-        this.sociosInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
-        this.setHttpStatusCode(res.status);
-      }).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      })
-    },
-    fetchObrasInfoDB (callback) {
-      axios.get("/api/obra",
-      {
-        headers: {
-          Authorization: this.localStorageToken
-        }
-      }).then(res => {
-        this.obrasInfo = res.data.sort((s1, s2) => s2.codigo - s1.codigo)
-        this.setHttpStatusCode(res.status);
-        if (callback) callback();
-      }).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      })
-    },
-    createInfoDB () {
-      axios.post("/api/obra",
-        {
-          nome: this.nome,
-          endereco: this.endereco,
-          dataInicio: this.dataInicio,
-          dataPrevistaFim: this.dataPrevistaFim,
-          dataRealFim: this.dataRealFim,
-          custoMaoDeObra: this.custoMaoDeObra,
-          custoPrevisto: this.custoPrevisto
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
-          }
-        }).then((res) => {
-          this.fetchObrasInfoDB();
-          this.setHttpStatusCode(res.status);
-        }).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
-      this.cancel();
-    },
-    fillUpdateDeleteModal (codigo, nome, endereco, dataInicio, dataPrevistaFim, dataRealFim, custoMaoDeObra, custoPrevisto) {
-      this.codigo = codigo;
-      this.nome = nome;
-      this.endereco = endereco;
-      this.dataInicio = dataInicio;
-      this.dataPrevistaFim = dataPrevistaFim;
-      this.dataRealFim = dataRealFim;
-      this.custoMaoDeObra = custoMaoDeObra;
-      this.custoPrevisto = custoPrevisto;
-    },
-    updateInfoDB () {
-      axios.put("/api/obra",
-        {
-          codigo: this.codigo,
-          nome: this.nome,
-          endereco: this.endereco,
-          dataInicio: this.dataInicio,
-          dataPrevistaFim: this.dataPrevistaFim,
-          dataRealFim: this.dataRealFim,
-          custoMaoDeObra: this.custoMaoDeObra,
-          custoPrevisto: this.custoPrevisto
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
-          }
-        }).then((res) => {
-          this.fetchObrasInfoDB();
-          this.setHttpStatusCode(res.status);
-        }).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
-      this.cancel();
-    },
-    removeFromDB (codigo) {
-      axios.delete("/api/obra",
-        {
-          headers: {
-            Authorization: this.localStorageToken
-          },
-          data: {
-            codigo: Number(codigo)
-          }
-        }).then((res) => {
-          this.fetchObrasInfoDB();
-          this.setHttpStatusCode(res.status);
-        }).catch(error => {
-          this.validateHttpStatus(error.response.status);
-        });
-      this.cancel();
-    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     brazilDate (data) {
       if (data === null) {
         return null;
@@ -361,7 +337,74 @@ export default {
   
         return `R$${parteInteira},${parteDecimal}`;
       }
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      // Recupera botões e elementos da tela.
+      let body = document.getElementsByTagName('body');
+      let novaObraButton = document.getElementById('nova-obra-button');
+      let atribuirSocioButton = document.getElementById('atribuir-socio-button');
+
+      let salvaNovaObra = document.getElementById('salva-nova-obra-button');
+      let atualizaObra = document.getElementById('atualiza-obra-button');
+      let deletaObra = document.getElementById('deleta-obra-button');
+
+      let salvaNovaAtribuicao = document.getElementById('salva-nova-atribuicao-button');
+      let desatribuir = document.getElementById('desatribuicao-button');
+
+      // Modais e comparações se elas estão ativas ou não.
+      let deleteObraModal = document.getElementById('deleteModal');
+      let insertObraModal = document.getElementById('insertModal');
+      let updateObraModal = document.getElementById('updateModal');
+
+      let atribuirModal = document.getElementById('atribuirSocioModal');
+      let desatribuirModal = document.getElementById('desatribuirSocioModal');
+      
+      const noModalOpen = body[0].classList.value === '';
+
+      const isDeleteObraModal = deleteObraModal.classList.value === 'modal fade show';
+      const isInsertObraModal = insertObraModal.classList.value === 'modal fade show';
+      const isUpdateObraModal = updateObraModal.classList.value === 'modal fade show';
+
+      const isAtribuirSocioModal = atribuirModal.classList.value === 'modal fade show';
+      const isDesatribuirSocioModal = desatribuirModal.classList.value === 'modal fade show';
+
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+      if (noModalOpen && !this.showSocios && ENTER) {
+        e.preventDefault();
+        novaObraButton.click();
+      } else if (!noModalOpen && !this.showSocios && isInsertObraModal && ENTER) {
+        e.preventDefault();
+        salvaNovaObra.click();
+      } else if (!noModalOpen && !this.showSocios && isUpdateObraModal && ENTER) {
+        e.preventDefault();
+        atualizaObra.click();
+      } else if (!noModalOpen && !this.showSocios && isDeleteObraModal && ENTER) {
+        e.preventDefault();
+        deletaObra.click();
+      } else if (noModalOpen && this.showSocios && ENTER) {
+        e.preventDefault();
+        atribuirSocioButton.click();
+      } else if (!noModalOpen && this.showSocios && isAtribuirSocioModal && ENTER) {
+        e.preventDefault();
+        salvaNovaAtribuicao.click();
+      } else if (!noModalOpen && this.showSocios && isDesatribuirSocioModal && ENTER) {
+        e.preventDefault();
+        desatribuir.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
     }
+    ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
@@ -369,6 +412,11 @@ export default {
     this.validateLogin();
     this.fetchObrasInfoDB();
     this.fetchSociosInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 </script>
@@ -378,6 +426,7 @@ export default {
   <!-- Header com o botão de + Nova Obra -->
   <header v-show="!this.showSocios" class="header middle-margin">
     <button
+      id="nova-obra-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -400,7 +449,7 @@ export default {
       </button>
       <!-- Botão para atribuir socio a obra. -->
       <button
-        @click=""
+        id="atribuir-socio-button"
         type="button"
         class="btn btn-success light-green margin-5px"
         data-bs-toggle="modal"
@@ -440,6 +489,7 @@ export default {
           >Não</button>
 
           <button
+            id="deleta-obra-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -547,6 +597,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salva-nova-obra-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -660,7 +711,11 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button
+            id="atualiza-obra-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
             @click="updateInfoDB()"
           >Salvar</button>
         </div>
@@ -724,7 +779,11 @@ export default {
             @click="cancelAtribuir"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button
+            id="salva-nova-atribuicao-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
             @click="assignSocio(this.selectedSocioID)"
           >Salvar</button>
         </div>
@@ -750,6 +809,7 @@ export default {
           >Não</button>
 
           <button
+            id="desatribuicao-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
