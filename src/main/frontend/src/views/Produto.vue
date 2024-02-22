@@ -36,29 +36,26 @@ export default {
   },
 
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
-    // ------------------------------------------------------------------------------------
-    // Método para esvaziar os dados quando enviada/cancelada a requisição.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel() {
       this.nome = '';
       this.tipoProduto = '';
@@ -66,9 +63,11 @@ export default {
       this.selectedMarcaNome = '';
       this.selectedMarcaCod = '';
     },
-    // Método para buscar os dados no Banco.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB (callback) {
-      axios.get("/api/produto",
+      axios.get('/api/produto',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -81,9 +80,24 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método para criar os dados no Banco.
+    fetchMarcasInfoDB () {
+      axios.get('/api/marca',
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        }
+      }).then(res => {
+        this.marcasInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
+        this.setHttpStatusCode(res.status);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status);
+      });
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createProdutoInfoDB () {
-      axios.post("/api/produto",
+      axios.post('/api/produto',
         {
           nome: this.nome,
           tipoProduto: this.tipoProduto,
@@ -93,7 +107,7 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then((res) => {
           this.fetchInfoDB();
@@ -103,15 +117,16 @@ export default {
         });
       this.cancel();
     },
-    // Método para preencher as informações da Modal.
-    fillUpdateDeleteModal (codigo, nome, tipo, marcaCodigo, marcaNome) {
-      this.codigo = codigo;
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (cod, nome, tipo, marcaCod, marcaNome) {
+      this.codigo = cod;
       this.nome = nome;
       this.tipoProduto = tipo;
-      this.selectedMarcaCod = marcaCodigo;
+      this.selectedMarcaCod = marcaCod;
       this.selectedMarcaNome = marcaNome;
     },
-    // Método para atualizar um Produto no Banco.
     fillCodigoMarcaForUpdate () {
       for (let marca of this.marcasInfo) {
         if (marca.nome === this.selectedMarcaNome) {
@@ -120,7 +135,7 @@ export default {
       }
     },
     updateInfo () {
-      axios.put("/api/produto",
+      axios.put('/api/produto',
         {
           codigo: this.codigo,
           nome: this.nome,
@@ -131,7 +146,7 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then((res) => {
           this.fetchInfoDB();
@@ -145,9 +160,11 @@ export default {
       this.fillCodigoMarcaForUpdate();
       this.updateInfo();
     },
-    // Método para remover um produto do Banco.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/produto",
+      axios.delete('/api/produto',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -163,24 +180,59 @@ export default {
         });
       this.cancel();
     },
-    // Método para ajustar a visualização da categoria.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     fixTaxasImpostos(tipo) {
       return tipo === "TaxasImpostos" ? "Taxas/Impostos" : tipo;
     },
-    // Método GET - Marcas
-    fetchMarcasInfoDB () {
-      axios.get('/api/marca',
-      {
-        headers: {
-          Authorization: this.localStorageToken
-        }
-      }).then(res => {
-        this.marcasInfo = res.data.sort((s1, s2) => s1['nome'].localeCompare(s2['nome']));
-        this.setHttpStatusCode(res.status);
-      }).catch(error => {
-        this.validateHttpStatus(error.response.status);
-      });
-    }
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      // Recupera botões e elementos da tela.
+      let body = document.getElementsByTagName('body');
+      let novoProdutoButton = document.getElementById('novo-produto-Button');
+      let salvaNovoButton =document.getElementById('salva-novo-produto-button');
+      let atualizaButton = document.getElementById('atualiza-button');
+      let confirmarDeleteButton = document.getElementById('confirmar-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novoProdutoButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvaNovoButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizaButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmarDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
   },
 
 
@@ -189,6 +241,11 @@ export default {
     this.validateLogin();
     this.fetchInfoDB();
     this.fetchMarcasInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 </script>
@@ -198,6 +255,7 @@ export default {
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
     <button
+      id="novo-produto-Button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -223,6 +281,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirmar-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -296,6 +355,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salva-novo-produto-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -377,7 +437,11 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <button
+            id="atualiza-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
             @click="updateInfoDB()"
           >Salvar</button>
         </div>

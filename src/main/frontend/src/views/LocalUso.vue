@@ -17,7 +17,6 @@ export default {
       dataDesativacao: null,
       /////////////////////////////////////////////
       // Variáveis de comportamento: -------------\
-      recarregarPagina: true,
       /////////////////////////////////////////////
     };
   },
@@ -172,7 +171,6 @@ export default {
     // HGPK = Handle Global Press Key
     HGPKEnter (event) {
       const e = event;
-      // Confere se o botão apertado foi o 'ENTER'.
       const ENTER = e.key === 'Enter';
 
       // Recupera botões e elementos da página.
@@ -192,8 +190,7 @@ export default {
       const isInsertModal = insertModal.classList.value === 'modal fade show';
       const isUpdateModal = updateModal.classList.value === 'modal fade show';
 
-      // Se não houver nenhuma modal aberta, ao clicar ENTER deve ser acionado o
-      // botão de '+ Novo Local'.
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
       if (noModalOpen && ENTER) {
         e.preventDefault();
         novoLocalButton.click();
