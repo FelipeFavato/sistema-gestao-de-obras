@@ -95,6 +95,16 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
+          <h5 class="card-title">Atualização 22.02.24</h5>
+          <p class="card-text">Página de Produtos/Local Uso/Obras/Compras/Login</p>
+          <p>1. Refinamentos de interação com o teclado finalizados</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
           <h5 class="card-title">Atualização 06.02.24</h5>
           <p class="card-text">Página de Arquivos</p>
           <p>1. Tela de ARQUIVOS quase 100% finalizada.</p>
