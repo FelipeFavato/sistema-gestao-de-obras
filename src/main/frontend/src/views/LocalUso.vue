@@ -17,6 +17,7 @@ export default {
       dataDesativacao: null,
       /////////////////////////////////////////////
       // Variáveis de comportamento: -------------\
+      startNewAdd: false,
       /////////////////////////////////////////////
     };
   },
@@ -153,6 +154,9 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de comportamento: -------------------------------------------------\
+    startNewAddition () {
+      this.startNewAdd = !this.startNewAdd;
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de renderização: --------------------------------------------------\
@@ -281,8 +285,6 @@ export default {
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
       id="novoLocalButton"
-      @click="focusFirstInput"
-      v-on:click=""
     >+ Novo Local de Uso</button>
   </header>
 
@@ -424,7 +426,8 @@ export default {
   <!-- Tabela -->
   <main class="middle-margin table-responsive">
     <table class="table table-hover">
-      <thead>
+
+      <thead class="tamanho-fonte-18">
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Local</th>
@@ -434,9 +437,71 @@ export default {
           <th></th>
           <th></th>
           <th></th>
+          <!-- <th class="flex-end">
+            <button
+              type="button"
+              class="btn btn-success light-green"
+              id="novoLocalButton"
+              data-bs-target="#insertModal"
+              data-bs-toggle="modal"
+            >+ Novo Local
+            </button>
+          </th> -->
         </tr>
       </thead>
+
       <tbody>
+        <!-- Primeira tentativa -->
+        <!-- <tr v-if="this.startNewAdd" class="red-border">
+          <th scope="row">
+          </th>
+          <td class="red-border">
+            <div class="input-group input-group-sm mb-3" style="height: 50%;">
+              <input
+                id="nameInput"
+                type="text"
+                class="form-control"
+                aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm"
+                placeholder="Fundação, Hidráulica, etc..."
+                v-model="nomeLocalUsoObra"
+                maxlength="30"
+              >
+            </div>
+          </td>
+          <td style="height: 100%;">
+            <div class="input-group input-group-sm mb-3" style="height: 100%;">
+              <input
+                type="text"
+                aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm"
+                disabled
+                placeholder="Ativo"
+              >
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="flex-end red-border">
+            <button
+              type="button"
+              class="btn btn-light btn-sm medium medium"
+              title="Cancelar"
+              @click="cancel"
+            ><img src="../assets/imagens/close-window-icon.png" alt="close-button" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm medium"
+              title="Salvar"
+              @click="createInfoDB"
+            ><img src="../assets/imagens/check.webp" alt="salvar-button"/>
+            </button>
+          </td>
+        </tr> -->
+
         <tr v-for="(localUso, i) in info" :key="i">
           <th scope="row">{{ localUso.codigoLocalUsoObra }}</th>
           <td>{{ localUso.nomeLocalUsoObra }}</td>
@@ -445,7 +510,7 @@ export default {
           <td></td>
           <td></td>
           <td></td>
-          <td class="editar-excluir">
+          <td class="flex-end">
             <button
               type="button"
               class="btn btn-light btn-sm small"
@@ -465,7 +530,9 @@ export default {
           </td>
         </tr>
       </tbody>
+
     </table>
+
   </main>
 
 </template>
@@ -489,7 +556,15 @@ export default {
   background-color: #333333;
 }
 
-.editar-excluir {
+.red-border {
+  border: 1px solid red;
+}
+
+.tamanho-fonte-18 {
+  font-size: 18px;
+}
+
+.flex-end {
   display: flex;
   justify-content: flex-end;
 }
@@ -497,6 +572,11 @@ export default {
 .small img {
   height: 15px;
   width: 15px;
+}
+
+.medium img {
+  height: 20px;
+  width: 20px;
 }
 
 .middle-margin {
