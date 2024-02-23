@@ -211,7 +211,6 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;

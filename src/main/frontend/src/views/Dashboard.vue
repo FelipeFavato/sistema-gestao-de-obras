@@ -25,6 +25,10 @@ export default {
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
     // Métodos de validação e login
     redirectToLogin () {

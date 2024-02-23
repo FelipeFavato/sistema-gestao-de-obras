@@ -5,34 +5,39 @@ import { useRouter } from 'vue-router';
 export default {
   data () {
     return {
+      // Variáveis de requisição/auxiliares: -----\
       useRouter: useRouter(),
       localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis de autenticação/autorização: --\
       info: [],
       codigo: '',
       unidade: ''
+      /////////////////////////////////////////////
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
-    // Método para redirecionar para a página de Login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
-      this.clearLocalStorage();
+      // this.clearLocalStorage();
     },
     // Método para excluir o token do localStorage.
     clearLocalStorage () {
       localStorage.clear();
     },
-    // Método para recuperar o token do localStorage.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatusCode' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
@@ -40,14 +45,18 @@ export default {
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para esvaziar dados quando enviada/cancelada a requisição.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.codigo = '';
       this.unidade = '';
     },
-    // Método para buscar os dados no Banco.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB () {
-      axios.get("/api/unidademedida", 
+      axios.get('/api/unidademedida', 
       {
         headers: {
           Authorization: this.localStorageToken
@@ -58,15 +67,17 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
-    // Método para criar dados no Banco.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
-      axios.post("/api/unidademedida",
+      axios.post('/api/unidademedida',
       {
         unidade: this.unidade
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then((res) => {
         this.fetchInfoDB();
@@ -76,21 +87,22 @@ export default {
       });
       this.cancel();
     },
-    // Método para preencher as informações da Modal.
-    fillUpdateDeleteModal (codigo, unidade) {
-      this.codigo = codigo;
-      this.unidade = unidade;
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (cod, unid) {
+      this.codigo = cod;
+      this.unidade = unid;
     },
-    // Método para atualizar um Produto no Banco.
-    updateInfoDB (codigo, unidade) {
-      axios.put("/api/unidademedida",
+    updateInfoDB () {
+      axios.put('/api/unidademedida',
       {
-        codigo: Number(codigo),
-        unidade: unidade
+        codigo: Number(this.codigo),
+        unidade: this.unidade
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then((res) => {
         this.fetchInfoDB();
@@ -100,9 +112,9 @@ export default {
       });
       this.cancel();
     },
-    // Método para remover um dado do Banco.
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/unidademedida",
+      axios.delete('/api/unidademedida',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -117,13 +129,62 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
       this.cancel();
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      let body = document.getElementsByTagName('body');
+      let novaUnidadeButton = document.getElementById('nova-unidade-button');
+      let salvaUnidadeButton = document.getElementById('salva-unidade-button');
+      let atualizaUnidadeButton = document.getElementById('atualiza-unidade-button');
+      let confirmaDeleteButton = document.getElementById('confirma-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novaUnidadeButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvaUnidadeButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizaUnidadeButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmaDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
     }
+    ///////////////////////////////////////////////////////////////////////////////
   },
   
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 </script>
@@ -133,6 +194,7 @@ export default {
   <!-- Header com o botão de + Novo -->
   <header class="header middle-margin">
     <button
+      id="nova-unidade-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -159,6 +221,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirma-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -203,6 +266,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salva-unidade-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -253,8 +317,12 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.unidade)"
+          <button
+            id="atualiza-unidade-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

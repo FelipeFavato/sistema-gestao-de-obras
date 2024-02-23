@@ -5,16 +5,26 @@ import { useRouter } from 'vue-router';
 export default {
   data () {
     return {
-      info: [],
-      localStorageToken: null,
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
+      localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis de requisição/auxiliares: -----\
+      info: [],
+      codigo: '',
       nome: '',
       dataDesativacao: ''
+      /////////////////////////////////////////////
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
+    // Validações de login: ------------------------------------------------------\
     // Método para redirecionar para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
@@ -36,10 +46,16 @@ export default {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.nome = '';
       this.dataDesativacao = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB () {
       axios.get('/api/marca',
       {
@@ -53,6 +69,9 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
       axios.post('/api/marca',
       {
@@ -61,31 +80,35 @@ export default {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
+        console.log(error)
       });
       this.cancel();
     },
-    fillUpdateDeleteModal (codigo, nome, dataDesativacao) {
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
+    fillUpdateDeleteModal (codigo, nome, dataD) {
       this.codigo = codigo;
       this.nome = nome;
-      this.dataDesativacao = dataDesativacao;
+      this.dataDesativacao = dataD;
     },
-    updateInfoDB (codigo, nome, dataD) {
+    updateInfoDB () {
       axios.put('/api/marca',
       {
-       codigo: Number(codigo),
-       nome: nome,
-       dataDesativacao: dataD 
+       codigo: Number(this.codigo),
+       nome: this.nome,
+       dataDesativacao: this.dataDesativacao 
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         this.fetchInfoDB();
@@ -95,8 +118,11 @@ export default {
       });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/marca",
+      axios.delete('/api/marca',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -112,6 +138,9 @@ export default {
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     brazilDate (data) {
       if (data === null) {
         return null
@@ -120,13 +149,62 @@ export default {
       let partes = data.split("-");
 
       return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      let body = document.getElementsByTagName('body');
+      let novaMarcaButton = document.getElementById('nova-marca-button');
+      let salvaMarcaButton = document.getElementById('salva-marca-button');
+      let atualizaMarcaButton = document.getElementById('atualiza-marca-button');
+      let confirmaDeleteButton = document.getElementById('confirma-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novaMarcaButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvaMarcaButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizaMarcaButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmaDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
     }
+    ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 
@@ -137,6 +215,7 @@ export default {
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
     <button
+      id="nova-marca-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -162,6 +241,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirma-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -208,6 +288,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salva-marca-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -268,8 +349,12 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.dataDesativacao)"
+          <button
+            id="atualiza-marca-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

@@ -16,11 +16,11 @@ export default {
   },
 
   methods: {
-    // Método para buscar o 'this.localStorageToken'
+    // Método para buscar o 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para recuperar o 'this.localStorageEmail'
+    // Método para recuperar o 'this.localStorageEmail'.
     getLocalStorageEmail () {
       this.localStorageEmail = localStorage.getItem('email');
     },
@@ -85,7 +85,6 @@ export default {
         HUB 
         <p class="constr">Construções</p>
       </a>
-
 
       <!-- Ativa => Menu navegação Celular -->
       <button

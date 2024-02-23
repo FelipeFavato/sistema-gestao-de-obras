@@ -5,61 +5,73 @@ import axios from 'axios';
 export default {
   data () {
     return {
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
       localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis de requisição/auxiliares: -----\
       info: [],
       codigo: '',
       nome: '',
       dataDesativacao: '',
       telegramID: ''
+      /////////////////////////////////////////////
     }
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
-    // Método para esvaziar os dados quando enviada/cancelada a requisição.
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel() {
       this.nome = '';
       this.dataDesativacao = '';
       this.telegramID = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB (callback) {
-      axios.get("/api/socio",
+      axios.get('/api/socio',
       {
         headers: {
           Authorization: this.localStorageToken
         }
       }).then(res => {
         this.info = res.data.sort((s1, s2) => s1.codigo - s2.codigo);
-        if (callback) callback();
         this.setHttpStatusCode(res.status);
+        if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
-      })
+      });
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
-      axios.post("/api/socio",
+      axios.post('/api/socio',
       {
         nome: this.nome,
         dataDesativacao: null,
@@ -67,7 +79,7 @@ export default {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         this.fetchInfoDB();
@@ -76,24 +88,27 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
       this.cancel();
-    },  
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (codigo, nome, dataD, teleID) {
       this.codigo = codigo;
       this.nome = nome;
       this.dataDesativacao = dataD;
       this.telegramID = teleID;
     },
-    updateInfoDB (codigo, nome, dataD, teleID) {
-      axios.put("/api/socio",
+    updateInfoDB () {
+      axios.put('/api/socio',
       {
-        codigo: Number(codigo),
-        nome: nome,
-        dataDesativacao: dataD,
-        telegramID: teleID
+        codigo: Number(this.codigo),
+        nome: this.nome,
+        dataDesativacao: this.dataDesativacao,
+        telegramID: this.telegramID
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         this.fetchInfoDB();
@@ -103,8 +118,11 @@ export default {
       });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/socio",
+      axios.delete('/api/socio',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -120,6 +138,9 @@ export default {
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
     brazilDate (data) {
       if (data === null) {
         return null
@@ -128,13 +149,62 @@ export default {
       let partes = data.split("-");
 
       return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : null;
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      let body = document.getElementsByTagName('body');
+      let novoSocioButton = document.getElementById('novo-socio-button');
+      let salvaSocioButton = document.getElementById('salva-socio-button');
+      let atualizaSocioButton = document.getElementById('atualiza-socio-button');
+      let confirmaDeleteButton = document.getElementById('confirma-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novoSocioButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvaSocioButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizaSocioButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmaDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
     }
+    ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 
@@ -146,6 +216,7 @@ export default {
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
     <button
+      id="novo-socio-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -171,6 +242,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirma-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -231,6 +303,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salva-socio-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -305,8 +378,12 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.dataDesativacao, this.telegramID)"
+          <button
+            id="atualiza-socio-button"
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

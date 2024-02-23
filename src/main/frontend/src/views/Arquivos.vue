@@ -75,7 +75,7 @@ export default {
       axios.get('/api/obra-arquivos',
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
           // 'Content-Type': 'application/pdf',
         },
         // responseType: 'blob'
@@ -88,10 +88,10 @@ export default {
       });
     },
     fetchObrasInfoDB (callback) {
-      axios.get("/api/obra",
+      axios.get('/api/obra',
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         this.obrasInfo = res.data.sort((s1, s2) => s1.codigo - s2.codigo)
@@ -108,7 +108,7 @@ export default {
       axios.post('/api/obra-arquivos', formD,
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`,
+          Authorization: this.localStorageToken,
           'Content-Type': 'multipart/form-data'
         },
       }).then(res => {
@@ -153,7 +153,7 @@ export default {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
       }).then(res => {
         if (callback) callback();
@@ -357,45 +357,48 @@ export default {
 
     // Métodos de refinamento: ----------------------------------------------------------\
     // HGPK = Handle Global Press Key: Lida com os cliques de ENTER na página.
-    HGPKEnter () {
-      window.addEventListener('keydown', (event) => {
-        // Confere se o botão apertado foi o 'ENTER' 
-        const e = event;
-        const ENTER = e.keyCode === 13;
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
 
-        // Recupera botões e elementos da página.
-        let body = document.getElementsByTagName('body');
-        let novaFotoButton = document.getElementById('novaFotoButton');
+      // Recupera botões e elementos da página.
+      let body = document.getElementsByTagName('body');
+      let novaFotoButton = document.getElementById('novaFotoButton');
 
-        let salvaNovaFoto = document.getElementById('salvaNovaFoto');
-        let atualizaFoto = document.getElementById('atualizaFoto');
-        let deletaFoto = document.getElementById('deletaFoto');
+      let salvaNovaFoto = document.getElementById('salvaNovaFoto');
+      let atualizaFoto = document.getElementById('atualizaFoto');
+      let deletaFoto = document.getElementById('deletaFoto');
 
-        // Modais e comparações se elas estão ativas ou não.
-        let deleteArquivoModal = document.getElementById('deleteArquivoModal');
-        let updateArquivoModal = document.getElementById('updateModalArquivo');
+      // Modais e comparações se elas estão ativas ou não.
+      let deleteArquivoModal = document.getElementById('deleteArquivoModal');
+      let updateArquivoModal = document.getElementById('updateModalArquivo');
 
-        const noModalOpen = body[0].classList.value === '';
+      const noModalOpen = body[0].classList.value === '';
 
-        const isDeleteArquivoModal = deleteArquivoModal.classList.value === 'modal fade show';
-        const isUpdateArquivoModal = updateArquivoModal.classList.value === 'modal fade show';
+      const isDeleteArquivoModal = deleteArquivoModal.classList.value === 'modal fade show';
+      const isUpdateArquivoModal = updateArquivoModal.classList.value === 'modal fade show';
 
-        // Ativa o comportamento desejado baseado no momento que o usuário está na página:
-        if (noModalOpen && !this.arquivoSelecionado && ENTER) {
-          e.preventDefault();
-          novaFotoButton.click();
-        } else if (noModalOpen && this.arquivoSelecionado && ENTER) {
-          e.preventDefault();
-          salvaNovaFoto.click();
-        } else if (!noModalOpen && isUpdateArquivoModal && ENTER) {
-          e.preventDefault();
-          atualizaFoto.click();
-        } else if (!noModalOpen && isDeleteArquivoModal && ENTER) {
-          e.preventDefault();
-          deletaFoto.click();
-        }
-      });
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+      if (noModalOpen && !this.arquivoSelecionado && ENTER) {
+        e.preventDefault();
+        novaFotoButton.click();
+      } else if (noModalOpen && this.arquivoSelecionado && ENTER) {
+        e.preventDefault();
+        salvaNovaFoto.click();
+      } else if (!noModalOpen && isUpdateArquivoModal && ENTER) {
+        e.preventDefault();
+        atualizaFoto.click();
+      } else if (!noModalOpen && isDeleteArquivoModal && ENTER) {
+        e.preventDefault();
+        deletaFoto.click();
+      }
     },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
+    }
     //////////////////////////////////////////////////////////////////////////////////////
 
   },
@@ -409,7 +412,11 @@ export default {
       );
     });
     this.fetchObrasInfoDB()
-    this.HGPKEnter();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 
