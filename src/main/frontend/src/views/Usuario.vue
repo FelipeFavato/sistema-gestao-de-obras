@@ -1,33 +1,36 @@
 <script>
-// Endpoint => http://localhost:8080/api/auth/registrar
-// {
-//   "nome": "Fabio Sussumu Komori",
-//   "email": "fabioskomori@gmail.com",
-//   "senha": "123456",
-//   "tipoPerfil": "Gestor"
-// }
-
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
     return {
+      // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
       localStorageToken: null,
       httpStatus: '',
+      /////////////////////////////////////////////
+      // Variáveis de requisição/auxiliares: -----\
       info: [],
       codigo: '',
       nome: '',
       email: '',
       senha: '',
-      role: ''
+      role: '',
+      customToastNotification: 'Usuário(a)'
+      /////////////////////////////////////////////
     };
   },
 
+  props: {
+    alturaMenu: Number,
+  },
+
   methods: {
-    // Método para redirecionar para a página de login.
+    // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
       // this.clearLocalStorage();
@@ -36,27 +39,22 @@ export default {
     clearLocalStorage () {
       localStorage.clear();
     },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
     getLocalStorageToken () {
       this.localStorageToken = localStorage.getItem('token');
     },
-    // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
-    // Método para validar o login baseado no token.
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
-    // Método para validar o StatusHttp da requisição. Casos de token expirado.
     validateHttpStatus (status) {
       this.setHttpStatusCode(status);
       this.httpStatus === 403 ? this.redirectToLogin(): null;
     },
-    // Método para mostrar na tabela de usuarios como 'Gestor' e 'operacional'.
-    adminToGestor (role) {
-      return role === "ADMIN" ? "Gestor" : "Operacional"
-    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.codigo = '';
       this.nome = '';
@@ -64,8 +62,11 @@ export default {
       this.senha = '';
       this.tipoPerfil = '';
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de busca - GET: ---------------------------------------------------\
     fetchInfoDB () {
-      axios.get("/api/usuario",
+      axios.get('/api/usuario',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -77,8 +78,11 @@ export default {
         this.validateHttpStatus(error.response.status);
       });
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de INSERT - POST: -------------------------------------------------\
     createInfoDB () {
-      axios.post("/api/auth/registrar",
+      axios.post('/api/auth/registrar',
         {
           nome: this.nome,
           email: this.email,
@@ -87,16 +91,21 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal(cod, nome, email, senha, role) {
       this.codigo = cod;
       this.nome = nome;
@@ -104,29 +113,34 @@ export default {
       this.senha = senha;
       this.role = role;
     },
-    updateInfoDB (codigo, nome, email, senha, role) {
-      axios.put("/api/usuario",
+    updateInfoDB () {
+      axios.put('/api/usuario',
         {
-          codigo: Number(codigo),
-          nome: nome,
-          email: email,
-          senha: senha,
-          role: role
+          codigo: Number(this.codigo),
+          nome: this.nome,
+          email: this.email,
+          senha: this.senha,
+          role: this.role
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          updateErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de DELETE - DELETE: -----------------------------------------------\
     removeFromDB (codigo) {
-      axios.delete("/api/usuario",
+      axios.delete('/api/usuario',
         {
           headers: {
             Authorization: this.localStorageToken
@@ -137,17 +151,76 @@ export default {
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          deleteErrorToast('');
         });
       this.cancel();
     },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de renderização: --------------------------------------------------\
+    adminToGestor (role) {
+      return role === "ADMIN" ? "Gestor" : "Operacional"
+    },
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Métodos de refinamento: ---------------------------------------------------\
+    HGPKEnter (event) {
+      const e = event;
+      const ENTER = e.key === 'Enter';
+
+      // Recupera botões e elementos da página.
+      let body = document.getElementsByTagName('body');
+      let novoUsuarioButton = document.getElementById('novo-usuario-button');
+      let salvarNovoButton = document.getElementById('salvar-novo-button');
+      let atualizarButton = document.getElementById('atualizar-button');
+      let confirmarDeleteButton = document.getElementById('confirmar-delete-button');
+
+      // Modais para comparar se elas estão aparecendo ou não.
+      let deleteModal = document.getElementById('deleteModal');
+      let insertModal = document.getElementById('insertModal');
+      let updateModal = document.getElementById('updateModal');
+
+      const noModalOpen = body[0].classList.value === '';
+      const isDeleteModal = deleteModal.classList.value === 'modal fade show';
+      const isInsertModal = insertModal.classList.value === 'modal fade show';
+      const isUpdateModal = updateModal.classList.value === 'modal fade show';
+
+      // Ativa o comportamento desejado baseado no momento que o usuário está na página:
+      if (noModalOpen && ENTER) {
+        e.preventDefault();
+        novoUsuarioButton.click();
+      } else if (!noModalOpen && isInsertModal && ENTER) {
+        e.preventDefault();
+        salvarNovoButton.click();
+      } else if (!noModalOpen && isUpdateModal && ENTER) {
+        e.preventDefault();
+        atualizarButton.click();
+      } else if (!noModalOpen && isDeleteModal && ENTER) {
+        e.preventDefault();
+        confirmarDeleteButton.click();
+      }
+    },
+    addHGPKEnter () {
+      window.addEventListener('keydown', this.HGPKEnter);
+    },
+    removeHGPKEnter () {
+      window.removeEventListener('keydown', this.HGPKEnter);
+    },
+    ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
     this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
+    this.addHGPKEnter();
+  },
+
+  unmounted () {
+    this.removeHGPKEnter();
   }
 }
 
@@ -159,6 +232,7 @@ export default {
   <!-- Header com o botão de +Novo Usuário -->
   <header class="header middle-margin">
     <button
+      id="novo-usuario-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
@@ -184,6 +258,7 @@ export default {
           >Não</button>
 
           <button
+            id="confirmar-delete-button"
             type="button"
             class="btn btn-success light-green"
             data-bs-dismiss="modal"
@@ -266,6 +341,7 @@ export default {
             @click="cancel"
           >Fechar</button>
           <button
+            id="salvar-novo-button"
             type="button"
             class="btn btn-success  light-green"
             data-bs-dismiss="modal"
@@ -332,7 +408,8 @@ export default {
                 id="password-input"
                 placeholder="******"
                 v-model="senha"
-                maxlength="30">
+                maxlength="30"
+                disabled>
             </div>
 
             <!-- Perfil -->
@@ -355,8 +432,12 @@ export default {
             @click="cancel"
           >Fechar</button>
 
-          <button type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
-            @click="updateInfoDB(this.codigo, this.nome, this.email, this.role)"
+          <button
+            id="atualizar-button"  
+            type="button"
+            class="btn btn-success light-green"
+            data-bs-dismiss="modal"
+            @click="updateInfoDB()"
           >Salvar</button>
         </div>
       </div>

@@ -1,6 +1,8 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -17,6 +19,8 @@ export default {
       dataDesativacao: null,
       /////////////////////////////////////////////
       // Variáveis de comportamento: -------------\
+      startNewAdd: false,
+      customToastNotification: 'Local de uso'
       /////////////////////////////////////////////
     };
   },
@@ -67,15 +71,16 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de busca - GET: ---------------------------------------------------\
-    fetchInfoDB () {
+    fetchInfoDB (callback) {
       axios.get('/api/localuso',
       {
         headers: {
           Authorization: this.localStorageToken
         }
-      }).then(res => {
+      }).then(res => {          
         this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra']))
         this.setHttpStatusCode(res.status);
+        if (callback) callback();
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       })
@@ -96,8 +101,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.customToastNotification);
         }
       );
       this.cancel();
@@ -124,8 +131,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          updateErrorToast(this.customToastNotification);
         }
       );
       this.cancel();
@@ -145,7 +154,9 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
+          deleteErrorToast('ITENS DE COMPRA');
           this.validateHttpStatus(error.response.status);
         });
       this.cancel();
@@ -153,6 +164,9 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de comportamento: -------------------------------------------------\
+    startNewAddition () {
+      this.startNewAdd = !this.startNewAdd;
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de renderização: --------------------------------------------------\
@@ -211,7 +225,6 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;
@@ -275,15 +288,24 @@ export default {
 <template>
 
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
       id="novoLocalButton"
-      @click="focusFirstInput"
-      v-on:click=""
+    >+ Novo Local de Uso</button>
+  </header>
+
+  <!-- <SuccessToast /> -->
+
+  <!-- Header Esqueleto - Carregamento -->
+  <header v-if="this.info == ''" class="header middle-margin">
+    <button
+      type="button"
+      class="btn loading-elements"
+      disabled
     >+ Novo Local de Uso</button>
   </header>
 
@@ -423,9 +445,10 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
-      <thead>
+
+      <thead class="tamanho-fonte-18">
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Local</th>
@@ -435,9 +458,71 @@ export default {
           <th></th>
           <th></th>
           <th></th>
+          <!-- <th class="flex-end">
+            <button
+              type="button"
+              class="btn btn-success light-green"
+              id="novoLocalButton"
+              data-bs-target="#insertModal"
+              data-bs-toggle="modal"
+            >+ Novo Local
+            </button>
+          </th> -->
         </tr>
       </thead>
+
       <tbody>
+        <!-- Primeira tentativa -->
+        <!-- <tr v-if="this.startNewAdd" class="red-border">
+          <th scope="row">
+          </th>
+          <td class="red-border">
+            <div class="input-group input-group-sm mb-3" style="height: 50%;">
+              <input
+                id="nameInput"
+                type="text"
+                class="form-control"
+                aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm"
+                placeholder="Fundação, Hidráulica, etc..."
+                v-model="nomeLocalUsoObra"
+                maxlength="30"
+              >
+            </div>
+          </td>
+          <td style="height: 100%;">
+            <div class="input-group input-group-sm mb-3" style="height: 100%;">
+              <input
+                type="text"
+                aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-sm"
+                disabled
+                placeholder="Ativo"
+              >
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="flex-end red-border">
+            <button
+              type="button"
+              class="btn btn-light btn-sm medium medium"
+              title="Cancelar"
+              @click="cancel"
+            ><img src="../assets/imagens/close-window-icon.png" alt="close-button" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-light btn-sm medium"
+              title="Salvar"
+              @click="createInfoDB"
+            ><img src="../assets/imagens/check.webp" alt="salvar-button"/>
+            </button>
+          </td>
+        </tr> -->
+
         <tr v-for="(localUso, i) in info" :key="i">
           <th scope="row">{{ localUso.codigoLocalUsoObra }}</th>
           <td>{{ localUso.nomeLocalUsoObra }}</td>
@@ -446,7 +531,7 @@ export default {
           <td></td>
           <td></td>
           <td></td>
-          <td class="editar-excluir">
+          <td class="flex-end">
             <button
               type="button"
               class="btn btn-light btn-sm small"
@@ -466,7 +551,46 @@ export default {
           </td>
         </tr>
       </tbody>
+
     </table>
+
+  </main>
+
+  <!-- Tabela Esqueleto - Carregamento -->
+  <main v-if="this.info == ''" class="middle-margin table-responsive">
+    <table class="table table-hover">
+
+      <thead class="tamanho-fonte-18">
+        <tr>
+          <th scope="col"><p class="loading-elements">Código</p></th>
+          <th scope="col"><p class="loading-elements">Local</p></th>
+          <th scope="col"><p class="loading-elements">Data desativação</p></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody class="loading-elements">
+        <tr v-for="(i) in 10" :key="i" class="loading-elements">
+          <th scope="row"><p class="loading-elements">123</p></th>
+          <td><p class="loading-elements">aaaaa</p></td>
+          <td><p class="loading-elements">aaaa</p></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="flex-end">
+            <p class="loading-elements">aaa</p>
+            <p class="loading-elements">aaa</p>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
   </main>
 
 </template>
@@ -490,14 +614,27 @@ export default {
   background-color: #333333;
 }
 
-.editar-excluir {
+.red-border {
+  border: 1px solid red;
+}
+
+.tamanho-fonte-18 {
+  font-size: 18px;
+}
+
+.flex-end {
   display: flex;
   justify-content: flex-end;
 }
 
 .small img {
-  height: 15px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
+}
+
+.medium img {
+  height: 20px;
+  width: 20px;
 }
 
 .middle-margin {
@@ -506,5 +643,34 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+.loading-elements {
+  border-radius: 5px;
+  animation: pulse-bg 1.5s infinite, pulse-text 1.5s infinite;
+}
+
+@keyframes pulse-bg {
+  0% {
+    background-color: #f0f0f0;
+  }
+  50% {
+    background-color: #bcbcbc;
+  }
+  100% {
+    background-color: #f0f0f0;
+  }
+}
+
+@keyframes pulse-text {
+  0% {
+    color: #f0f0f0;
+  }
+  50% {
+    color: #bcbcbc;
+  }
+  100% {
+    color: #f0f0f0;
+  }
 }
 </style>

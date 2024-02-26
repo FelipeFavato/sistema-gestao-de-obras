@@ -120,17 +120,29 @@ export default {
                   </div>
 
                   <!-- Senha -->
-                  <!-- @keyup.enter="login" -->
-                  <div class="mb-3">
-                    <label for="senha-login-input" class="form-label bold">Senha:</label>
-                      <input
-                        :type="this.showPassword ? 'text' : 'password'"
-                        class="form-control"
-                        id="senha-login-input"
-                        placeholder="******"
-                        v-model="senhaLogin"
-                      >
+                  <label for="senha-login-input" class="form-label bold">Senha:</label>
+                  <div class="input-group" id="senha-login-input">
+                    <input
+                      :type="this.showPassword ? 'text' : 'password'"
+                      class="form-control"
+                      placeholder="******"
+                      aria-label="Recipient's username with two button addons"
+                      v-model="senhaLogin"
+                    >
+                    <button v-if="!this.showPassword"
+                      class="btn btn-outline-secondary small"
+                      type="button"
+                      title="Mostrar senha"
+                      @click="changeShowPassword"
+                    ><img src="../assets/imagens/hide-password.png" alt="mostrar/esconder senha"/></button>
+                    <button v-if="this.showPassword"
+                      class="btn btn-outline-secondary small"
+                      type="button"
+                      title="Esconder senha"
+                      @click="changeShowPassword"
+                    ><img src="../assets/imagens/hide-password.png" alt="mostrar/esconder senha"/></button>
                   </div>
+
                 </div>
                 <!-- Lembrar de mim? -->
 
@@ -152,12 +164,6 @@ export default {
                     @click="login"
                   >Login</button>
                 </div>
-<!-- 
-                <div>
-                  <input v-model="username" placeholder="Usuário" @keyup.enter="login">
-                  <input v-model="password" type="password" placeholder="Senha" @keyup.enter="login">
-                  <button @click="login">Entrar</button>
-                </div> -->
 
               </form>
           </div>

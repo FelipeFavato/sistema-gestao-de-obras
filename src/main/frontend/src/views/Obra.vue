@@ -2,6 +2,9 @@
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast ,assignSuccessToast,
+  unAssignSuccessToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -21,6 +24,7 @@ export default {
       getObraInfo: {},
       selectedSocioID: '',
       sociosNotYetAssigned: [],
+      customToastNotification: 'Obra',
       // Variáveis para requisição
       codigo: '',
       nome: '',
@@ -137,8 +141,10 @@ export default {
         }).then((res) => {
           this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
+          insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -160,6 +166,7 @@ export default {
           self.fillSociosSelecionadosByObra();
           self.selectNotYetAssignedSocios();
         });
+        assignSuccessToast();
       }).catch(error => {
         console.log(error);
       });
@@ -184,6 +191,7 @@ export default {
           self.fillSociosSelecionadosByObra();
           self.selectNotYetAssignedSocios();
         });
+        unAssignSuccessToast();
       }).catch(error => {
         console.log(error);
       });
@@ -221,8 +229,10 @@ export default {
         }).then((res) => {
           this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
+          updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          updateErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -241,8 +251,10 @@ export default {
         }).then((res) => {
           this.fetchObrasInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          deleteErrorToast('COMPRAS');
         });
       this.cancel();
     },

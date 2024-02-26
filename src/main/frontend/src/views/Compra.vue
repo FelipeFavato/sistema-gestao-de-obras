@@ -1,43 +1,9 @@
 <script>
-// Requisição de NOVA COMPRA:
-// {
-//   "obra":  {
-//     "codigo": 1
-//   },
-//   "fornecedor": {
-//     "codigo": 23
-//   },
-//   "socio": {
-//     "codigo": 4
-//   },
-//   "dataCompra": "2023-05-30",
-//   "dataEntrega": "2023-05-30",
-//   "valorOriginal": 200,
-//   "valorDesconto": 5,
-//   "valorFinal": 195
-// }
-
-// Requisição de NOVO ITEM DE COMPRA:
-// {
-//   "compra": {
-//     "codigo": 89
-//   },
-//   "produto": {
-//     "codigo": 1
-//   },
-//   "localUso": {
-//     "codigoLocalUsoObra": 2
-//   },
-//   "unidadeMedida": {
-//     "codigo": 1
-//   },
-//   "quantidade": 10,
-//   "valorUnitario": 1.50,
-//   "valorTotal": 15
-// }
 
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -76,6 +42,8 @@ export default {
       valorTotalCompra: 0,
       showItems: false,
       valueStatus: '',
+      compraCustomToast: 'Compra',
+      itemCustomToast: 'Item',
       // Variáveis para requisição
       localStorageToken: null,
       codigo: '',
@@ -256,7 +224,7 @@ export default {
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       })
-    },
+      this.itemCustomToast },
     // GET - UnidadeMedida.
     fetchUnidadeMedidaInfoDB () {
       axios.get("/api/unidademedida",
@@ -384,11 +352,16 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
         }
-      ).then(() => callback())
-      .catch(error => this.validateHttpStatus(error.response.status));
+      ).then(res => {
+        if (callback) callback();
+        insertSuccessToast(this.compraCustomToast);
+      }).catch(error => {
+        this.validateHttpStatus(error.response.status)
+        insertErrorToast(this.compraCustomToast);
+      });
     },
     // Chama o método 'createCompra()', repopula a lista correta e reseta os dados de requisição.
     createCompraInfoDB () {
@@ -416,10 +389,14 @@ export default {
         },
         {
           headers: {
-            Authorization: `Bearer ${this.localStorageToken}`
+            Authorization: this.localStorageToken
           }
-        }).then(() => callback()).catch(error => {
+        }).then(res => {
+          if (callback) callback();
+          insertSuccessToast(this.itemCustomToast);
+        }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.itemCustomToast);
         });
     },
     // Chama o método 'createItem()', repopula a lista correta e reseta os dados da requisição.
@@ -487,10 +464,14 @@ export default {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
-      }).then(() => callback()).catch(error => {
+      }).then(res => {
+        if (callback) callback();
+        updateSuccessToast(this.compraCustomToast);
+      }).catch(error => {
         this.validateHttpStatus(error.response.status);
+        updateErrorToast(this.compraCustomToast);
       });
     },
     // Chama o método 'updateCompra', repopula a lista corretamente e reseta os dados da requisição.
@@ -548,10 +529,14 @@ export default {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.localStorageToken}`
+          Authorization: this.localStorageToken
         }
-      }).then(() => callback()).catch(error => {
+      }).then(res => {
+        if (callback) callback();
+        updateSuccessToast(this.itemCustomToast);
+      }).catch(error => {
         this.validateHttpStatus(error.response.status);
+        updateErrorToast(this.itemCustomToast);
       });
     },
     // Chama o método 'updateItem' e repopula a lista corretamente.
@@ -586,9 +571,12 @@ export default {
           data: {
             codigo: Number(codigo)
           }
-        }).then(() => callback()).catch(error => {
+        }).then(res => {
+          if (callback) callback();
+          deleteSuccessToast(this.compraCustomToast);
+        }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          alert('Essa compra não pode ser removida pois há ITENS associados a ela.');
+          deleteErrorToast('ITENS');
         });
     },
     // Chama o método 'removeCompra', repopula a lista correta e reseta os dados da requisição.
@@ -617,8 +605,12 @@ export default {
           data: {
             codigo: Number(cod)
           }
-        }).then(() => callback()).catch(error => {
+        }).then(res => {
+          if (callback) callback();
+          deleteSuccessToast(this.itemCustomToast);
+        }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          deleteErrorToast('');
         });
     },
     // Chama o método 'removeItem', repopula a lista correta e reseta os dados da requisição.

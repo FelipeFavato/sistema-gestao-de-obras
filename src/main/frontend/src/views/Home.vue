@@ -91,7 +91,6 @@ export default {
 
   <!-- Atualizações -->
   <main class="flex">
-
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
@@ -155,22 +154,6 @@ export default {
         <a href="#arquivo" class="btn btn-success">Ver mudanças (Arquivos) -></a>
       </div>
     </div>
-
-
-
-    <!-- <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 17.01.24</h5>
-          <p class="card-text">Página de Custos</p>
-          <p>1. Combos corrigidos para enviar apenas o código nas requisições.</p>
-          <p></p>
-          <p></p>
-          <p></p>
-        </div>
-        <a disabled href="#" class="btn btn-secondary">Sem mudanças visíveis</a>
-      </div>
-    </div> -->
   </main>
   
 </template>
