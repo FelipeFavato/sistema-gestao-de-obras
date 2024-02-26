@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import SkeletonTableAndHeader from '../components/SkeletonTableAndHeader.vue';
 
 export default {
   data () {
@@ -70,6 +71,10 @@ export default {
 
   props: {
     alturaMenu: Number,
+  },
+
+  components: {
+    SkeletonTableAndHeader
   },
 
   methods: {
@@ -838,6 +843,9 @@ export default {
 </script>
 
 <template>
+
+  <!-- Tabela e Header Esqueleto - Carregamento -->
+  <SkeletonTableAndHeader v-if="this.comprasInfo == ''" />
   
   <!-- Header com o DropDown 'Obras' -->
   <header v-show="!this.showItems" class="header middle-margin">

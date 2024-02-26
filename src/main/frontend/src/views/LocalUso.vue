@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import SkeletonTableAndHeader from '../components/SkeletonTableAndHeader.vue';
+
 
 export default {
   data () {
@@ -27,6 +29,10 @@ export default {
 
   props: {
     alturaMenu: Number,
+  },
+
+  components: {
+    SkeletonTableAndHeader,
   },
 
   // O vue percebe que estou usando algumas variaveis, qualquer atualização nas variaveis, ele atualiza
@@ -77,7 +83,7 @@ export default {
         headers: {
           Authorization: this.localStorageToken
         }
-      }).then(res => {          
+      }).then(res => {    
         this.info = res.data.sort((s1, s2) => s1['nomeLocalUsoObra'].localeCompare(s2['nomeLocalUsoObra']))
         this.setHttpStatusCode(res.status);
         if (callback) callback();
@@ -287,6 +293,9 @@ export default {
 
 <template>
 
+  <!-- Tabela e Header Esqueleto - Carregamento -->
+  <SkeletonTableAndHeader v-if="this.info == ''" />
+
   <!-- Header com o botão de +Novo -->
   <header v-if="this.info != ''" class="header middle-margin">
     <button
@@ -295,17 +304,6 @@ export default {
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
       id="novoLocalButton"
-    >+ Novo Local de Uso</button>
-  </header>
-
-  <!-- <SuccessToast /> -->
-
-  <!-- Header Esqueleto - Carregamento -->
-  <header v-if="this.info == ''" class="header middle-margin">
-    <button
-      type="button"
-      class="btn loading-elements"
-      disabled
     >+ Novo Local de Uso</button>
   </header>
 
@@ -556,43 +554,6 @@ export default {
 
   </main>
 
-  <!-- Tabela Esqueleto - Carregamento -->
-  <main v-if="this.info == ''" class="middle-margin table-responsive">
-    <table class="table table-hover">
-
-      <thead class="tamanho-fonte-18">
-        <tr>
-          <th scope="col"><p class="loading-elements">Código</p></th>
-          <th scope="col"><p class="loading-elements">Local</p></th>
-          <th scope="col"><p class="loading-elements">Data desativação</p></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-
-      <tbody class="loading-elements">
-        <tr v-for="(i) in 10" :key="i" class="loading-elements">
-          <th scope="row"><p class="loading-elements">123</p></th>
-          <td><p class="loading-elements">aaaaa</p></td>
-          <td><p class="loading-elements">aaaa</p></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="flex-end">
-            <p class="loading-elements">aaa</p>
-            <p class="loading-elements">aaa</p>
-          </td>
-        </tr>
-      </tbody>
-
-    </table>
-
-  </main>
-
 </template>
 
 <style scope>
@@ -601,12 +562,9 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -645,7 +603,7 @@ export default {
   font-weight: bold;
 }
 
-.loading-elements {
+/* .loading-elements {
   border-radius: 5px;
   animation: pulse-bg 1.5s infinite, pulse-text 1.5s infinite;
 }
@@ -672,5 +630,5 @@ export default {
   100% {
     color: #f0f0f0;
   }
-}
+} */
 </style>
