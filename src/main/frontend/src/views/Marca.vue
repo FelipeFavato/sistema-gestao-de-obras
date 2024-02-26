@@ -1,6 +1,8 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -14,7 +16,8 @@ export default {
       info: [],
       codigo: '',
       nome: '',
-      dataDesativacao: ''
+      dataDesativacao: '',
+      customToastNotification: 'Marca'
       /////////////////////////////////////////////
     }
   },
@@ -85,9 +88,10 @@ export default {
       }).then(res => {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status);
+        insertSuccessToast(this.customToastNotification);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
-        console.log(error)
+        insertErrorToast(this.customToastNotification);
       });
       this.cancel();
     },
@@ -113,8 +117,10 @@ export default {
       }).then(res => {
         this.fetchInfoDB();
         this.setHttpStatusCode(res.status);
+        updateSuccessToast(this.customToastNotification);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
+        updateErrorToast(this.customToastNotification);
       });
       this.cancel();
     },
@@ -133,8 +139,10 @@ export default {
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          deleteErrorToast('PRODUTOS');
         });
       this.cancel();
     },

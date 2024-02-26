@@ -1,6 +1,8 @@
 <script>
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -12,6 +14,7 @@ export default {
       /////////////////////////////////////////////
       // Variáveis auxiliares: -------------------\
       info: [],
+      customToastNotification: 'Fornecedor',
       /////////////////////////////////////////////
       // Variáveis de requisição: ----------------\
       codigo: '',
@@ -91,8 +94,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -124,8 +129,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          updateErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -144,9 +151,11 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
           console.log(error)
+          deleteErrorToast('COMPRAS');
         });
       this.cancel();
     },
@@ -326,7 +335,7 @@ export default {
             <div class="mb-3">
               <label for="telefone-input" class="form-label bold">Telefone:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="telefone-input"
                 placeholder="Telefone (com DDD)"
@@ -432,7 +441,7 @@ export default {
             <div class="mb-3">
               <label for="telefone-input" class="form-label bold">Telefone:</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="telefone-input"
                 placeholder="Telefone (com DDD)"

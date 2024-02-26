@@ -1,6 +1,8 @@
 <script>
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 // Requisição de Novo Produto
 // {
@@ -20,6 +22,7 @@ export default {
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
+      customToastNotification: 'Produto',
       // Variaveis para requisição
       localStorageToken: null,
       codigo: '',
@@ -112,8 +115,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          insertErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -151,8 +156,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          updateErrorToast(this.customToastNotification);
         });
       this.cancel();
     },
@@ -175,8 +182,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
+          deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
+          deleteErrorToast('ITENS DE COMPRA');
         });
       this.cancel();
     },

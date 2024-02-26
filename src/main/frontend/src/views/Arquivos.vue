@@ -1,6 +1,8 @@
 <script>
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
+  deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 
 export default {
   data () {
@@ -28,6 +30,7 @@ export default {
       retratoOuPaisagemImagem: '',
       retratoOuPaisagemDescricao: '',
       selectedFiltro: '',
+      customToastNotification: 'Arquivo',
       //////////////////////////////////
 
       // Variáveis de requisição: -----\
@@ -113,19 +116,19 @@ export default {
         },
       }).then(res => {
         if (callback) callback();
+        insertSuccessToast(this.customToastNotification);
       }).catch(error => {
-        if (error.response.status === 500) {
-          alert("Foto já cadastrada no sistema.");
-          this.limparButtonActions();
-        }
+        insertErrorToast(this.customToastNotification);
+        this.limparButtonActions();
       });
+      
     },
 
     createArquivo () {
       const self = this;
       const formData = new FormData();
       formData.append("file", this.conteudoArquivo);
-      formData.append("descricao", this.descricao);
+      formData.append("descricao", this.descricao ? this.descricao : ' ');
       formData.append("nomeArquivo", this.nomeArquivo);
       formData.append("idObra", this.idObra);
       // Cria o arquivo novo e renderiza a lista.
@@ -157,8 +160,10 @@ export default {
         }
       }).then(res => {
         if (callback) callback();
+        updateSuccessToast(this.customToastNotification);
       }).catch(error => {
         console.log(error);
+        updateErrorToast(this.customToastNotification);
       })
     },
     updateArquivo() {
@@ -187,8 +192,10 @@ export default {
         }
       }).then(res => {
         if (callback) callback();
+        deleteSuccessToast(this.customToastNotification);
       }).catch(error => {
         console.log(error);
+        deleteErrorToast('');
       });
     },
     removeArquivo (codigo) {
