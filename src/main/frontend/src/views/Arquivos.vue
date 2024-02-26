@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
-import SkeletonCards from '../components/SkeletonCards.vue';
+import SkeletonCards from '../components/skeletonLoading/SkeletonCards.vue';
 
 export default {
   data () {

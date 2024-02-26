@@ -1,6 +1,6 @@
 <script>
-import ProfileCard from '../components/ProfileCard.vue';
-import ProfileCardSkeleton from '../components/ProfileCardSkeleton.vue';
+// import ProfileCard from '../components/ProfileCard.vue';
+// import ProfileCardSkeleton from '../components/ProfileCardSkeleton.vue';
 
 export default {
   data () {
@@ -14,8 +14,8 @@ export default {
   },
 
   components: {
-    ProfileCard,
-    ProfileCardSkeleton
+    // ProfileCard,
+    // ProfileCardSkeleton
   },
 
   methods: {
@@ -26,7 +26,7 @@ export default {
 
 <template>
 
-  <h2>Perfil</h2>
+  <!-- <h2>Perfil</h2>
   <Suspense>
     <template #default>
       <ProfileCard />
@@ -35,7 +35,7 @@ export default {
     <template #fallback>
       <ProfileCardSkeleton />
     </template>
-  </Suspense>
+  </Suspense> -->
 
 </template>
 

@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast ,assignSuccessToast,
   unAssignSuccessToast } from '../utils/toasts/index';
-import SkeletonTableAndHeader from '../components/SkeletonTableAndHeader.vue';
+import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 
 export default {
