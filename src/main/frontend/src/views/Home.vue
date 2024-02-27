@@ -95,6 +95,17 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
+          <h5 class="card-title">Atualização 27.02.24</h5>
+          <p class="card-text">Todas as páginas</p>
+          <p>1. Agora o primeiro editável é focado quando existe.</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
           <h5 class="card-title">Atualização 26.02.24</h5>
           <p class="card-text">Todas as páginas</p>
           <p>1. Usuário recebe uma resposta de sucesso ou falha em todas suas requisições.</p>
