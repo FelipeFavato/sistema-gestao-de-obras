@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -101,6 +102,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (cod, unid) {
+      focusFirstModalInput('update-unidade-input');
       this.codigo = cod;
       this.unidade = unid;
     },
@@ -186,7 +188,8 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
   },
   
@@ -209,13 +212,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de + Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="nova-unidade-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-unidade-input')"
     >+ Nova Unidade de medida
     </button>
   </header>
@@ -262,11 +266,11 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="unidade-input" class="form-label bold">Unidade de medida:</label>
+              <label for="insert-unidade-input" class="form-label bold">Unidade de medida:</label>
               <input
                 type="text"
                 class="form-control"
-                id="unidade-input"
+                id="insert-unidade-input"
                 placeholder="Gramas, quilos, metros..."
                 v-model="unidade"
                 maxlength="30">
@@ -307,21 +311,21 @@ export default {
           <form action="PUT">
 
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Unidade de medida:</label>
+              <label for="update-unidade-input" class="form-label bold">Unidade de medida:</label>
               <input
                 type="text"
                 class="form-control"
-                id="category-input"
+                id="update-unidade-input"
                 placeholder="Alvenaria, Ferragens, etc..."
                 v-model="unidade">
             </div>
@@ -347,7 +351,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

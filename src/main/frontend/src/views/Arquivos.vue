@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonCards from '../components/skeletonLoading/SkeletonCards.vue';
 
 export default {
@@ -148,6 +149,7 @@ export default {
 
     // Métodos de UPDATE de dados - PUT: ------------------------------------------------\
     fillUpdateArquivoModal(cod, nome, descricao) {
+      focusFirstModalInput('update-nome-input');
       this.codigo = cod;
       this.nomeArquivo = nome;
       this.descricao = descricao;
@@ -410,7 +412,9 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    // Esse método vem de '../utils/inputFocus'.
+    focusFirstModalInput,
     //////////////////////////////////////////////////////////////////////////////////////
 
   },
@@ -604,32 +608,32 @@ export default {
 
             <!-- Código -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <!-- NomeArquivo -->
             <div class="mb-3">
-              <label for="nome-arquivo-input" class="form-label bold">Nome:</label>
+              <label for="update-nome-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nome-arquivo-input"
+                id="update-nome-input"
                 v-model="nomeArquivo">
             </div>
 
             <!-- Descrição -->
             <div class="mb-3">
-              <label for="descricao-input" class="form-label bold">Descrição:</label>
+              <label for="update-descricao-input" class="form-label bold">Descrição:</label>
               <input
                 type="text"
                 class="form-control"
-                id="descricao-input"
+                id="update-descricao-input"
                 v-model="descricao">
             </div>
 
@@ -672,9 +676,10 @@ export default {
                     <input
                       type="text"
                       class="form-control"
-                      id="name-input"
+                      id="insert-nome-input"
                       placeholder="Nome"
                       v-model="nomeArquivo"
+                      autofocus
                     >
                   </div>
                   <!-- Descrição -->
@@ -682,7 +687,7 @@ export default {
                     <input
                       type="text"
                       class="form-control"
-                      id="descricao-input"
+                      id="insert-descricao-input"
                       placeholder="Descrição"
                       v-model="descricao"
                     >

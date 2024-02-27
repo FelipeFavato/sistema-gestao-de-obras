@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -228,8 +229,8 @@ export default {
         this.setHttpStatusCode(res.status);
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
-      })
-      this.itemCustomToast },
+      });
+    },
     // GET - UnidadeMedida.
     fetchUnidadeMedidaInfoDB () {
       axios.get("/api/unidademedida",
@@ -422,6 +423,7 @@ export default {
     // Métodos de UPDATE - PUT: ---------------------------------------------------------\
     // Preenche a modal UPDATE de COMPRA.
     fillUpdateCompraModal (cod, codigoObra, dataC, dataE, dataP, dataV, valorO, valorD, valorF, selForneNome, selSocioNome) {
+      focusFirstModalInput('update-compra-socio-pagador-select');
       this.codigo = cod;
       this.selectedObraId = codigoObra;
       this.dataCompra = dataC;
@@ -495,6 +497,7 @@ export default {
     // Item: ----------------------------------------------------------------------------|
     // Preenche a modal UPDATE de ITEM.
     fillUpdateItemModal (cod, qnt, valorU, valorT, selProdNome, selProdCod, selLocUsoNome, selUniMedida) {
+      focusFirstModalInput('update-item-local-uso-select');
       this.codigoItem = cod;
       this.quantidade = qnt;
       this.valorUnitario = valorU;
@@ -659,6 +662,7 @@ export default {
     // Preenche o 'this.compraCodForne' para a VISUALIZAÇÃO no momento de inserção de novo Item.
     fillCompraCodForne () {
       this.compraCodForne = `${this.getCompraInfo.codigo} - ${this.getCompraInfo.fornecedor.nome}`;
+      focusFirstModalInput('insert-item-produto-select');
     },
     // Renderiza apenas o primeiro e ultimo nome do sócio.
     firstLastName (nomeSocio) {
@@ -799,17 +803,9 @@ export default {
         this.valueStatus = 'green-letter';
       }
     },
+    focusFirstModalInput,
     //////////////////////////////////////////////////////////////////////////////////////
 
-
-    // Precisa ser melhorado: -----------------------------------------------------------\
-    // 
-    // focusFirstInput () {
-    //   setTimeout(() => {
-    //     document.getElementById('socio-pagador-select').focus();
-    //   }, 500);
-    // }
-    //////////////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
@@ -848,7 +844,7 @@ export default {
   <SkeletonTableAndHeader v-if="this.comprasInfo == ''" />
   
   <!-- Header com o DropDown 'Obras' -->
-  <header v-show="!this.showItems" class="header middle-margin">
+  <header v-if="this.comprasInfo != ''" v-show="!this.showItems" class="header middle-margin">
     <!-- DropDown 'Obras' -->
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -929,7 +925,7 @@ export default {
   </div>
 
   <!-- Elementos condicionais baseados na escolha da Obra (Botão + Novo Custo) -->
-  <div v-show="this.selectedObraNome" class="header middle-margin">
+  <div v-if="this.comprasInfo != ''" v-show="this.selectedObraNome" class="header middle-margin">
     <!-- Botão para adicionar Compra -->
     <button
       v-show="!this.showItems"
@@ -938,6 +934,7 @@ export default {
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-compra-socio-pagador-select')"
     >+ Novo Custo</button>
   </div>
 
@@ -985,21 +982,21 @@ export default {
 
             <!-- Obra -->
             <div class="mb-3">
-              <label for="obra-input" class="bold">Obra:</label>
+              <label for="insert-compra-obra-nome-input" class="bold">Obra:</label>
               <input
                 type="text"
                 class="form-control"
-                id="obra-input"
+                id="insert-compra-obra-nome-input"
                 disabled
                 v-model="selectedObraNome">
             </div>
 
             <!-- Sócio pagador -->
             <div class="mb-3">
-              <label for="socio-pagador-select" class="bold">Pagador:</label>
+              <label for="insert-compra-socio-pagador-select" class="bold">Pagador:</label>
               <select
                 class="form-select"
-                id="socio-pagador-select"
+                id="insert-compra-socio-pagador-select"
                 v-model="selectedSocioCod">
                 <option
                   v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.codigo"
@@ -1009,10 +1006,10 @@ export default {
 
             <!-- Fornecedor -->
             <div class="mb-3">
-              <label for="fornecedor-select" class="bold">Fornecedor:</label>
+              <label for="insert-compra-fornecedor-select" class="bold">Fornecedor:</label>
               <select
                 class="form-select"
-                id="fornecedor-select"
+                id="insert-compra-fornecedor-select"
                 v-model="selectedFornecedorCod"
                 @click="checkTipoFornecedor"
               ><option
@@ -1023,53 +1020,53 @@ export default {
 
             <!-- Data da Compra -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-compra-input" class="form-label bold">Data da compra:</label>
+              <label for="insert-compra-data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-compra-input"
+                id="insert-compra-data-compra-input"
                 v-model="dataCompra">
             </div>
 
             <!-- Data da Entrega -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
+              <label for="insert-compra-data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-entrega-input"
+                id="insert-compra-data-entrega-input"
                 v-model="dataEntrega">
             </div>
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="data-pagamento-input" class="form-label bold">Data de pagamento:</label>
+              <label for="insert-compra-data-pagamento-input" class="form-label bold">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-pagamento-input"
+                id="insert-compra-data-pagamento-input"
                 v-model="dataPagamento">
             </div>
 
             <!-- Data de Vencimento -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
+              <label for="insert-compra-data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-vencimento-input"
+                id="insert-compra-data-vencimento-input"
                 v-model="dataVencimento">
             </div>
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="valor-original-input" class="form-label bold">Valor original:</label>
+              <label for="insert-compra-valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="valor-original-input"
+                id="insert-compra-valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
                 maxlength="30"
@@ -1078,13 +1075,13 @@ export default {
 
             <!-- Valor Desconto -->
             <div class="mb-3">
-              <label for="desconto-input" class="form-label bold">Desconto:</label>
+              <label for="insert-compra-desconto-input" class="form-label bold">Desconto:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="desconto-input"
+                id="insert-compra-desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto"
                 maxlength="30"
@@ -1093,13 +1090,13 @@ export default {
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="valor-final-input" class="form-label bold">Valor total:</label>
+              <label for="insert-compra-valor-final-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="valor-final-input"
+                id="insert-compra-valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorFinal"
                 maxlength="30">
@@ -1141,32 +1138,32 @@ export default {
 
             <!-- Código -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-compra-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-compra-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <!-- Obra -->
             <div class="mb-3">
-              <label for="obra-input" class="form-label bold">Obra:</label>
+              <label for="update-compra-obra-nome-input" class="form-label bold">Obra:</label>
               <input
                 type="text"
                 class="form-control"
-                id="obra-input"
+                id="update-compra-obra-nome-input"
                 disabled
                 v-model="selectedObraNome">
             </div>
 
             <!-- Sócio pagador -->
             <div class="mb-3">
-              <label for="socio-pagador-select" class="bold">Pagador:</label>
+              <label for="update-compra-socio-pagador-select" class="bold">Pagador:</label>
               <select
                 class="form-select"
-                id="socio-pagador-select"
+                id="update-compra-socio-pagador-select"
                 v-model="selectedSocioNome"
                 @click="getCodigoSocioForCompraUpdate"
               ><option
@@ -1177,10 +1174,10 @@ export default {
 
             <!-- Fornecedor -->
             <div class="mb-3">
-              <label for="fornecedor-select" class="bold">Fornecedor:</label>
+              <label for="update-compra-fornecedor-select" class="bold">Fornecedor:</label>
               <select
                 class="form-select"
-                id="fornecedor-select"
+                id="update-compra-fornecedor-select"
                 v-model="selectedFornecedorNome"
                 @click="getCodigoFornecedorForCompraUpdate"
               ><option
@@ -1191,53 +1188,53 @@ export default {
 
             <!-- Data da Compra -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-compra-input" class="form-label bold">Data da compra:</label>
+              <label for="update-compra-data-compra-input" class="form-label bold">Data da compra:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-compra-input"
+                id="update-compra-data-compra-input"
                 v-model="dataCompra">
             </div>
 
             <!-- Data da Entrega -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-entrega-input" class="form-label bold">Data da entrega:</label>
+              <label for="update-compra-data-entrega-input" class="form-label bold">Data da entrega:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-entrega-input"
+                id="update-compra-data-entrega-input"
                 v-model="dataEntrega">
             </div>
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="data-pagamento-input" class="form-label bold">Data de pagamento:</label>
+              <label for="update-compra-data-pagamento-input" class="form-label bold">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-pagamento-input"
+                id="update-compra-data-pagamento-input"
                 v-model="dataPagamento">
             </div>
 
             <!-- Data de Vencimento -->
             <div v-if="this.fornecedor.tipoFornecedor != 'Serviço'" class="mb-3">
-              <label for="data-vencimento-input" class="form-label bold">Data de vencimento:</label>
+              <label for="update-compra-data-vencimento-input" class="form-label bold">Data de vencimento:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-vencimento-input"
+                id="update-compra-data-vencimento-input"
                 v-model="dataVencimento">
             </div>
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="valor-original-input" class="form-label bold">Valor original:</label>
+              <label for="update-compra-valor-original-input" class="form-label bold">Valor original:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="valor-original-input"
+                id="update-compra-valor-original-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
                 maxlength="30"
@@ -1246,13 +1243,13 @@ export default {
 
             <!-- Valor Desconto -->
             <div class="mb-3">
-              <label for="desconto-input" class="form-label bold">Desconto:</label>
+              <label for="update-compra-desconto-input" class="form-label bold">Desconto:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="desconto-input"
+                id="update-compra-desconto-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto"
                 maxlength="30"
@@ -1261,11 +1258,11 @@ export default {
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="valor-final-input" class="form-label bold">Valor total:</label>
+              <label for="update-compra-valor-final-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
                 class="form-control"
-                id="valor-final-input"
+                id="update-compra-valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorFinal"
                 maxlength="30">
@@ -1331,21 +1328,21 @@ export default {
 
             <!-- Compra -->
             <div class="mb-3">
-              <label for="compra-input" class="bold">Compra:</label>
+              <label for="insert-item-compra-codigo-input" class="bold">Compra:</label>
               <input
                 type="text"
                 class="form-control"
-                id="compra-input"
+                id="insert-item-compra-codigo-input"
                 disabled
                 v-model="compraCodForne">
             </div>
 
             <!-- Produto -->
             <div class="mb-3">
-              <label for="produto-select" class="bold">Produto:</label>
+              <label for="insert-item-produto-select" class="bold">Produto:</label>
               <select
                 class="form-select"
-                id="produto-select"
+                id="insert-item-produto-select"
                 v-model="selectedProdutoCod"
               ><option
                 v-for="(produto, i) in produtosInfo" :key="i" :value="produto.codigo"
@@ -1355,10 +1352,10 @@ export default {
 
             <!-- localUso -->
             <div class="mb-3">
-              <label for="local-uso-select" class="bold">Local de uso:</label>
+              <label for="insert-item-local-uso-select" class="bold">Local de uso:</label>
               <select
                 class="form-select"
-                id="local-uso-select"
+                id="insert-item-local-uso-select"
                 v-model="selectedLocalUsoCod"
               ><option
                 v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.codigoLocalUsoObra"
@@ -1368,11 +1365,11 @@ export default {
 
             <!-- Quantidade -->
             <div class="mb-3">
-              <label for="quantidade-input" class="form-label bold">Quantidade:</label>
+              <label for="insert-item-quantidade-input" class="form-label bold">Quantidade:</label>
               <input
                 type="number"
                 class="form-control"
-                id="quantidade-input"
+                id="insert-item-quantidade-input"
                 placeholder="(inserir apenas números)"
                 v-model="quantidade"
                 maxlength="30"
@@ -1381,10 +1378,10 @@ export default {
 
             <!-- Unidade de medida -->
             <div class="mb-3">
-              <label for="unidade-medida-select" class="bold">Unidade de medida:</label>
+              <label for="insert-item-unidade-medida-select" class="bold">Unidade de medida:</label>
               <select
                 class="form-select"
-                id="unidade-medida-select"
+                id="insert-item-unidade-medida-select"
                 v-model="selectedUnidadeMedidaCod"
               ><option
                 v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.codigo"
@@ -1394,13 +1391,13 @@ export default {
 
             <!-- Valor Unitario -->
             <div class="mb-3">
-              <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
+              <label for="insert-item-valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="valor-unitario-input"
+                id="insert-item-valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorUnitario"
                 maxlength="30"
@@ -1409,13 +1406,13 @@ export default {
 
             <!-- Valor Total -->
             <div class="mb-3">
-              <label for="valor-total-input" class="form-label bold">Valor total:</label>
+              <label for="insert-item-valor-total-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
                 step="0.01"
                 title=''
                 class="form-control"
-                id="valor-total-input"
+                id="insert-item-valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorTotal"
                 maxlength="30">
@@ -1457,32 +1454,32 @@ export default {
 
             <!-- Código -->
             <div class="mb-3">
-              <label for="codigo-input" class="form-label bold">Código:</label>
+              <label for="update-item-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="codigo-input"
+                id="update-item-codigo-input"
                 disabled
                 v-model="codigoItem">
             </div>
 
             <!-- Produto -->
             <div class="mb-3">
-              <label for="produto-input" class="form-label bold">Produto:</label>
+              <label for="update-item-produto-input" class="form-label bold">Produto:</label>
               <input
                 type="text"
                 class="form-control"
-                id="produto-input"
+                id="update-item-produto-input"
                 v-model="selectedProdutoNome"
                 disabled>
             </div>
 
             <!-- Local de uso -->
             <div class="mb-3">
-              <label for="local-uso-select" class="bold">Local de uso:</label>
+              <label for="update-item-local-uso-select" class="bold">Local de uso:</label>
               <select
                 class="form-select"
-                id="local-uso-select"
+                id="update-item-local-uso-select"
                 v-model="selectedLocalUsoNome"
                 @click="getCodigoLocalUsoForItemUpdate"
               ><option
@@ -1493,11 +1490,11 @@ export default {
 
             <!-- Quantidade -->
             <div class="mb-3">
-              <label for="quantidade-input" class="form-label bold">Quantidade:</label>
+              <label for="update-item-quantidade-input" class="form-label bold">Quantidade:</label>
               <input
                 type="number"
                 class="form-control"
-                id="quantidade-input"
+                id="update-item-quantidade-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="quantidade"
                 maxlength="30"
@@ -1506,10 +1503,10 @@ export default {
 
             <!-- Unidade de medida -->
             <div class="mb-3">
-              <label for="unidade-medida-select" class="bold">Unidade de medida:</label>
+              <label for="update-item-unidade-medida-select" class="bold">Unidade de medida:</label>
               <select
                 class="form-select"
-                id="unidade-medida-select"
+                id="update-item-unidade-medida-select"
                 v-model="selectedUnidadeMedida"
                 @click="getCodigoUnidadeMedidaForItemUpdate"
               ><option
@@ -1520,13 +1517,13 @@ export default {
 
             <!-- Valor Unitario -->
             <div class="mb-3">
-              <label for="valor-unitario-input" class="form-label bold">Valor unitário:</label>
+              <label for="update-item-valor-unitario-input" class="form-label bold">Valor unitário:</label>
               <input
                 type="number"
                 step="0.01"
                 title=""
                 class="form-control"
-                id="valor-unitario-input"
+                id="update-item-valor-unitario-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorUnitario"
                 maxlength="30"
@@ -1535,13 +1532,13 @@ export default {
 
             <!-- Valor Total -->
             <div class="mb-3">
-              <label for="valor-total-input" class="form-label bold">Valor total:</label>
+              <label for="update-item-valor-total-input" class="form-label bold">Valor total:</label>
               <input
                 type="number"
                 step="0.01"
                 title=""
                 class="form-control"
-                id="valor-total-input"
+                id="update-item-valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorTotal"
                 maxlength="30">
@@ -1565,7 +1562,7 @@ export default {
 
   <!-- Tabelas condicionais baseadas na escolha de Itens ou Compras -->
   <!-- Tabela de Compras -->
-  <main v-show="!showItems" class="middle-margin table-responsive">
+  <main v-if="this.comprasInfo != ''" v-show="!showItems" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
