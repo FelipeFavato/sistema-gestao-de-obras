@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -110,6 +111,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (cod, nome, tipoF, tel, endereco, email) {
+      focusFirstModalInput('update-tipo-fornecedor-select');
       this.codigo = cod;
       this.nome = nome;
       this.tipoFornecedor = tipoF;
@@ -236,7 +238,9 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    // Esse método vem de '../utils/inputFocus'.
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -262,13 +266,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="novo-fornecedor-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Novo Fornecedor</button>
   </header>
 
@@ -316,11 +321,11 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Nome do Fornecedor"
                 v-model="nome"
                 maxlength="70">
@@ -328,10 +333,10 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <label for="insert-tipo-fornecedor-select" class="bold">Categoria:</label>
               <select
                 class="form-select"
-                id="tipoFornecedor-select"
+                id="insert-tipo-fornecedor-select"
                 v-model="tipoFornecedor">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
@@ -341,11 +346,11 @@ export default {
 
             <!-- Telefone -->
             <div class="mb-3">
-              <label for="telefone-input" class="form-label bold">Telefone:</label>
+              <label for="insert-telefone-input" class="form-label bold">Telefone:</label>
               <input
                 type="number"
                 class="form-control"
-                id="telefone-input"
+                id="insert-telefone-input"
                 placeholder="Telefone (com DDD)"
                 v-model="telefone"
                 maxlength="20">
@@ -353,11 +358,11 @@ export default {
 
             <!-- Endereço -->
             <div class="mb-3">
-              <label for="address-input" class="form-label bold">Endereço:</label>
+              <label for="insert-endereco-input" class="form-label bold">Endereço:</label>
               <input
                 type="text"
                 class="form-control"
-                id="address-input"
+                id="insert-endereco-input"
                 placeholder="Avenida dos Fornecedores, 1000"
                 v-model="endereco"
                 maxlength="150">
@@ -365,11 +370,11 @@ export default {
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="email-input" class="form-label bold">Email:</label>
+              <label for="insert-email-input" class="form-label bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="email-input"
+                id="insert-email-input"
                 placeholder="fornecedor@gmail.com"
                 v-model="email"
                 maxlength="100">
@@ -411,22 +416,22 @@ export default {
 
             <!-- Código -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="nome-input" class="form-label bold">Nome:</label>
+              <label for="update-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nome-input"
+                id="update-name-input"
                 v-model="nome"
                 disabled
                 maxlength="70">
@@ -434,10 +439,10 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="tipoFornecedor-select" class="bold">Categoria:</label>
+              <label for="update-tipo-fornecedor-select" class="bold">Categoria:</label>
               <select
                 class="form-select"
-                id="tipoFornecedor-select"
+                id="update-tipo-fornecedor-select"
                 v-model="tipoFornecedor">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
@@ -447,11 +452,11 @@ export default {
 
             <!-- Telefone -->
             <div class="mb-3">
-              <label for="telefone-input" class="form-label bold">Telefone:</label>
+              <label for="update-telefone-input" class="form-label bold">Telefone:</label>
               <input
                 type="number"
                 class="form-control"
-                id="telefone-input"
+                id="update-telefone-input"
                 placeholder="Telefone (com DDD)"
                 v-model="telefone"
                 maxlength="20">
@@ -459,11 +464,11 @@ export default {
 
             <!-- Endereço -->
             <div class="mb-3">
-              <label for="endereco-input" class="form-label bold">Endereço:</label>
+              <label for="update-endereco-input" class="form-label bold">Endereço:</label>
               <input
                 type="text"
                 class="form-control"
-                id="endereco-input"
+                id="update-endereco-input"
                 placeholder="Avenida dos Fornecedores, 1000"
                 v-model="endereco"
                 maxlength="150">
@@ -471,11 +476,11 @@ export default {
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="email-input" class="form-label bold">Email:</label>
+              <label for="update-email-input" class="form-label bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="email-input"
+                id="update-email-input"
                 placeholder="fornecedor@gmail.com"
                 v-model="email"
                 maxlength="100">
@@ -501,7 +506,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

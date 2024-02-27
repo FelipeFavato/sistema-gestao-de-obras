@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -103,6 +104,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (codigo, nome, dataD, teleID) {
+      focusFirstModalInput('update-data-desativacao-input');
       this.codigo = codigo;
       this.nome = nome;
       this.dataDesativacao = dataD;
@@ -206,7 +208,8 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
@@ -231,13 +234,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="novo-socio-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Novo Sócio</button>
   </header>
 
@@ -284,11 +288,11 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Sócio"
                 v-model="nome"
                 maxlength="100"
@@ -296,13 +300,13 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="telegramID-input" class="form-label bold">ID telegram:</label>
+              <label for="insert-telegram-ID-input" class="form-label bold">ID telegram:</label>
               <input
                 type="number"
                 step="1"
                 title=''
                 class="form-control"
-                id="telegramID-input"
+                id="insert-telegram-ID-input"
                 placeholder="ID telegram"
                 v-model="telegramID"
                 maxlength="30"
@@ -344,43 +348,43 @@ export default {
           <form action="PUT">
 
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <div class="mb-3">
-              <label for="nome-input" class="form-label bold">Nome:</label>
+              <label for="update-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nome-input"
+                id="update-name-input"
                 placeholder="Sócio"
                 v-model="nome"
                 disabled>
             </div>
 
             <div class="mb-3">
-              <label for="dataDesativacao-input" class="form-label bold">Data desativação:</label>
+              <label for="update-data-desativacao-input" class="form-label bold">Data desativação:</label>
               <input
                 type="date"
                 class="form-control"
-                id="dataDesativacao-input"
+                id="update-data-desativacao-input"
                 v-model="dataDesativacao">
             </div>
 
             <div class="mb-3">
-              <label for="telegramID-input" class="form-label bold">ID telegram:</label>
+              <label for="update-telegram-ID-input" class="form-label bold">ID telegram:</label>
               <input
                 type="number"
                 step="1"
                 title=''
                 class="form-control"
-                id="telegramID-input"
+                id="update-telegram-ID-input"
                 placeholder="ID telegram"
                 v-model="telegramID"
                 maxlength="30"
@@ -408,7 +412,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

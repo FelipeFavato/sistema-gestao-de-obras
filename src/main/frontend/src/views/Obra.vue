@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast ,assignSuccessToast,
   unAssignSuccessToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 
@@ -207,6 +208,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (cod, nome, endereco, dataI, dataPFim, dataRFim, custoMDO, custoP) {
+      focusFirstModalInput('update-name-input');
       this.codigo = cod;
       this.nome = nome;
       this.endereco = endereco;
@@ -421,7 +423,8 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
@@ -445,13 +448,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.obrasInfo == ''" />
 
   <!-- Header com o botão de + Nova Obra -->
-  <header v-show="!this.showSocios" class="header middle-margin">
+  <header v-if="this.obrasInfo != ''" v-show="!this.showSocios" class="header middle-margin">
     <button
       id="nova-obra-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Nova Obra</button>
   </header>
 
@@ -475,6 +479,7 @@ export default {
         class="btn btn-success light-green margin-5px"
         data-bs-toggle="modal"
         data-bs-target="#atribuirSocioModal"
+        @click="focusFirstModalInput('atribuir-socio-select')"
       >
         + Atribuir sócio
       </button>
@@ -534,74 +539,74 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Projeto: "
                 v-model="nome"
                 maxlength="70">
             </div>
 
             <div class="mb-3">
-              <label for="address-input" class="form-label bold">Endereço:</label>
+              <label for="insert-endereco-input" class="form-label bold">Endereço:</label>
               <input
                 type="text"
                 class="form-control"
-                id="address-input"
+                id="insert-endereco-input"
                 placeholder="Rua da Obra, 1000"
                 v-model="endereco"
                 maxlength="150">
             </div>
 
             <div class="mb-3">
-              <label for="data-inicio-input" class="form-label bold">Data início:</label>
+              <label for="insert-data-inicio-input" class="form-label bold">Data início:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-inicio-input"
+                id="insert-data-inicio-input"
                 placeholder=""
                 v-model="dataInicio">
             </div>
 
             <div class="mb-3">
-              <label for="data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
+              <label for="insert-data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-prevista-fim-input"
+                id="insert-data-prevista-fim-input"
                 placeholder=""
                 v-model="dataPrevistaFim">
             </div>
 
             <div class="mb-3">
-              <label for="data-real-fim-input" class="form-label bold">Data entrega:</label>
+              <label for="insert-data-real-fim-input" class="form-label bold">Data entrega:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-real-fim-input"
+                id="insert-data-real-fim-input"
                 placeholder=""
                 v-model="dataRealFim">
             </div>
 
             <div class="mb-3">
-              <label for="custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
+              <label for="insert-custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
               <input
                 type="number"
                 class="form-control"
-                id="custo-mao-de-obra-input"
+                id="insert-custo-mao-de-obra-input"
                 placeholder="R$... (inserir apenas números)"
                 v-model="custoMaoDeObra"
                 maxlength="50">
             </div>
 
             <div class="mb-3">
-              <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
+              <label for="insert-custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="number"
                 class="form-control"
-                id="custo-previsto-input"
+                id="insert-custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"
                 v-model="custoPrevisto"
                 maxlength="50">
@@ -642,83 +647,83 @@ export default {
           <form action="PUT">
 
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="update-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="update-name-input"
                 placeholder="Nome da Obra"
                 v-model="nome"
                 maxlength="70">
             </div>
 
             <div class="mb-3">
-              <label for="address-input" class="form-label bold">Endereço:</label>
+              <label for="update-endereco-input" class="form-label bold">Endereço:</label>
               <input
                 type="text"
                 class="form-control"
-                id="address-input"
+                id="update-endereco-input"
                 placeholder="Rua da Obra, 1000"
                 v-model="endereco"
                 maxlength="150">
             </div>
 
             <div class="mb-3">
-              <label for="data-inicio-input" class="form-label bold">Data início:</label>
+              <label for="update-data-inicio-input" class="form-label bold">Data início:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-inicio-input"
+                id="update-data-inicio-input"
                 v-model="dataInicio">
             </div>
 
             <div class="mb-3">
-              <label for="data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
+              <label for="update-data-prevista-fim-input" class="form-label bold">Data entrega prevista:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-prevista-fim-input"
+                id="update-data-prevista-fim-input"
                 placeholder=""
                 v-model="dataPrevistaFim">
             </div>
 
             <div class="mb-3">
-              <label for="data-real-fim-input" class="form-label bold">Data entrega:</label>
+              <label for="update-data-real-fim-input" class="form-label bold">Data entrega:</label>
               <input
                 type="date"
                 class="form-control"
-                id="data-real-fim-input"
+                id="update-data-real-fim-input"
                 placeholder=""
                 v-model="dataRealFim">
             </div>
 
             <div class="mb-3">
-              <label for="custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
+              <label for="update-custo-mao-de-obra-input" class="form-label bold">Custo mão de obra:</label>
               <input
                 type="number"
                 class="form-control"
-                id="custo-mao-de-obra-input"
+                id="update-custo-mao-de-obra-input"
                 placeholder="R$... (inserir apenas números)"
                 v-model="custoMaoDeObra"
                 maxlength="50">
             </div>
           
             <div class="mb-3">
-              <label for="custo-previsto-input" class="form-label bold">Custo previsto:</label>
+              <label for="update-custo-previsto-input" class="form-label bold">Custo previsto:</label>
               <input
                 type="number"
                 class="form-control"
-                id="custo-previsto-input"
+                id="update-custo-previsto-input"
                 placeholder="R$... (inserir apenas números)"
                 v-model="custoPrevisto"
                 maxlength="50">
@@ -758,22 +763,22 @@ export default {
 
             <!-- Código - Obra -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="atribuir-socio-obra-codigo" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="atribuir-socio-obra-codigo"
                 disabled
                 v-model="obra.codigo">
             </div>
 
             <!-- Nome - Obra -->
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="atribuir-socio-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="atribuir-socio-name-input"
                 placeholder="Nome da Obra"
                 disabled
                 v-model="obra.nome">
@@ -781,10 +786,10 @@ export default {
 
             <!-- Sócios -->
             <div class="mb-3">
-              <label for="socio-select" class="bold">Sócio:</label>
+              <label for="atribuir-socio-select" class="bold">Sócio:</label>
               <select
                 class="form-select"
-                id="socio-select"
+                id="atribuir-socio-select"
                 v-model="selectedSocioID"
                 ><option
                   v-for="(socio, i) in sociosNotYetAssigned" :key="i" :value="socio.codigo"
@@ -842,7 +847,7 @@ export default {
   </div>
 
   <!-- Tabela Obras -->
-  <main v-show="!showSocios" class="middle-margin table-responsive">
+  <main v-if="this.obrasInfo != ''" v-show="!showSocios" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
@@ -952,6 +957,10 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   padding-bottom: 5px;
+}
+
+.red-border {
+  border: 1px solid red;
 }
 
 .margin-5px {

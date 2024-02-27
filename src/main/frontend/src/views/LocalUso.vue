@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 
@@ -22,7 +23,7 @@ export default {
       /////////////////////////////////////////////
       // Variáveis de comportamento: -------------\
       startNewAdd: false,
-      customToastNotification: 'Local de uso'
+      customToastNotification: 'Local de uso',
       /////////////////////////////////////////////
     };
   },
@@ -43,8 +44,9 @@ export default {
 
   // Pode definir um comportamento a ser chamado quando uma variável mudar.
   watch: {
-    // variavel() {
-
+    // inputValue(newValue, oldValue) {
+    //   console.log('Valor novo: ', newValue);
+    //   console.log('Valor antigo: ', oldValue);
     // }
   },
 
@@ -119,6 +121,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (cod, nome, data) {
+      focusFirstModalInput('update-data-desativacao-input');
       this.codigoLocalUsoObra = cod;
       this.nomeLocalUsoObra = nome;
       this.dataDesativacao = data;
@@ -231,6 +234,8 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
+    // Esse método vem de '../utils/inputFocus'.
+    focusFirstModalInput,
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;
@@ -265,12 +270,6 @@ export default {
         }
       });
     },
-    // Precisa ser melhorado:
-    // focusFirstInput () {
-    //   setTimeout(() => {
-    //     document.getElementById('nameInput').focus();
-    //   }, 500);
-    // }
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -304,6 +303,7 @@ export default {
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
       id="novoLocalButton"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Novo Local de Uso</button>
   </header>
 
@@ -350,11 +350,11 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="nameInput" class="form-label bold">Local:</label>
+              <label for="insert-name-input" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nameInput"
+                id="insert-name-input"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
                 maxlength="30">
@@ -396,21 +396,21 @@ export default {
           <form action="PUT">
 
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigoLocalUsoObra">
             </div>
 
             <div class="mb-3">
-              <label for="category-input" class="form-label bold">Local:</label>
+              <label for="update-name-input" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
-                id="category-input"
+                id="update-name-input"
                 placeholder="Alvenaria, Ferragens, etc..."
                 v-model="nomeLocalUsoObra"
                 disabled
@@ -418,11 +418,11 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="dataDesativacao-input" class="form-label bold">Data desativação:</label>
+              <label for="update-data-desativacao-input" class="form-label bold">Data desativação:</label>
               <input
                 type="date"
                 class="form-control"
-                id="dataDesativacao-input"
+                id="update-data-desativacao-input"
                 v-model="dataDesativacao">
             </div>
 

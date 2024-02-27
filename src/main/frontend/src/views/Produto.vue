@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 // Requisição de Novo Produto
@@ -131,6 +132,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (cod, nome, tipo, marcaCod, marcaNome) {
+      focusFirstModalInput('update-marca-empresa-select');
       this.codigo = cod;
       this.nome = nome;
       this.tipoProduto = tipo;
@@ -245,6 +247,7 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -270,13 +273,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="novo-produto-Button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Novo Produto</button>
   </header>
 
@@ -324,11 +328,11 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
                 maxlength="100"
@@ -337,10 +341,10 @@ export default {
 
             <!-- Marca -->
             <div class="mb-3">
-              <label for="marca-empresa-select" class="bold">Marca/Empresa:</label>
+              <label for="insert-marca-empresa-select" class="bold">Marca/Empresa:</label>
               <select
                 class="form-select"
-                id="marca-empresa-select"
+                id="insert-marca-empresa-select"
                 v-model="selectedMarcaCod">
                 <option
                   v-for="(marca, i) in marcasInfo" :key="i" :value="marca.codigo"
@@ -350,10 +354,10 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="tipoProduto-select" class="bold">Categoria:</label>
+              <label for="insert-tipo-produto-select" class="bold">Categoria:</label>
               <select
                 class="form-select"
-                id="tipoProduto-select"
+                id="insert-tipo-produto-select"
                 v-model="tipoProduto">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
@@ -398,22 +402,22 @@ export default {
 
             <!-- Codigo -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <!-- nome -->
             <div class="mb-3">
-              <label for="nome-input" class="form-label bold">Nome:</label>
+              <label for="update-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nome-input"
+                id="update-name-input"
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
                 disabled>
@@ -421,10 +425,10 @@ export default {
 
             <!-- Marca -->
             <div class="mb-3">
-              <label for="marca-empresa-select" class="bold">Marca/Empresa:</label>
+              <label for="update-marca-empresa-select" class="bold">Marca/Empresa:</label>
               <select
                 class="form-select"
-                id="marca-empresa-select"
+                id="update-marca-empresa-select"
                 v-model="selectedMarcaNome">
                 <option
                   v-for="(marca, i) in marcasInfo" :key="i" :value="marca.nome"
@@ -434,10 +438,10 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="tipoProduto-select" class="bold">Categoria:</label>
+              <label for="update-tipo-produto-select" class="bold">Categoria:</label>
               <select
                 class="form-select"
-                id="tipoProduto-select"
+                id="update-tipo-produto-select"
                 v-model="tipoProduto">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
@@ -467,7 +471,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus/index';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -104,6 +105,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal (codigo, nome, dataD) {
+      focusFirstModalInput('dataDesativacao-input')
       this.codigo = codigo;
       this.nome = nome;
       this.dataDesativacao = dataD;
@@ -205,7 +207,9 @@ export default {
     },
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
-    }
+    },
+    // Esse método vem de '../utils/inputFocus'.
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
@@ -229,13 +233,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de +Novo -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="nova-marca-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Nova Marca</button>
   </header>
 
@@ -282,11 +287,11 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Amanco, Krona, CMC..."
                 v-model="nome"
                 maxlength="80"
@@ -378,7 +383,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>

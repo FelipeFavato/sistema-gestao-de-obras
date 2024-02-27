@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
@@ -112,6 +113,7 @@ export default {
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal(cod, nome, email, senha, role) {
+      focusFirstModalInput('update-gmail-input');
       this.codigo = cod;
       this.nome = nome;
       this.email = email;
@@ -214,6 +216,7 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
+    focusFirstModalInput,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
@@ -238,13 +241,14 @@ export default {
   <SkeletonTableAndHeader v-if="this.info == ''" />
 
   <!-- Header com o botão de +Novo Usuário -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <button
       id="novo-usuario-button"
       type="button"
       class="btn btn-success light-green"
       data-bs-toggle="modal"
       data-bs-target="#insertModal"
+      @click="focusFirstModalInput('insert-name-input')"
     >+ Novo Usuário</button>
   </header>
 
@@ -292,11 +296,11 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="name-input" class="form-label bold">Nome:</label>
+              <label for="insert-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="name-input"
+                id="insert-name-input"
                 placeholder="Nome do usuário"
                 v-model="nome"
                 maxlength="100">
@@ -304,11 +308,11 @@ export default {
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="email-input" class="form-label bold">Email:</label>
+              <label for="insert-email-input" class="form-label bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="email-input"
+                id="insert-email-input"
                 placeholder="usuario@gmail.com"
                 v-model="email"
                 maxlength="70">
@@ -316,11 +320,11 @@ export default {
 
             <!-- Senha -->
             <div class="mb-3">
-              <label for="senha-input" class="form-label bold">Senha:</label>
+              <label for="insert-senha-input" class="form-label bold">Senha:</label>
               <input
                 type="password"
                 class="form-control"
-                id="senha-input"
+                id="insert-senha-input"
                 placeholder="******"
                 v-model="senha"
                 maxlength="30">
@@ -328,10 +332,10 @@ export default {
 
             <!-- Perfil -->
             <div class="mb-3">
-              <label for="tipo-perfil-select" class="bold">Perfil:</label>
+              <label for="insert-tipo-perfil-select" class="bold">Perfil:</label>
               <select
                 class="form-select"
-                id="tipo-perfil-select"
+                id="insert-tipo-perfil-select"
                 v-model="role">
                 <option value="ADMIN">Gestor</option>
                 <option value="USER">Operacional</option>
@@ -374,22 +378,22 @@ export default {
 
             <!-- Código -->
             <div class="mb-3">
-              <label for="id-input" class="form-label bold">Código:</label>
+              <label for="update-codigo-input" class="form-label bold">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                id="id-input"
+                id="update-codigo-input"
                 disabled
                 v-model="codigo">
             </div>
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="nome-input" class="form-label bold">Nome:</label>
+              <label for="update-name-input" class="form-label bold">Nome:</label>
               <input
                 type="text"
                 class="form-control"
-                id="nome-input"
+                id="update-name-input"
                 placeholder="Nome do usuário"
                 v-model="nome"
                 disabled>
@@ -397,11 +401,11 @@ export default {
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="gmail-input" class="form-label bold">Email:</label>
+              <label for="update-gmail-input" class="form-label bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="gmail-input"
+                id="update-gmail-input"
                 placeholder="usuario@gmail.com"
                 v-model="email"
                 maxlength="70">
@@ -409,11 +413,11 @@ export default {
 
             <!-- Senha -->
             <div class="mb-3">
-              <label for="password-input" class="form-label bold">Senha:</label>
+              <label for="update-password-input" class="form-label bold">Senha:</label>
               <input
                 type="password"
                 class="form-control"
-                id="password-input"
+                id="update-password-input"
                 placeholder="******"
                 v-model="senha"
                 maxlength="30"
@@ -422,10 +426,10 @@ export default {
 
             <!-- Perfil -->
             <div class="mb-3">
-              <label for="tipoPerfil-select" class="bold">Perfil:</label>
+              <label for="update-tipo-perfil-select" class="bold">Perfil:</label>
               <select
                 class="form-select"
-                id="tipoPerfil-select"
+                id="update-tipo-perfil-select"
                 v-model="role">
                 <option value="ADMIN">Gestor</option>
                 <option value="USER">Operacional</option>
@@ -453,7 +457,7 @@ export default {
   </div>
 
   <!-- Tabela -->
-  <main class="middle-margin table-responsive">
+  <main v-if="this.info != ''" class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
