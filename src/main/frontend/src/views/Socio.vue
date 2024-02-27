@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
 export default {
   data () {
@@ -25,6 +26,10 @@ export default {
 
   props: {
     alturaMenu: Number,
+  },
+
+  components: {
+    SkeletonTableAndHeader
   },
 
   methods: {
@@ -221,7 +226,10 @@ export default {
 </script>
 
 <template>
-  
+
+  <!-- Tabela e Header Esqueleto - Carregamento -->
+  <SkeletonTableAndHeader v-if="this.info == ''" />
+
   <!-- Header com o botão de +Novo -->
   <header class="header middle-margin">
     <button

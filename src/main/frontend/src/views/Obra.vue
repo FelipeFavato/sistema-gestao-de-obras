@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast ,assignSuccessToast,
   unAssignSuccessToast } from '../utils/toasts/index';
+import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+
 
 export default {
   data () {
@@ -36,6 +38,10 @@ export default {
       custoPrevisto: '',
       obra: {},
     };
+  },
+
+  components: {
+    SkeletonTableAndHeader
   },
 
   // O vue percebe que estou usando algumas variaveis, qualquer atualização nas variaveis, ele atualiza
@@ -434,6 +440,9 @@ export default {
 </script>
 
 <template>
+
+  <!-- Tabela e Header Esqueleto - Carregamento -->
+  <SkeletonTableAndHeader v-if="this.obrasInfo == ''" />
 
   <!-- Header com o botão de + Nova Obra -->
   <header v-show="!this.showSocios" class="header middle-margin">

@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import SkeletonCards from '../components/skeletonLoading/SkeletonCards.vue';
 
 export default {
   data () {
@@ -46,6 +47,10 @@ export default {
 
   props: {
     alturaMenu: Number,
+  },
+
+  components: {
+    SkeletonCards
   },
     
   methods: {
@@ -431,8 +436,11 @@ export default {
 
 <template>
 
+  <!-- Cards Esqueleto - Carregamento -->
+  <SkeletonCards v-if="this.info == ''" />
+
   <!-- Header com o DropDown 'Obras' -->
-  <header class="header middle-margin">
+  <header v-if="this.info != ''" class="header middle-margin">
     <!-- DropDown 'Obras' -->
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -642,7 +650,7 @@ export default {
   </div>
 
   <!-- CARDS -->
-  <main class="margin-12">
+  <main v-if="this.info != ''" class="margin-12">
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <!-- Card de INSERT -->
