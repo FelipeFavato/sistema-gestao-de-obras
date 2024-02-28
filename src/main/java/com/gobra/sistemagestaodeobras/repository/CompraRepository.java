@@ -10,6 +10,7 @@ import com.gobra.sistemagestaodeobras.bot.projection.OrcamentoBotProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorFornecedorProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcamentoProjection;
+import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodCompraCodFornecedorProjection;
 import com.gobra.sistemagestaodeobras.model.Compra;
 
 // SELECT
@@ -115,5 +116,24 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
       + "GROUP BY t2.nome, t2.custo_mao_de_obra, t2.custo_previsto"
   )
   List<OrcamentoBotProjection> obterOrcamentoBot (@Param("codigo") Integer codigo);
+
+//   SELECT
+// 	t1.codigo as codigoCompra,
+//     t2.codigo as codigoFornecedor
+// FROM public.compra as t1
+// LEFT JOIN public.fornecedor as t2
+// ON t1.id_fornecedor = t2.codigo
+// WHERE t2.codigo = :codigo
+
+  @Query(nativeQuery = true,
+    value = "SELECT "
+      + "t1.codigo as codigoCompra, "
+      + "t2.codigo as codigoFornecedor "
+      + "FROM public.compra as t1 "
+      + "LEFT JOIN public.fornecedor as t2 "
+      + "ON t1.id_fornecedor = t2.codigo "
+      + "WHERE t2.codigo = :codigo"
+  )
+  List<CodCompraCodFornecedorProjection> obterListaComprasComFornecedoresVinculados(@Param("codigo") Integer codigo);
 
 }

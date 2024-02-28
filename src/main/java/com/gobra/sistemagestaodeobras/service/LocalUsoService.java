@@ -88,7 +88,7 @@ public class LocalUsoService {
     }
 
     localUsoRepository.delete(data);
-    return new ResponseEntity<>("'"+ nomeLocalUso + "' DELETADO com sucesso.", HttpStatus.OK);
+    return new ResponseEntity<>("Local de Uso: '"+ nomeLocalUso + "' DELETADO(A) com sucesso.", HttpStatus.OK);
   }
 
 }

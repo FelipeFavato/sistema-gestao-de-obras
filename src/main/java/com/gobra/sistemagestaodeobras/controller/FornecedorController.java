@@ -1,7 +1,6 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.dto.FornecedorRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.FornecedorResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
-import com.gobra.sistemagestaodeobras.repository.FornecedorRepository;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.gobra.sistemagestaodeobras.service.FornecedorService;
 
 
 
@@ -28,42 +25,27 @@ import jakarta.persistence.EntityNotFoundException;
 public class FornecedorController {
 
   @Autowired
-  private FornecedorRepository repository;
-
-  @PostMapping
-  public void saveFornecedor(@RequestBody FornecedorRequestDTO data) {
-    Fornecedor fornecedorData = new Fornecedor(data);
-    repository.save(fornecedorData);
-  }
-
+  private FornecedorService fornecedorService;
+  
+  
   @GetMapping
-  public List<FornecedorResponseDTO> getAll() {
-    List<FornecedorResponseDTO> FornecedorList = repository.findAll().stream().map(FornecedorResponseDTO::new).toList();
-    return FornecedorList;
+  public List<FornecedorResponseDTO> getAll () {
+    return fornecedorService.getAllFornecedores();
+  }
+  
+  @PostMapping
+  public ResponseEntity<?> salva (@RequestBody FornecedorRequestDTO data) {
+    return fornecedorService.saveFornecedor(data);
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<Fornecedor> updateFornecedor(@RequestBody FornecedorRequestDTO data) {
-    Optional<Fornecedor> optionalFornecedor = repository.findById(data.codigo());
-
-    if (optionalFornecedor.isPresent()) {
-      Fornecedor fornecedor = optionalFornecedor.get();
-      fornecedor.setNome(data.nome());
-      fornecedor.setTelefone(data.telefone());
-      fornecedor.setEndereco(data.endereco());
-      fornecedor.setEmail(data.email());
-      fornecedor.setTipoFornecedor(data.tipoFornecedor());
-
-      return ResponseEntity.ok(fornecedor);
-    } else {
-      throw new EntityNotFoundException();
-    }
+  public ResponseEntity<Fornecedor> update (@RequestBody FornecedorRequestDTO data) {
+    return fornecedorService.updateFornecedor(data);
   }
 
-  // O RequestBody pode conter só o ID, ou um Fornecedor inteiro
   @DeleteMapping
-  public void deletaFornecedor(@RequestBody Fornecedor fornecedor) {
-    repository.delete(fornecedor);
+  public ResponseEntity<?> deleta (@RequestBody Fornecedor fornecedor) {
+    return fornecedorService.deletaFornecedor(fornecedor);
   }
 }

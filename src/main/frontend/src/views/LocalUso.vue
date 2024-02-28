@@ -161,7 +161,7 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
-          deleteSuccessToast(this.customToastNotification);
+          deleteSuccessToast(res.data);
         }).catch(error => {
           deleteErrorToast(error.response.data.resposta);
           this.validateHttpStatus(error.response.status);
