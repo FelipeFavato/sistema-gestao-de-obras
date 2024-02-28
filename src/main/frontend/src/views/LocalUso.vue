@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 
@@ -12,7 +13,7 @@ export default {
     return {
       // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       /////////////////////////////////////////////
       // Variáveis de requisição/auxiliares: -----\
@@ -54,9 +55,6 @@ export default {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
@@ -112,7 +110,7 @@ export default {
           insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          insertErrorToast(this.customToastNotification);
+          insertErrorToast(error.response.data.resposta);
         }
       );
       this.cancel();
@@ -165,7 +163,7 @@ export default {
           this.setHttpStatusCode(res.status);
           deleteSuccessToast(this.customToastNotification);
         }).catch(error => {
-          deleteErrorToast('ITENS DE COMPRA');
+          deleteErrorToast(error.response.data.resposta);
           this.validateHttpStatus(error.response.status);
         });
       this.cancel();
@@ -275,7 +273,6 @@ export default {
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     // Adiciona os escutadores de evento relacionados a tecla 'Enter'.

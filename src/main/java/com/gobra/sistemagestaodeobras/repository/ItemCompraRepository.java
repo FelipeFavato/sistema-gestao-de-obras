@@ -7,28 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.ItemLocalProjection;
+import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodItemCodNomeLocalProjection;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 
-// SELECT
-// 	t2.custo_mao_de_obra as custoMaoDeObra,
-// 	t2.custo_previsto as custoPrevisto,
-// 	SUM(CASE WHEN t1.id_fornecedor = 43
-// 		THEN t1.valor_final END) as pagoMaoDeObra,
-// 	SUM(CASE WHEN t1.id_fornecedor != 43
-// 		THEN t1.valor_desconto END) as valorDesconto,
-// 	SUM(CASE WHEN t1.id_fornecedor != 43
-// 		THEN t1.valor_final END) as valorGastos
-// FROM public.compra as t1
-// LEFT JOIN public.obra as t2
-// ON t1.id_obra = t2.codigo
-// GROUP BY t2.custo_mao_de_obra, t2.custo_previsto
 
 
 public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer> {
   
   // Buscar os Gastos Totais de cada Local de Uso.
-  @Query(
-    nativeQuery = true,
+  @Query(nativeQuery = true,
     value = "SELECT "
       + "t2.nome_local_uso_obra as nomeLocalUsoObra, "
       + "t4.nome as nomeFornecedor, "
@@ -45,5 +32,17 @@ public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer>
       + "ORDER BY t2.nome_local_uso_obra"
   )
   List<ItemLocalProjection> obterSomaValorPorLocalUso(@Param("codigo") Integer codigo);
+
+
+  @Query(nativeQuery = true,
+  value = "SELECT "
+    + "t1.codigo as codigoItem, "  
+    + "t2.codigo_local_uso_obra as codigoLocalUsoObra "  
+    + "FROM public.item_compra as t1 "  
+    + "LEFT JOIN public.localuso as t2 "  
+    + "ON t1.id_local_uso = t2.codigo_local_uso_obra "  
+    + "WHERE t2.codigo_local_uso_obra = :codigo"
+    )
+  List<CodItemCodNomeLocalProjection> obterListaDeLocaisDeUsoAssociadosAItens (@Param("codigo") Integer codigo);
 
 }
