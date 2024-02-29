@@ -55,11 +55,11 @@ public class BotService {
 				// BOT PROD oficial:
 				// String username = "HubConstrucoesBot";
 				// Token necessário para fazer a requisição à API do Telegram.
-				// String token = "6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA";
+				String token = "6483491941:AAEz5chdrSXuc-Xl9ieafkOh4KBdYeKG6tA";
 
 				// BOT DEV teste:
 				// String usernameTeste = "TESTEHubConstrucoesBot";
-				String token = "6574404905:AAHZHyYnXNFviT17pS1fVtdEpqGvf1ncHyg";
+				// String token = "6574404905:AAHZHyYnXNFviT17pS1fVtdEpqGvf1ncHyg";
 
 				// Variável auxiliar 'maxUpdateId'.
         int maxUpdateId = 0;
