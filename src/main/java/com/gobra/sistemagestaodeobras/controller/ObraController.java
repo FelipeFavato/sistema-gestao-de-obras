@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.dto.AssociacaoSocioObraDTO;
 import com.gobra.sistemagestaodeobras.dto.ObraRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.ObraResponseDTO;
+import com.gobra.sistemagestaodeobras.exceptionHandler.CustomErrorMessage;
+import com.gobra.sistemagestaodeobras.exceptionHandler.dto.CodXCodYDTO;
 import com.gobra.sistemagestaodeobras.model.Obra;
+import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 import com.gobra.sistemagestaodeobras.repository.ObraRepository;
 import com.gobra.sistemagestaodeobras.service.ObraService;
 
@@ -34,20 +37,32 @@ public class ObraController {
   private ObraRepository repository;
 
   @Autowired
-  private ObraService obraService;
+  private CompraRepository compraRepository;
 
-  @PostMapping
-  public void saveObra(@RequestBody ObraRequestDTO data) {
-    Obra obraData = new Obra(data);
-    
-    repository.save(obraData);
-  }
+  @Autowired
+  private ObraService obraService;
 
 
   @GetMapping
   public List<ObraResponseDTO> getAll() {
     List<ObraResponseDTO> obrasList = repository.findAll().stream().map(ObraResponseDTO::new).toList();
     return obrasList;
+  }
+
+  @PostMapping
+  public ResponseEntity<?> saveObra(@RequestBody ObraRequestDTO data) {
+
+    Optional<List<Obra>> optionalObra = repository.findByNome(data.nome());
+    if (!optionalObra.get().isEmpty()) {
+      String resposta = "Não foi possível INSERIR, pois a Obra: '" + data.nome() + "' já existe";
+      Integer statusCode = 409;
+      CustomErrorMessage customErrorMessage = new CustomErrorMessage(HttpStatus.CONFLICT, statusCode, resposta);
+      return new ResponseEntity<>(customErrorMessage, HttpStatus.CONFLICT);
+    }
+    
+    Obra obraData = new Obra(data);
+    repository.save(obraData);
+    return new ResponseEntity<Obra>(obraData, HttpStatus.CREATED);
   }
 
   @PutMapping
@@ -75,8 +90,20 @@ public class ObraController {
   }
 
   @DeleteMapping
-  public void deletaCompra(@RequestBody Obra obra) {
+  public ResponseEntity<?> deletaCompra(@RequestBody Obra data) {
+    Obra obra = repository.getReferenceById(data.getCodigo());
+    String nomeObra = obra.getNome();
+
+    List<CodXCodYDTO> listaObraCompras = compraRepository.obterObraComComprasCadastradas(data.getCodigo()).stream().map(CodXCodYDTO::new).toList();
+    if (!listaObraCompras.isEmpty()) {
+      String resposta = "Não foi possível DELETAR '" + nomeObra + "', pois há COMPRAS vinculadas!";
+      Integer statusCode = 422;
+      CustomErrorMessage customErrorMessage = new CustomErrorMessage(HttpStatus.UNPROCESSABLE_ENTITY, statusCode, resposta);
+      return new ResponseEntity<>(customErrorMessage, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     repository.delete(obra);
+    return new ResponseEntity<>("Obra: '" + nomeObra + "' DELETADA com sucesso.", HttpStatus.OK);
   }
 
   // Associar sócio a uma obra

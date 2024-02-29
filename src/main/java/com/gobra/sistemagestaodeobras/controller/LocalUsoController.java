@@ -39,18 +39,18 @@ public class LocalUsoController {
   }
 
   @PostMapping
-  public ResponseEntity<?> salva (@RequestBody LocalUsoRequestDTO data) {
+  public ResponseEntity<?> saveOne (@RequestBody LocalUsoRequestDTO data) {
     return localUsoService.saveLocalUso(data);
   }
 
   @PutMapping
   @Transactional  // Método só deve ser executado se todas as transações tiverem sucesso
-  public ResponseEntity<LocalUso> atualiza (@RequestBody LocalUsoRequestDTO data){
+  public ResponseEntity<LocalUso> updateOne (@RequestBody LocalUsoRequestDTO data){
     return localUsoService.updateLocalUso(data);
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleta (@RequestBody LocalUso localUso) {
+  public ResponseEntity<?> deleteOne (@RequestBody LocalUso localUso) {
     return localUsoService.deletaLocalUso(localUso);
   }
 

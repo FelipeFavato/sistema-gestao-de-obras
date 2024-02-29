@@ -36,6 +36,7 @@ public class ObraArquivoService {
     String hashArquivo = HashByteArray.hashBArray(conteudoArquivo);
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
+
     try {
       if (fileName.contains("..")) {
         throw  new Exception("Filename contains invalid path sequence " + fileName);

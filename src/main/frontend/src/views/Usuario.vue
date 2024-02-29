@@ -105,7 +105,7 @@ export default {
           insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          insertErrorToast(this.customToastNotification);
+          insertErrorToast("Usuário(a) já existe!");
         });
       this.cancel();
     },

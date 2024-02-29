@@ -10,7 +10,7 @@ import com.gobra.sistemagestaodeobras.bot.projection.OrcamentoBotProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.AcumuladoGastosProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorFornecedorProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.MDOGastoComprasOrcamentoProjection;
-import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodCompraCodFornecedorProjection;
+import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodXCodYProjection;
 import com.gobra.sistemagestaodeobras.model.Compra;
 
 // SELECT
@@ -117,23 +117,47 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
   )
   List<OrcamentoBotProjection> obterOrcamentoBot (@Param("codigo") Integer codigo);
 
-//   SELECT
-// 	t1.codigo as codigoCompra,
-//     t2.codigo as codigoFornecedor
-// FROM public.compra as t1
-// LEFT JOIN public.fornecedor as t2
-// ON t1.id_fornecedor = t2.codigo
-// WHERE t2.codigo = :codigo
-
   @Query(nativeQuery = true,
     value = "SELECT "
-      + "t1.codigo as codigoCompra, "
-      + "t2.codigo as codigoFornecedor "
+      + "t1.codigo as codX, "
+      + "t2.codigo as codY "
       + "FROM public.compra as t1 "
       + "LEFT JOIN public.fornecedor as t2 "
       + "ON t1.id_fornecedor = t2.codigo "
       + "WHERE t2.codigo = :codigo"
   )
-  List<CodCompraCodFornecedorProjection> obterListaComprasComFornecedoresVinculados(@Param("codigo") Integer codigo);
+  List<CodXCodYProjection> obterListaComprasComFornecedoresVinculados(@Param("codigo") Integer codigo);
 
+  @Query(nativeQuery = true,
+    value = "SELECT "
+    + "t1.codigo as codX, "
+    + "t2.codigo as codY "
+    + "FROM public.compra as t1 "
+    + "LEFT JOIN public.obra as t2 "
+    + "ON t1.id_obra = t2.codigo "
+    + "WHERE t2.codigo = :codigo"
+  )
+  List<CodXCodYProjection> obterObraComComprasCadastradas(@Param("codigo") Integer codigo);
+
+  @Query(nativeQuery = true,
+    value = "SELECT "
+      + "t1.codigo as codX, "
+      + "t2.codigo as codY "
+      + "FROM public.compra as t1 "
+      + "LEFT JOIN public.socio as t2 "
+      + "ON t1.id_socio = t2.codigo "
+      + "WHERE t2.codigo = :codigo "
+  )
+  List<CodXCodYProjection> obterSociosQueJaTenhamFeitoAlgumaCompra(@Param("codigo") Integer codigo);
+
+  @Query(nativeQuery = true,
+  value = "SELECT "
+    + "t1.codigo as codX, "
+    + "t2.codigo as codY "
+    + "FROM public.item_compra as t1 "
+    + "LEFT JOIN public.compra as t2 "
+    + "ON t1.id_compra = t2.codigo "
+    + "WHERE t2.codigo = :codigo "
+  )
+  List<CodXCodYProjection> obterListaDeCompraComItens(@Param("codigo") Integer codigo);
 }

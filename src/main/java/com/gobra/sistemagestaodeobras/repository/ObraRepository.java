@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,8 @@ import com.gobra.sistemagestaodeobras.model.Obra;
 
 
 public interface ObraRepository extends JpaRepository<Obra, Integer> {
+
+  Optional<List<Obra>> findByNome(String nome);
 
   @Query(
     nativeQuery = true,

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.gobra.sistemagestaodeobras.dashboard.projection.ItemLocalProjection;
-import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodItemCodNomeLocalProjection;
+import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodXCodYProjection;
 import com.gobra.sistemagestaodeobras.model.ItemCompra;
 
 
@@ -36,13 +36,13 @@ public interface ItemCompraRepository extends JpaRepository<ItemCompra, Integer>
 
   @Query(nativeQuery = true,
   value = "SELECT "
-    + "t1.codigo as codigoItem, "  
-    + "t2.codigo_local_uso_obra as codigoLocalUsoObra "  
+    + "t1.codigo as codX, "  
+    + "t2.codigo_local_uso_obra as codY "  
     + "FROM public.item_compra as t1 "  
     + "LEFT JOIN public.localuso as t2 "  
     + "ON t1.id_local_uso = t2.codigo_local_uso_obra "  
     + "WHERE t2.codigo_local_uso_obra = :codigo"
     )
-  List<CodItemCodNomeLocalProjection> obterListaDeLocaisDeUsoAssociadosAItens (@Param("codigo") Integer codigo);
+  List<CodXCodYProjection> obterListaDeLocaisDeUsoAssociadosAItens (@Param("codigo") Integer codigo);
 
 }

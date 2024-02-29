@@ -1,7 +1,6 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,59 +16,37 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.dto.CompraRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.CompraResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Compra;
-import com.gobra.sistemagestaodeobras.repository.CompraRepository;
-// import com.gobra.sistemagestaodeobras.repository.FornecedorRepository;
+import com.gobra.sistemagestaodeobras.service.CompraService;
 
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/compra")
 public class CompraController {
 
-  @Autowired
-  private CompraRepository compraRepository;
-
   // @Autowired
-  // private FornecedorRepository fornecedorRepository;
+  // private CompraRepository compraRepository;
 
-  @PostMapping
-  public void saveCompra(@RequestBody CompraRequestDTO data) {
-    Compra compraData = new Compra(data);
-    compraRepository.save(compraData);
-  }
+  @Autowired
+  private CompraService compraService;
 
   @GetMapping
-  public List<CompraResponseDTO> getAll() {
-    List<CompraResponseDTO> comprasList = compraRepository.findAll().stream().map(CompraResponseDTO::new).toList();
-    return comprasList;
+  public List<CompraResponseDTO> getAll () {
+    return compraService.getAllCompras();
+  }
+
+  @PostMapping
+  public ResponseEntity<Compra> saveOne (@RequestBody CompraRequestDTO data) {
+    return compraService.saveCompra(data);
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<Compra> updateCompra(@RequestBody CompraRequestDTO data) {
-    Optional<Compra> optionalCompra = compraRepository.findById(data.codigo());
-
-    if (optionalCompra.isPresent()) {
-      Compra compra = optionalCompra.get();
-      compra.setObra(data.obra());
-      compra.setFornecedor(data.fornecedor());
-      compra.setSocio(data.socio());
-      compra.setDataCompra(data.dataCompra());
-      compra.setDataEntrega(data.dataEntrega());
-      compra.setDataPagamento(data.dataPagamento());
-      compra.setDataVencimento(data.dataVencimento());
-      compra.setValorOriginal(data.valorOriginal());
-      compra.setValorDesconto(data.valorDesconto());
-      compra.setValorFinal(data.valorFinal());
-
-      return ResponseEntity.ok(compra);
-    } else {
-      throw new EntityNotFoundException();
-    }
+  public ResponseEntity<Compra> updateOne (@RequestBody CompraRequestDTO data) {
+    return compraService.updateCompra(data);
   }
 
   @DeleteMapping
-  public void deletaCompra(@RequestBody Compra compra) {
-    compraRepository.delete(compra);
+  public ResponseEntity<?> deleteOne (@RequestBody Compra compra) {
+    return compraService.deletaCompra(compra);
   }
 }

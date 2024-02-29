@@ -1,7 +1,6 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,52 +16,36 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.dto.ProdutoRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.ProdutoResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Produto;
-import com.gobra.sistemagestaodeobras.repository.ProdutoRepository;
-
-import jakarta.persistence.EntityNotFoundException;
-
+import com.gobra.sistemagestaodeobras.service.ProdutoService;
 
 
 
 @RestController
 @RequestMapping("/api/produto")
 public class ProdutoController {
-  
-  @Autowired
-  private ProdutoRepository repository;
 
-  @PostMapping
-  public void saveProduto(@RequestBody ProdutoRequestDTO data) {
-    Produto produtoData = new Produto(data);
-    // produtoData.setMarca(marcaRepository.getReferenceById(data.getMarca()));
-    repository.save(produtoData);
-  }
+  @Autowired
+  private ProdutoService produtoService;
+
 
   @GetMapping
-  public List<ProdutoResponseDTO> getAll() {
-    List<ProdutoResponseDTO> produtoList = repository.findAll().stream().map(ProdutoResponseDTO::new).toList();
-    return produtoList;
+  public List<ProdutoResponseDTO> getAll () {
+    return produtoService.getAllProduto();
+  }
+
+  @PostMapping
+  public ResponseEntity<?> saveOne (@RequestBody ProdutoRequestDTO data) {
+    return produtoService.saveProduto(data);
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<Produto> updateProduto(@RequestBody ProdutoRequestDTO data) {
-    Optional<Produto> optionalProduto = repository.findById(data.codigo());
-
-    if (optionalProduto.isPresent()) {
-      Produto produto = optionalProduto.get();
-      produto.setNome(data.nome());
-      produto.setTipoProduto(data.tipoProduto());
-      produto.setMarca(data.marca());
-
-      return ResponseEntity.ok(produto);
-    } else {
-      throw new EntityNotFoundException();
-    }
+  public ResponseEntity<Produto> updateOne (@RequestBody ProdutoRequestDTO data) {
+    return produtoService.updateProduto(data);
   }
 
   @DeleteMapping
-  public void deletaProduto(@RequestBody Produto produto) {
-    repository.delete(produto);
+  public ResponseEntity<?> deleteOne(@RequestBody Produto produto) {
+    return produtoService.deleteProduto(produto);
   }
 }

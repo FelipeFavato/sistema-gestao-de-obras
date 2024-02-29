@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.gobra.sistemagestaodeobras.dto.LocalUsoRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.LocalUsoResponseDTO;
 import com.gobra.sistemagestaodeobras.exceptionHandler.CustomErrorMessage;
-import com.gobra.sistemagestaodeobras.exceptionHandler.dto.CodItemCodNomeLocalDTO;
+import com.gobra.sistemagestaodeobras.exceptionHandler.dto.CodXCodYDTO;
 import com.gobra.sistemagestaodeobras.model.LocalUso;
 import com.gobra.sistemagestaodeobras.repository.ItemCompraRepository;
 import com.gobra.sistemagestaodeobras.repository.LocalUsoRepository;
@@ -42,7 +42,7 @@ public class LocalUsoService {
 
     Optional<List<LocalUso>> optionalLocalUso = localUsoRepository.findByNomeLocalUsoObra(data.nomeLocalUsoObra());
     if (!optionalLocalUso.get().isEmpty()) {
-      String resposta = "Não foi possível INSERIR, pois o Local de Uso: '" + data.nomeLocalUsoObra() + "' já existe.";
+      String resposta = "Não foi possível INSERIR, pois o Local de Uso: '" + data.nomeLocalUsoObra() + "' já existe!";
       Integer statusCode = 409;
       CustomErrorMessage customErrorMessage = new CustomErrorMessage(HttpStatus.CONFLICT, statusCode, resposta);
       return new ResponseEntity<>(customErrorMessage, HttpStatus.CONFLICT);
@@ -79,7 +79,7 @@ public class LocalUsoService {
     LocalUso localUso = localUsoRepository.getReferenceById(data.getCodigoLocalUsoObra());
     String nomeLocalUso = localUso.getNomeLocalUsoObra();
 
-    List<CodItemCodNomeLocalDTO> listaItensLocais = itemCompraRepository.obterListaDeLocaisDeUsoAssociadosAItens(data.getCodigoLocalUsoObra()).stream().map(CodItemCodNomeLocalDTO::new).toList();
+    List<CodXCodYDTO> listaItensLocais = itemCompraRepository.obterListaDeLocaisDeUsoAssociadosAItens(data.getCodigoLocalUsoObra()).stream().map(CodXCodYDTO::new).toList();
     if (!listaItensLocais.isEmpty()) {
       String resposta = "Não foi possível DELETAR '" + localUso.getNomeLocalUsoObra() + "', pois há ITENS DE COMPRA vinculados!";
       Integer statusCode = 422;
@@ -88,7 +88,7 @@ public class LocalUsoService {
     }
 
     localUsoRepository.delete(data);
-    return new ResponseEntity<>("Local de Uso: '"+ nomeLocalUso + "' DELETADO(A) com sucesso.", HttpStatus.OK);
+    return new ResponseEntity<>("Local de Uso: '"+ nomeLocalUso + "' DELETADO com sucesso.", HttpStatus.OK);
   }
 
 }

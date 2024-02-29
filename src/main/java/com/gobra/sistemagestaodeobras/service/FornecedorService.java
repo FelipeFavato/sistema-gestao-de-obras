@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.gobra.sistemagestaodeobras.dto.FornecedorRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.FornecedorResponseDTO;
 import com.gobra.sistemagestaodeobras.exceptionHandler.CustomErrorMessage;
-import com.gobra.sistemagestaodeobras.exceptionHandler.dto.CodCompraCodFornecedorDTO;
+import com.gobra.sistemagestaodeobras.exceptionHandler.dto.CodXCodYDTO;
 import com.gobra.sistemagestaodeobras.model.Fornecedor;
 import com.gobra.sistemagestaodeobras.repository.CompraRepository;
 import com.gobra.sistemagestaodeobras.repository.FornecedorRepository;
@@ -73,7 +73,7 @@ public class FornecedorService {
     Fornecedor fornecedor = fornecedorRepository.getReferenceById(data.getCodigo());
     String nomeFornecedor = fornecedor.getNome();
 
-    List<CodCompraCodFornecedorDTO> listaComprasComFornecedores = compraRepository.obterListaComprasComFornecedoresVinculados(data.getCodigo()).stream().map(CodCompraCodFornecedorDTO::new).toList();
+    List<CodXCodYDTO> listaComprasComFornecedores = compraRepository.obterListaComprasComFornecedoresVinculados(data.getCodigo()).stream().map(CodXCodYDTO::new).toList();
     if (!listaComprasComFornecedores.isEmpty()) {
       String resposta = "Não foi possível DELETAR '" + nomeFornecedor + "', pois há COMPRAS vinculadas!";
       Integer statusCode = 422;
