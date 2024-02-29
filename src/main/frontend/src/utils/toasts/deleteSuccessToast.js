@@ -1,7 +1,7 @@
 import { toast} from 'vue3-toastify';
 
 export function deleteSuccessToast (texto) {
-  toast.success(texto + ' DELETADO(A) com sucesso!', {
+  toast.success(texto, {
     autoClose: 3000
   });
 }

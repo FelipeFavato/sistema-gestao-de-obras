@@ -581,10 +581,10 @@ export default {
           }
         }).then(res => {
           if (callback) callback();
-          deleteSuccessToast(this.compraCustomToast);
+          deleteSuccessToast(res.data);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          deleteErrorToast('ITENS');
+          deleteErrorToast(error.response.data.resposta);
         });
     },
     // Chama o método 'removeCompra', repopula a lista correta e reseta os dados da requisição.
@@ -615,10 +615,10 @@ export default {
           }
         }).then(res => {
           if (callback) callback();
-          deleteSuccessToast(this.itemCustomToast);
+          deleteSuccessToast(res.data);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          deleteErrorToast('');
+          deleteErrorToast(error.response.status.resposta);
         });
     },
     // Chama o método 'removeItem', repopula a lista correta e reseta os dados da requisição.

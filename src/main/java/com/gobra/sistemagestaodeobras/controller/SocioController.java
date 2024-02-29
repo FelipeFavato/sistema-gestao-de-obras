@@ -1,7 +1,6 @@
 package com.gobra.sistemagestaodeobras.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gobra.sistemagestaodeobras.dto.SocioRequestDTO;
 import com.gobra.sistemagestaodeobras.dto.SocioResponseDTO;
 import com.gobra.sistemagestaodeobras.model.Socio;
-import com.gobra.sistemagestaodeobras.repository.SocioRepository;
+import com.gobra.sistemagestaodeobras.service.SocioService;
 
-import jakarta.persistence.EntityNotFoundException;
 
 
 
@@ -30,41 +28,28 @@ import jakarta.persistence.EntityNotFoundException;
 public class SocioController {
 
   @Autowired
-  private SocioRepository repository;
+  private SocioService socioService;
 
-  @PostMapping
-  public void saveSocio(@RequestBody SocioRequestDTO data) {
-    Socio socioData = new Socio(data);
-    repository.save(socioData);
-  }
 
   @GetMapping
   public List<SocioResponseDTO> getAll () {
-    List<SocioResponseDTO> socioList = repository.findAll().stream().map(SocioResponseDTO::new).toList();
-    return socioList;
+    return socioService.getAllSocios();
+  }
+
+  @PostMapping
+  public ResponseEntity<?> saveOne (@RequestBody SocioRequestDTO data) {
+    return socioService.saveSocio(data);
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<Socio> updateSocio(@RequestBody SocioRequestDTO data) {
-    Optional<Socio> optionalSocio = repository.findById(data.codigo());
-
-    if (optionalSocio.isPresent()) {
-      Socio socio = optionalSocio.get();
-      socio.setNome(data.nome());
-      socio.setDataDesativacao(data.dataDesativacao());
-      socio.setTelegramID(data.telegramID());
-      // socio.setObras(data.obras());
-
-      return ResponseEntity.ok(socio);
-    } else {
-      throw new EntityNotFoundException();
-    }
+  public ResponseEntity<Socio> updateOne(@RequestBody SocioRequestDTO data) {
+    return socioService.updateSocio(data);
   }
 
   @DeleteMapping
-  public void deletaSocio (@RequestBody Socio socio) {
-    repository.delete(socio);
+  public ResponseEntity<?> deletaSocio (@RequestBody Socio socio) {
+    return socioService.deletaSocio(socio);
   }
 
 }

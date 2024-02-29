@@ -1,6 +1,7 @@
 package com.gobra.sistemagestaodeobras.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.gobra.sistemagestaodeobras.bot.projection.GastoSocioBotProjection;
 import com.gobra.sistemagestaodeobras.bot.projection.SocioTelegramIDBotProjection;
 import com.gobra.sistemagestaodeobras.dashboard.projection.GastoPorSocioProjection;
+import com.gobra.sistemagestaodeobras.exceptionHandler.projection.CodXCodYProjection;
 import com.gobra.sistemagestaodeobras.model.Socio;
 
 // SELECT
@@ -22,6 +24,8 @@ import com.gobra.sistemagestaodeobras.model.Socio;
 public interface SocioRepository extends JpaRepository<Socio, Integer> {
 
   List<Socio> findByNomeContaining(String nome);
+
+  Optional<List<Socio>> findByNome(String nome);
 
   @Query(
     nativeQuery = true,
@@ -59,5 +63,25 @@ public interface SocioRepository extends JpaRepository<Socio, Integer> {
       + "WHERE telegram_id IS NOT NULL"
   )
   List<SocioTelegramIDBotProjection> obterNomeSocioTelegramID();
+
+  @Query(nativeQuery = true,
+    value = "SELECT "
+      + "id_socio as codX, "
+      + "id_obra as codY "
+      + "FROM public.socio_obra "
+      + "WHERE id_socio = :codigo"
+  )
+  List<CodXCodYProjection> obterSocioQueEstejaAtribuidoAAlgumaObra(@Param("codigo") Integer codigo);
+
+  @Query(nativeQuery = true,
+    value = "SELECT "
+    + "t1.codigo as codX, "
+    + "t2.codigo as codY "
+    + "FROM public.compra as t1 "
+    + "LEFT JOIN public.socio as t2 "
+    + "ON t1.id_socio = t2.codigo "
+    + "WHERE t2.codigo = :codigo"
+  )
+  List<CodXCodYProjection> obterSocioQueTenhaComprasVinculadas(@Param("codigo") Integer codigo);
 
 }

@@ -103,7 +103,7 @@ export default {
           insertSuccessToast(this.customToastNotification);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          insertErrorToast(this.customToastNotification);
+          insertErrorToast(error.response.data.resposta);
         });
       this.cancel();
     },
@@ -158,11 +158,10 @@ export default {
         }).then((res) => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
-          deleteSuccessToast(this.customToastNotification);
+          deleteSuccessToast(res.data);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
-          console.log(error)
-          deleteErrorToast('COMPRAS');
+          deleteErrorToast(error.response.data.resposta);
         });
       this.cancel();
     },

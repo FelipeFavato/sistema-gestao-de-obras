@@ -124,7 +124,7 @@ export default {
         if (callback) callback();
         insertSuccessToast(this.customToastNotification);
       }).catch(error => {
-        insertErrorToast(this.customToastNotification);
+        insertErrorToast("Não foi possível INSERIR, pois este Arquivo já existe!");
         this.limparButtonActions();
       });
       
@@ -199,10 +199,10 @@ export default {
         }
       }).then(res => {
         if (callback) callback();
-        deleteSuccessToast(this.customToastNotification);
+        deleteSuccessToast('Arquivo DELETADO com sucesso.');
       }).catch(error => {
         console.log(error);
-        deleteErrorToast('');
+        deleteErrorToast('Não foi possível DELETAR este Arquivo!');
       });
     },
     removeArquivo (codigo) {

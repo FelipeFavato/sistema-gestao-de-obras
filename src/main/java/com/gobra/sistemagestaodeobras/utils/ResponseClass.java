@@ -1,4 +1,4 @@
-package com.gobra.sistemagestaodeobras.service;
+package com.gobra.sistemagestaodeobras.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
