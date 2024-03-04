@@ -6,6 +6,7 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
 import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { controlToolTipState } from '../utils/inputValidations';
 
 
 export default {
@@ -25,6 +26,9 @@ export default {
       // Variáveis de comportamento: -------------\
       startNewAdd: false,
       customToastNotification: 'Local de uso',
+      requiredRedBorder: '',
+      modal: 'no-closing-modal',
+      tooltip: 'no-show-tooltip'
       /////////////////////////////////////////////
     };
   },
@@ -73,6 +77,12 @@ export default {
       this.codigoLocalUsoObra = '';
       this.nomeLocalUsoObra = '';
       this.dataDesativacao = '';
+      this.requiredRedBorder = '';
+      this.modal = 'no-closing-modal';
+      this.tooltip = 'no-show-tooltip';
+      setTimeout(() => {
+        controlToolTipState('hide');
+      }, 100);
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -94,7 +104,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
     
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/localuso', 
         {
           nomeLocalUsoObra: this.nomeLocalUsoObra,
@@ -114,6 +124,10 @@ export default {
         }
       );
       this.cancel();
+    },
+    createInfoDB () {
+      this.controlClosingInsertModal();
+      this.modal === 'modal' ? this.create() : console.log('Falta preencher algum campo');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -268,6 +282,33 @@ export default {
         }
       });
     },
+    controlClosingInsertModal () {
+      if (this.nomeLocalUsoObra === '') {
+        this.requiredRedBorder = 'required-red-border';
+        this.modal = 'no-closing-modal';
+        setTimeout(() => {
+          controlToolTipState('show');
+        }, 100);
+      } else {
+        this.requiredRedBorder = '';
+        this.modal = 'modal';
+        setTimeout(() => {
+          controlToolTipState('hide');
+        }, 100);
+      }
+    },
+    checkRequiredRedBorder () {
+      if (this.requiredRedBorder === 'required-red-border') {
+        // this.tooltip = 'tooltip';
+        setTimeout(() => {
+          controlToolTipState('show');
+        }, 100);
+      } else if (this.requiredRedBorder != 'required-red-border') {
+        setTimeout(() => {
+          controlToolTipState('hide');
+        }, 100);
+      }
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -277,6 +318,7 @@ export default {
     this.fetchInfoDB();
     // Adiciona os escutadores de evento relacionados a tecla 'Enter'.
     this.addHGPKEnter();
+    // controlToolTipState('get');
   },
 
   unmounted () {
@@ -347,14 +389,20 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Local:</label>
+              <label for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
               <input
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                data-bs-title="Campo obrigatório."
+                data-bs-custom-class="custom-tooltip"
+                :class="this.requiredRedBorder"
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
-                maxlength="30">
+                maxlength="30"
+                @keyup="controlClosingInsertModal">
             </div>
 
           </form>
@@ -372,7 +420,7 @@ export default {
             id="salvarNovoButton"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
+            :data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -598,6 +646,38 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000; /* Vermelho inicial */
+  }
+  50% {
+    /* border-color: #FFC0CB; */
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+/* .custom-tooltip {
+  background-color: red;
+  background-color: #FFC0CB;
+  background-color: #FFA07A;
+  background-color: #FF6F61;
+} */
+
+.custom-tooltip {
+  --bs-tooltip-bg: red;
+  --bs-tooltip-color: var(--bs-white);
 }
 
 /* .loading-elements {

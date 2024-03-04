@@ -4,7 +4,8 @@ export default {
   data () {
     return {
       nomeLocalUsoObra: '',
-      requiredRedBorder: ''
+      requiredRedBorder: '',
+      modal: 'no-closing-modal'
     }
   },
 
@@ -20,9 +21,19 @@ export default {
     showNome () {
       if (this.nomeLocalUsoObra === '') {
         this.requiredRedBorder = 'required-red-border'
+        this.modal = 'no-closing-modal';
+      } else {
+        this.requiredRedBorder = '';
+        this.modal = 'modal';
       }
-    }
+    },
   },
+
+  mounted () {
+  },
+
+  unmounted () {
+  }
 }
 </script>
 
@@ -51,7 +62,7 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Local:</label>
+              <label for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
               <input
                 :class="this.requiredRedBorder"
                 type="text"
@@ -60,6 +71,7 @@ export default {
                 required
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
+                @keyup="showNome"
                 maxlength="30">
             </div>
 
@@ -78,8 +90,8 @@ export default {
           id="salvarNovoButton"
           type="button"
           class="btn btn-success  light-green"
-          data-bs-dismiss="modal"
-            @click="showNome"
+          :data-bs-dismiss="modal"
+          @click="showNome"
           >Salvar</button>
         </div>
       </div>
@@ -89,9 +101,25 @@ export default {
 </template>
 
 <style scope>
+@keyframes piscar {
+    0%, 100% {
+        border-color: #ff0000; /* Vermelho inicial */
+    }
+    50% {
+        /* border-color: #FFC0CB; */
+        border-color: #FF69B4;
+    }
+}
+
 
 .required-red-border {
-  border: 1px solid red;
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
 }
 
 </style>
