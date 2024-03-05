@@ -6,7 +6,6 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
 import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
-import { controlToolTipState } from '../utils/inputValidations';
 
 
 export default {
@@ -26,9 +25,7 @@ export default {
       // Variáveis de comportamento: -------------\
       startNewAdd: false,
       customToastNotification: 'Local de uso',
-      requiredRedBorder: '',
       modal: 'no-closing-modal',
-      tooltip: 'no-show-tooltip'
       /////////////////////////////////////////////
     };
   },
@@ -77,12 +74,18 @@ export default {
       this.codigoLocalUsoObra = '';
       this.nomeLocalUsoObra = '';
       this.dataDesativacao = '';
-      this.requiredRedBorder = '';
-      this.modal = 'no-closing-modal';
-      this.tooltip = 'no-show-tooltip';
-      setTimeout(() => {
-        controlToolTipState('hide');
-      }, 100);
+    },
+    cancelInsert () {
+      this.codigoLocalUsoObra = '';
+      this.nomeLocalUsoObra = '';
+      this.dataDesativacao = '';
+      this.disableClosingInsertModal();
+
+      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
+      const nomeLocalUsoObraLabel = document.getElementById('insert-nome-label');
+
+      nomeLocalUsoObraInput.classList.remove('required-red-border');
+      nomeLocalUsoObraLabel.classList.remove('campo-obrigatorio-warning');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -123,11 +126,11 @@ export default {
           insertErrorToast(error.response.data.resposta);
         }
       );
-      this.cancel();
+      this.cancelInsert();
     },
     createInfoDB () {
-      this.controlClosingInsertModal();
-      this.modal === 'modal' ? this.create() : console.log('Falta preencher algum campo');
+      this.checkRequiredInsertFields();
+      this.modal === 'modal' ? this.create() : null;
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -282,33 +285,33 @@ export default {
         }
       });
     },
-    controlClosingInsertModal () {
+    disableClosingInsertModal() {
+      this.modal = 'no-closing-modal';
+    },
+    enableClosingInsertModal () {
+      this.modal = 'modal';
+    },
+    checkRequiredInsertFields () {
+      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
+      const nomeLocalUsoObraLabel = document.getElementById('insert-nome-label');
+
       if (this.nomeLocalUsoObra === '') {
-        this.requiredRedBorder = 'required-red-border';
-        this.modal = 'no-closing-modal';
-        setTimeout(() => {
-          controlToolTipState('show');
-        }, 100);
+        nomeLocalUsoObraInput.classList.add('required-red-border');
+        nomeLocalUsoObraLabel.classList.add('campo-obrigatorio-warning');
+        this.disableClosingInsertModal();
       } else {
-        this.requiredRedBorder = '';
-        this.modal = 'modal';
-        setTimeout(() => {
-          controlToolTipState('hide');
-        }, 100);
+        nomeLocalUsoObraInput.classList.remove('required-red-border');
+        nomeLocalUsoObraLabel.classList.remove('campo-obrigatorio-warning');
+        this.enableClosingInsertModal();
       }
     },
-    checkRequiredRedBorder () {
-      if (this.requiredRedBorder === 'required-red-border') {
-        // this.tooltip = 'tooltip';
-        setTimeout(() => {
-          controlToolTipState('show');
-        }, 100);
-      } else if (this.requiredRedBorder != 'required-red-border') {
-        setTimeout(() => {
-          controlToolTipState('hide');
-        }, 100);
+    checkNomeLocalUsoInputValue () {
+      if (this.nomeLocalUsoObra === '') {
+        this.disableClosingInsertModal();
+      } else {
+        this.enableClosingInsertModal();
       }
-    },
+    }
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -318,11 +321,10 @@ export default {
     this.fetchInfoDB();
     // Adiciona os escutadores de evento relacionados a tecla 'Enter'.
     this.addHGPKEnter();
-    // controlToolTipState('get');
   },
 
   unmounted () {
-    // remove os escutadores de evento relacionados a tecla 'Enter'.
+    // Remove os escutadores de evento relacionados a tecla 'Enter'.
     this.removeHGPKEnter();
   }
 }
@@ -382,27 +384,27 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Local de Uso</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
-              <input
-                data-bs-toggle="tooltip"
+              <label id="insert-nome-label" for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
+                <!-- data-bs-toggle="tooltip"
                 data-bs-placement="right"
                 data-bs-title="Campo obrigatório."
-                data-bs-custom-class="custom-tooltip"
-                :class="this.requiredRedBorder"
+                data-bs-custom-class="custom-tooltip" -->
+                <!-- :class="this.requiredRedBorder" -->
+              <input
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
                 maxlength="30"
-                @keyup="controlClosingInsertModal">
+                @keyup="checkNomeLocalUsoInputValue">
             </div>
 
           </form>
@@ -414,7 +416,7 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
           <button
             id="salvarNovoButton"
@@ -665,6 +667,11 @@ export default {
 
 .red-asterisk::after {
   content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
   color: red;
 }
 
