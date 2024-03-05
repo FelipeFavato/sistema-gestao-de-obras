@@ -306,9 +306,13 @@ export default {
       }
     },
     checkNomeLocalUsoInputValue () {
+      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
+
       if (this.nomeLocalUsoObra === '') {
+        nomeLocalUsoObraInput.classList.add('required-red-border');
         this.disableClosingInsertModal();
       } else {
+        nomeLocalUsoObraInput.classList.remove('required-red-border');
         this.enableClosingInsertModal();
       }
     }
