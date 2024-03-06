@@ -4,14 +4,19 @@ import axios from 'axios';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { checkInputValue, clickSavecheckRequiredInsertField, addElementClass,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
+
+// Campos obrigatorios: 'nome' e 'tipoFornecedor'.
 
 export default {
   data () {
     return {
       // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       /////////////////////////////////////////////
       // Variáveis auxiliares: -------------------\
@@ -29,6 +34,16 @@ export default {
     };
   },
 
+  watch: {
+    nome () {
+      this.watchRequiredInsertFields();
+    },
+    tipoFornecedor () {
+      this.watchRequiredInsertFields();
+    },
+  },
+
+
   props: {
     alturaMenu: Number,
   },
@@ -41,9 +56,6 @@ export default {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
@@ -65,6 +77,19 @@ export default {
       this.email = '';
       this.tipoFornecedor = '';
     },
+    cancelInsert () {
+      this.nome = '';
+      this.telefone = '';
+      this.endereco = '';
+      this.email = '';
+      this.tipoFornecedor = '';
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-tipo-fornecedor-select', 'required-red-border');
+      removeElementClass('insert-tipo-fornecedor-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de busca - GET: ---------------------------------------------------\
@@ -84,7 +109,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/fornecedor',
         {
           nome: this.nome,
@@ -105,7 +130,22 @@ export default {
           this.validateHttpStatus(error.response.status);
           insertErrorToast(error.response.data.resposta);
         });
-      this.cancel();
+      this.cancelInsert();
+    },
+    watchRequiredInsertFields () {
+      if (this.nome && this.tipoFornecedor) {
+        setAttributeSalvarButton('salvar-novo-button', 'modal');
+      } else {
+        setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
+      }
+    },
+    createInfoDB () {
+      clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salvar-novo-button');
+      clickSavecheckRequiredInsertField(this.tipoFornecedor, 'insert-tipo-fornecedor-select', 'insert-tipo-fornecedor-label', 'salvar-novo-button');
+
+      if (this.nome && this.tipoFornecedor) {
+        this.create();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -240,12 +280,13 @@ export default {
     },
     // Esse método vem de '../utils/inputFocus'.
     focusFirstModalInput,
+    checkInputValue,
+    setAttributeSalvarButton,
     ///////////////////////////////////////////////////////////////////////////////
 
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     this.addHGPKEnter();
@@ -311,7 +352,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Fornecedor</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -320,23 +361,26 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Nome:</label>
+              <label id="insert-name-label" for="insert-name-input" class="form-label bold red-asterisk">Nome:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Nome do Fornecedor"
                 v-model="nome"
-                maxlength="70">
+                maxlength="70"
+                @keyup="checkInputValue(nome, 'insert-name-input')"
+              >
             </div>
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="insert-tipo-fornecedor-select" class="bold">Categoria:</label>
+              <label id="insert-tipo-fornecedor-label" for="insert-tipo-fornecedor-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="insert-tipo-fornecedor-select"
-                v-model="tipoFornecedor">
+                v-model="tipoFornecedor"
+                @click="checkInputValue(tipoFornecedor, 'insert-tipo-fornecedor-select')">
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
                 <option value="Ambos">Ambos</option>
@@ -387,13 +431,13 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
+          <!-- data-bs-dismiss="modal" -->
           <button
             id="salvar-novo-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -560,12 +604,9 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -589,5 +630,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

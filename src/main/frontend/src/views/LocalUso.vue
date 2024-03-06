@@ -6,6 +6,8 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
 import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { clickSavecheckRequiredInsertField, checkInputValue,
+  setAttributeSalvarButton, removeElementClass } from '../utils/inputValidations';
 
 
 export default {
@@ -45,10 +47,9 @@ export default {
 
   // Pode definir um comportamento a ser chamado quando uma variável mudar.
   watch: {
-    // inputValue(newValue, oldValue) {
-    //   console.log('Valor novo: ', newValue);
-    //   console.log('Valor antigo: ', oldValue);
-    // }
+    nomeLocalUsoObra() {
+      this.watchRequiredInsertFields();
+    }
   },
 
   methods: {
@@ -74,6 +75,15 @@ export default {
       this.nomeLocalUsoObra = '';
       this.dataDesativacao = '';
     },
+    cancelInsert () {
+      this.codigoLocalUsoObra = '';
+      this.nomeLocalUsoObra = '';
+      this.dataDesativacao = '';
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-nome-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de busca - GET: ---------------------------------------------------\
@@ -94,7 +104,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
     
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/localuso', 
         {
           nomeLocalUsoObra: this.nomeLocalUsoObra,
@@ -113,7 +123,24 @@ export default {
           insertErrorToast(error.response.data.resposta);
         }
       );
-      this.cancel();
+      this.cancelInsert();
+    },
+    watchRequiredInsertFields () {
+      if (this.nomeLocalUsoObra === '') {
+        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+      } else {
+        setAttributeSalvarButton('salvarNovoButton', 'modal');
+      }
+    },
+    createInfoDB () {
+      // Verifica a variável 'this.nomeLocalUsoObra' e aplica comportamentos nos campos dependendo da variável. 
+      clickSavecheckRequiredInsertField(this.nomeLocalUsoObra, 'insert-name-input', 'insert-nome-label', 'salvarNovoButton');
+
+      // Caso a variável tenha valor e esteja dentro dos parametros, é permitido o INSERT.
+      if (this.nomeLocalUsoObra) {
+        this.create();
+      }
+
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -233,7 +260,7 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     // Esse método vem de '../utils/inputFocus'.
-    focusFirstModalInput,
+    
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;
@@ -268,6 +295,10 @@ export default {
         }
       });
     },
+    focusFirstModalInput,
+    checkInputValue,
+    setAttributeSalvarButton,
+    removeElementClass
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -280,7 +311,7 @@ export default {
   },
 
   unmounted () {
-    // remove os escutadores de evento relacionados a tecla 'Enter'.
+    // Remove os escutadores de evento relacionados a tecla 'Enter'.
     this.removeHGPKEnter();
   }
 }
@@ -340,21 +371,22 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Local de Uso</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Local:</label>
+              <label id="insert-nome-label" for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
-                maxlength="30">
+                maxlength="30"
+                @keyup="checkInputValue(nomeLocalUsoObra, 'insert-name-input')">
             </div>
 
           </form>
@@ -366,13 +398,13 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
+          <!-- :data-bs-dismiss="modal" -->
           <button
             id="salvarNovoButton"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -600,32 +632,28 @@ export default {
   font-weight: bold;
 }
 
-/* .loading-elements {
-  border-radius: 5px;
-  animation: pulse-bg 1.5s infinite, pulse-text 1.5s infinite;
-}
-
-@keyframes pulse-bg {
-  0% {
-    background-color: #f0f0f0;
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
   }
   50% {
-    background-color: #bcbcbc;
-  }
-  100% {
-    background-color: #f0f0f0;
+    border-color: #FF69B4;
   }
 }
 
-@keyframes pulse-text {
-  0% {
-    color: #f0f0f0;
-  }
-  50% {
-    color: #bcbcbc;
-  }
-  100% {
-    color: #f0f0f0;
-  }
-} */
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
+}
+
 </style>
