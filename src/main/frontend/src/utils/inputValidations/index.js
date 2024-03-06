@@ -1,7 +1,15 @@
 import { controlClosingInsertModal } from "./ControlClosingInsertModal";
-import { controlToolTipState } from "./ControlTooltipState";
+import { clickSavecheckRequiredInsertField } from "./clickSavecheckRequiredInsertField";
+import { checkInputValue } from "./checkInputValue";
+import { setAttributeSalvarButton } from "./setAttributeSalvarButton";
+import { addElementClass } from "./addElementClass";
+import { removeElementClass } from "./removeElementClass";
 
 export {
   controlClosingInsertModal,
-  controlToolTipState,
+  clickSavecheckRequiredInsertField,
+  checkInputValue,
+  setAttributeSalvarButton,
+  addElementClass,
+  removeElementClass
 }

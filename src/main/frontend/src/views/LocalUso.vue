@@ -6,6 +6,8 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
 import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { clickSavecheckRequiredInsertField, checkInputValue,
+  setAttributeSalvarButton, removeElementClass } from '../utils/inputValidations';
 
 
 export default {
@@ -25,7 +27,6 @@ export default {
       // Variáveis de comportamento: -------------\
       startNewAdd: false,
       customToastNotification: 'Local de uso',
-      modal: 'no-closing-modal',
       /////////////////////////////////////////////
     };
   },
@@ -46,10 +47,9 @@ export default {
 
   // Pode definir um comportamento a ser chamado quando uma variável mudar.
   watch: {
-    // inputValue(newValue, oldValue) {
-    //   console.log('Valor novo: ', newValue);
-    //   console.log('Valor antigo: ', oldValue);
-    // }
+    nomeLocalUsoObra() {
+      this.watchRequiredInsertFields();
+    }
   },
 
   methods: {
@@ -79,13 +79,10 @@ export default {
       this.codigoLocalUsoObra = '';
       this.nomeLocalUsoObra = '';
       this.dataDesativacao = '';
-      this.disableClosingInsertModal();
 
-      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
-      const nomeLocalUsoObraLabel = document.getElementById('insert-nome-label');
-
-      nomeLocalUsoObraInput.classList.remove('required-red-border');
-      nomeLocalUsoObraLabel.classList.remove('campo-obrigatorio-warning');
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-nome-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -128,9 +125,22 @@ export default {
       );
       this.cancelInsert();
     },
+    watchRequiredInsertFields () {
+      if (this.nomeLocalUsoObra === '') {
+        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+      } else {
+        setAttributeSalvarButton('salvarNovoButton', 'modal');
+      }
+    },
     createInfoDB () {
-      this.checkRequiredInsertFields();
-      this.modal === 'modal' ? this.create() : null;
+      // Verifica a variável 'this.nomeLocalUsoObra' e aplica comportamentos nos campos dependendo da variável. 
+      clickSavecheckRequiredInsertField(this.nomeLocalUsoObra, 'insert-name-input', 'insert-nome-label', 'salvarNovoButton');
+
+      // Caso a variável tenha valor e esteja dentro dos parametros, é permitido o INSERT.
+      if (this.nomeLocalUsoObra) {
+        this.create();
+      }
+
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -250,7 +260,7 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     // Esse método vem de '../utils/inputFocus'.
-    focusFirstModalInput,
+    
     HGPKEsc () {
       window.addEventListener('keydown', (event) => {
         const e = event;
@@ -285,37 +295,10 @@ export default {
         }
       });
     },
-    disableClosingInsertModal() {
-      this.modal = 'no-closing-modal';
-    },
-    enableClosingInsertModal () {
-      this.modal = 'modal';
-    },
-    checkRequiredInsertFields () {
-      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
-      const nomeLocalUsoObraLabel = document.getElementById('insert-nome-label');
-
-      if (this.nomeLocalUsoObra === '') {
-        nomeLocalUsoObraInput.classList.add('required-red-border');
-        nomeLocalUsoObraLabel.classList.add('campo-obrigatorio-warning');
-        this.disableClosingInsertModal();
-      } else {
-        nomeLocalUsoObraInput.classList.remove('required-red-border');
-        nomeLocalUsoObraLabel.classList.remove('campo-obrigatorio-warning');
-        this.enableClosingInsertModal();
-      }
-    },
-    checkNomeLocalUsoInputValue () {
-      const nomeLocalUsoObraInput = document.getElementById('insert-name-input');
-
-      if (this.nomeLocalUsoObra === '') {
-        nomeLocalUsoObraInput.classList.add('required-red-border');
-        this.disableClosingInsertModal();
-      } else {
-        nomeLocalUsoObraInput.classList.remove('required-red-border');
-        this.enableClosingInsertModal();
-      }
-    }
+    focusFirstModalInput,
+    checkInputValue,
+    setAttributeSalvarButton,
+    removeElementClass
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -396,11 +379,6 @@ export default {
 
             <div class="mb-3">
               <label id="insert-nome-label" for="insert-name-input" class="form-label bold red-asterisk">Local:</label>
-                <!-- data-bs-toggle="tooltip"
-                data-bs-placement="right"
-                data-bs-title="Campo obrigatório."
-                data-bs-custom-class="custom-tooltip" -->
-                <!-- :class="this.requiredRedBorder" -->
               <input
                 type="text"
                 class="form-control"
@@ -408,7 +386,7 @@ export default {
                 placeholder="Fundação, Hidráulica, etc..."
                 v-model="nomeLocalUsoObra"
                 maxlength="30"
-                @keyup="checkNomeLocalUsoInputValue">
+                @keyup="checkInputValue(nomeLocalUsoObra, 'insert-name-input')">
             </div>
 
           </form>
@@ -422,11 +400,11 @@ export default {
             data-bs-dismiss="modal"
             @click="cancelInsert"
           >Fechar</button>
+          <!-- :data-bs-dismiss="modal" -->
           <button
             id="salvarNovoButton"
             type="button"
             class="btn btn-success  light-green"
-            :data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -656,10 +634,9 @@ export default {
 
 @keyframes piscar {
   0%, 100% {
-    border-color: #ff0000; /* Vermelho inicial */
+    border-color: #ff0000;
   }
   50% {
-    /* border-color: #FFC0CB; */
     border-color: #FF69B4;
   }
 }
@@ -679,44 +656,4 @@ export default {
   color: red;
 }
 
-/* .custom-tooltip {
-  background-color: red;
-  background-color: #FFC0CB;
-  background-color: #FFA07A;
-  background-color: #FF6F61;
-} */
-
-.custom-tooltip {
-  --bs-tooltip-bg: red;
-  --bs-tooltip-color: var(--bs-white);
-}
-
-/* .loading-elements {
-  border-radius: 5px;
-  animation: pulse-bg 1.5s infinite, pulse-text 1.5s infinite;
-}
-
-@keyframes pulse-bg {
-  0% {
-    background-color: #f0f0f0;
-  }
-  50% {
-    background-color: #bcbcbc;
-  }
-  100% {
-    background-color: #f0f0f0;
-  }
-}
-
-@keyframes pulse-text {
-  0% {
-    color: #f0f0f0;
-  }
-  50% {
-    color: #bcbcbc;
-  }
-  100% {
-    color: #f0f0f0;
-  }
-} */
 </style>
