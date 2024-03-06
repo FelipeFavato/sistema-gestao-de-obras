@@ -95,6 +95,17 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
+          <h5 class="card-title">Atualização 06.02.24</h5>
+          <p class="card-text">Páginas de Fornecedores e Local de Uso</p>
+          <p>1. Campos obrigatórios implementados.</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
           <h5 class="card-title">Atualização 29.02.24</h5>
           <p class="card-text">Todas as páginas</p>
           <p>1. Back-end reestruturado para enviar respostas mais exatas de cada passo do usuário, podendo endereçar os problemas com precisão.</p>
