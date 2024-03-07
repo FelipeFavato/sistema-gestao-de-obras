@@ -7,6 +7,9 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   unAssignSuccessToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
 
 export default {
@@ -14,7 +17,7 @@ export default {
     return {
       // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       ///////////////////////////////////////////// 
       // Arrays auxiliares
@@ -53,9 +56,12 @@ export default {
 
   // Pode definir um comportamento a ser chamado quando uma variável mudar.
   watch: {
-    // variavel: function() {
-
-    // }
+    nome() {
+      this.watchRequiredInsertFields();
+    },
+    selectedSocioID() {
+      this.wacthAssignRequiredFields();
+    }
   },
 
   props: {
@@ -66,9 +72,6 @@ export default {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
@@ -94,8 +97,19 @@ export default {
       this.custoMaoDeObra = '';
       this.custoPrevisto = '';
     },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salva-nova-obra-button', 'no-closing-modal');
+    },
     cancelAtribuir () {
       this.selectedSocioID = '';
+
+      removeElementClass('atribuir-socio-select', 'required-red-border');
+      removeElementClass('atribuir-socio-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salva-nova-atribuicao-button', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +144,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/obra',
         {
           nome: this.nome,
@@ -155,8 +169,19 @@ export default {
         });
       this.cancel();
     },
-    assignSocio (codigoSocio) {
-      this.cancelAtribuir();
+    watchRequiredInsertFields() {
+      this.nome ?
+        setAttributeSalvarButton('salva-nova-obra-button', 'modal') :
+        setAttributeSalvarButton('salva-nova-obra-button', 'no-closing-modal');
+    },
+    createInfoDB () {
+      clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salva-nova-obra-button');
+
+      if (this.nome) {
+        this.create();
+      }
+    },
+    assign (codigoSocio) {
       axios.post('/api/obra/associar-socio-obra',
       {
         idSocio: codigoSocio,
@@ -177,6 +202,19 @@ export default {
       }).catch(error => {
         console.log(error);
       });
+    this.cancelAtribuir();
+    },
+    wacthAssignRequiredFields () {
+      this.selectedSocioID ?
+        setAttributeSalvarButton('salva-nova-atribuicao-button', 'modal') :
+        setAttributeSalvarButton('salva-nova-atribuicao-button', 'no-closing-modal');
+    },
+    assignSocio () {
+      clickSavecheckRequiredInsertField(this.selectedSocioID, 'atribuir-socio-select', 'atribuir-socio-label', 'salva-nova-atribuicao-button');
+
+      if (this.selectedSocioID) {
+        this.assign(this.selectedSocioID);
+      }
     },
     fillDesatribuirModal(codigoSocio) {
       this.selectedSocioID = codigoSocio;
@@ -425,11 +463,11 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     focusFirstModalInput,
+    checkInputValue,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchObrasInfoDB();
     this.fetchSociosInfoDB();
@@ -532,21 +570,23 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Nova Obra</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Nome:</label>
+              <label id="insert-name-label" for="insert-name-input" class="form-label bold red-asterisk">Nome:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Projeto: "
                 v-model="nome"
-                maxlength="70">
+                maxlength="70"
+                @keyup="checkInputValue(nome, 'insert-name-input')"
+              >
             </div>
 
             <div class="mb-3">
@@ -620,13 +660,12 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
           <button
             id="salva-nova-obra-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -664,6 +703,7 @@ export default {
                 id="update-name-input"
                 placeholder="Nome da Obra"
                 v-model="nome"
+                disabled
                 maxlength="70">
             </div>
 
@@ -786,14 +826,15 @@ export default {
 
             <!-- Sócios -->
             <div class="mb-3">
-              <label for="atribuir-socio-select" class="bold">Sócio:</label>
+              <label id="atribuir-socio-label" for="atribuir-socio-select" class="bold">Sócio:</label>
               <select
                 class="form-select"
                 id="atribuir-socio-select"
                 v-model="selectedSocioID"
-                ><option
-                  v-for="(socio, i) in sociosNotYetAssigned" :key="i" :value="socio.codigo"
-                >{{ socio.nome }}</option>
+                @click="checkInputValue(selectedSocioID, 'atribuir-socio-select')"
+              ><option
+                v-for="(socio, i) in sociosNotYetAssigned" :key="i" :value="socio.codigo"
+              >{{ socio.nome }}</option>
               </select>
             </div>
 
@@ -809,7 +850,6 @@ export default {
             id="salva-nova-atribuicao-button"
             type="button"
             class="btn btn-success light-green"
-            data-bs-dismiss="modal"
             @click="assignSocio(this.selectedSocioID)"
           >Salvar</button>
         </div>
@@ -993,5 +1033,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

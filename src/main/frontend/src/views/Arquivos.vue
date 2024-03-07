@@ -5,13 +5,16 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonCards from '../components/skeletonLoading/SkeletonCards.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass } from '../utils/inputValidations';
 
 export default {
   data () {
     return {
       // Validações de login ----------\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       //////////////////////////////////
 
@@ -59,10 +62,6 @@ export default {
     // Redireciona para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    // Recupera o token do localStorage e preencher 'this.localStorageToken'.
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     // Seta o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
@@ -127,10 +126,8 @@ export default {
         insertErrorToast("Não foi possível INSERIR, pois este Arquivo já existe!");
         this.limparButtonActions();
       });
-      
     },
-
-    createArquivo () {
+    create () {
       const self = this;
       const formData = new FormData();
       formData.append("file", this.conteudoArquivo);
@@ -144,6 +141,13 @@ export default {
         });
         this.limparButtonActions();
       });
+    },
+    createArquivo () {
+      clickSavecheckRequiredInsertField(this.nomeArquivo, 'insert-nome-input', 'insert-nome-label', 'salvaNovaFoto');
+
+      if (this.nomeArquivo) {
+        this.create();
+      }
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -224,6 +228,12 @@ export default {
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
     },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-nome-input', 'required-red-border');
+      removeElementClass('insert-nome-label', 'campo-obrigatorio-warning');
+    },
     closeVisualizacao () {
       this.conteudoArquivo = '';
       this.nomeArquivo = '';
@@ -232,7 +242,7 @@ export default {
     },
     limparButtonActions () {
       // Limpa o combo.
-      this.cancel();
+      this.cancelInsert();
       // Retira a imagem que está sendo gerada.
       this.imageDataUrl = '';
       // Volta a LABEL de novo Upload.
@@ -415,12 +425,12 @@ export default {
     },
     // Esse método vem de '../utils/inputFocus'.
     focusFirstModalInput,
+    checkInputValue,
     //////////////////////////////////////////////////////////////////////////////////////
 
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.fetchInfoDB(() => {
       this.obrasDropDownActions(
         localStorage.getItem('nomeObra') ? localStorage.getItem('nomeObra') : '',
@@ -624,6 +634,7 @@ export default {
                 type="text"
                 class="form-control"
                 id="update-nome-input"
+                disabled
                 v-model="nomeArquivo">
             </div>
 
@@ -673,13 +684,15 @@ export default {
                 <div class="card-bodyflex" >
                   <!-- Nome -->
                   <div class="mb-3">
+                    <label id="insert-nome-label" for="insert-nome-input"></label>
                     <input
                       type="text"
                       class="form-control"
                       id="insert-nome-input"
-                      placeholder="Nome"
+                      placeholder="Nome *"
                       v-model="nomeArquivo"
                       autofocus
+                      @keyup="checkInputValue(nomeArquivo, 'insert-nome-input')"
                     >
                   </div>
                   <!-- Descrição -->
@@ -947,6 +960,30 @@ input[type="file"] {
 
 .label-subir-foto:hover {
   background-color: #2C6D28;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 
 </style>

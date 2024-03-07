@@ -473,7 +473,7 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="update-tipo-fornecedor-select" class="bold">Categoria:</label>
+              <label for="update-tipo-fornecedor-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="update-tipo-fornecedor-select"

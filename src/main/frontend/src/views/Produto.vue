@@ -464,7 +464,7 @@ export default {
 
             <!-- Marca -->
             <div class="mb-3">
-              <label for="update-marca-empresa-select" class="bold">Marca/Empresa:</label>
+              <label for="update-marca-empresa-select" class="bold red-asterisk">Marca/Empresa:</label>
               <select
                 class="form-select"
                 id="update-marca-empresa-select"
@@ -477,7 +477,7 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="update-tipo-produto-select" class="bold">Categoria:</label>
+              <label for="update-tipo-produto-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="update-tipo-produto-select"
