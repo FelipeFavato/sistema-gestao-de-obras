@@ -5,13 +5,16 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
 export default {
   data () {
     return {
       // Variáveis de requisição/auxiliares: -----\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       /////////////////////////////////////////////
       // Variáveis de autenticação/autorização: --\
@@ -20,6 +23,12 @@ export default {
       unidade: '',
       customToastNotification: 'Unidade de medida'
       /////////////////////////////////////////////
+    }
+  },
+
+  watch: {
+    unidade() {
+      this.watchRequiredInsertFields();
     }
   },
 
@@ -41,9 +50,6 @@ export default {
     clearLocalStorage () {
       localStorage.clear();
     },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
-    },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
@@ -60,6 +66,13 @@ export default {
     cancel () {
       this.codigo = '';
       this.unidade = '';
+    },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-unidade-input', 'required-red-border');
+      removeElementClass('insert-unidade-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salva-unidade-button', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -79,7 +92,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/unidademedida',
       {
         unidade: this.unidade
@@ -97,6 +110,18 @@ export default {
         insertErrorToast(error.response.data.resposta);
       });
       this.cancel();
+    },
+    watchRequiredInsertFields () {
+      this.unidade ?
+        setAttributeSalvarButton('salva-unidade-button', 'modal') :
+        setAttributeSalvarButton('salva-unidade-button', 'no-closing-modal');
+    },
+    createInfoDB () {
+      clickSavecheckRequiredInsertField(this.unidade, 'insert-unidade-input', 'insert-unidade-label', 'salva-unidade-button');
+
+      if (this.unidade) {
+        this.create();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -190,11 +215,11 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     focusFirstModalInput,
+    checkInputValue,
     ///////////////////////////////////////////////////////////////////////////////
   },
   
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     this.addHGPKEnter();
@@ -259,21 +284,23 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Nova unidade de medida</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-unidade-input" class="form-label bold">Unidade de medida:</label>
+              <label id="insert-unidade-label" for="insert-unidade-input" class="form-label bold red-asterisk">Unidade de medida:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-unidade-input"
                 placeholder="Gramas, quilos, metros..."
                 v-model="unidade"
-                maxlength="30">
+                maxlength="30"
+                @keyup="checkInputValue(unidade, 'insert-unidade-input')"
+              >
             </div>
 
           </form>
@@ -284,13 +311,12 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
           <button
             id="salva-unidade-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -405,12 +431,9 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -434,5 +457,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

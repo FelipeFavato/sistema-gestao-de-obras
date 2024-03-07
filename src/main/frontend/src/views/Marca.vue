@@ -5,13 +5,16 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus/index';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
 export default {
   data () {
     return {
       // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       /////////////////////////////////////////////
       // Variáveis de requisição/auxiliares: -----\
@@ -21,6 +24,12 @@ export default {
       dataDesativacao: '',
       customToastNotification: 'Marca'
       /////////////////////////////////////////////
+    }
+  },
+
+  watch: {
+    nome () {
+      this.watchRequiredInsertFields();
     }
   },
 
@@ -37,10 +46,6 @@ export default {
     // Método para redirecionar para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    // Método para recuperar o token do localStorage e preencher 'this.localStorageToken'.
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     // Método para setar o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
@@ -62,6 +67,13 @@ export default {
       this.nome = '';
       this.dataDesativacao = '';
     },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salva-marca-button', 'no-closing-modal');
+    },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de busca - GET: ---------------------------------------------------\
@@ -81,7 +93,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/marca',
       {
         nome: this.nome,
@@ -99,7 +111,19 @@ export default {
         this.validateHttpStatus(error.response.status);
         insertErrorToast(error.response.data.resposta);
       });
-      this.cancel();
+      this.cancelInsert();
+    },
+    watchRequiredInsertFields () {
+      this.nome ?
+        setAttributeSalvarButton('salva-marca-button', 'modal') :
+        setAttributeSalvarButton('salva-marca-button', 'no-closing-modal');
+    },
+    createInfoDB() {
+      clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salva-marca-button');
+
+      if (this.nome) {
+        this.create();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -208,13 +232,12 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-    // Esse método vem de '../utils/inputFocus'.
     focusFirstModalInput,
+    checkInputValue,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     this.addHGPKEnter();
@@ -279,7 +302,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Nova Marca</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -287,7 +310,7 @@ export default {
           <form action="POST">
 
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Nome:</label>
+              <label id="insert-name-label" for="insert-name-input" class="form-label bold red-asterisk">Nome:</label>
               <input
                 type="text"
                 class="form-control"
@@ -295,7 +318,8 @@ export default {
                 placeholder="Amanco, Krona, CMC..."
                 v-model="nome"
                 maxlength="80"
-                >
+                @keyup="checkInputValue(nome, 'insert-name-input')"
+              >
             </div>
 
           </form>
@@ -306,13 +330,13 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
+          <!-- data-bs-dismiss="modal" -->
           <button
             id="salva-marca-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -467,5 +491,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

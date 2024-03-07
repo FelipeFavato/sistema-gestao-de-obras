@@ -54,7 +54,7 @@ public class UsuarioService {
     String nomeUsuario = usuario.getNome();
 
     usuarioRepository.delete(data);
-    return new ResponseEntity<>("Usuário(a): '" + nomeUsuario + "'DELETADO(A) com sucesso.", HttpStatus.OK);
+    return new ResponseEntity<>("Usuário(a): '" + nomeUsuario + "' DELETADO(A) com sucesso.", HttpStatus.OK);
   }
 
 }

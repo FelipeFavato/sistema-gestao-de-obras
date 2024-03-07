@@ -6,13 +6,17 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
+
 
 export default {
   data () {
     return {
       // Variáveis de autenticação/autorização: --\
       useRouter: useRouter(),
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       httpStatus: '',
       /////////////////////////////////////////////
       // Variáveis de requisição/auxiliares: -----\
@@ -25,6 +29,22 @@ export default {
       customToastNotification: 'Usuário(a)'
       /////////////////////////////////////////////
     };
+  },
+
+  watch: {
+    nome() {
+      this.watchRequiredInsertFields();
+    },
+    email() {
+      this.watchRequiredInsertFields();
+      this.watchRequiredUpdateFields();
+    },
+    senha() {
+      this.watchRequiredInsertFields();
+    },
+    role() {
+      this.watchRequiredInsertFields();
+    },
   },
 
   props: {
@@ -45,9 +65,6 @@ export default {
     clearLocalStorage () {
       localStorage.clear();
     },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
-    },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
     },
@@ -66,7 +83,27 @@ export default {
       this.nome = '';
       this.email = '';
       this.senha = '';
-      this.tipoPerfil = '';
+      this.role = '';
+    },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-email-input', 'required-red-border');
+      removeElementClass('insert-email-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-senha-input', 'required-red-border');
+      removeElementClass('insert-senha-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-tipo-perfil-select', 'required-red-border');
+      removeElementClass('insert-tipo-perfil-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
+    },
+    cancelUpdate () {
+      this.cancel();
+
+      removeElementClass('update-email-input', 'required-red-border');
+      removeElementClass('update-email-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('atualizar-button', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -87,7 +124,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createInfoDB () {
+    create () {
       axios.post('/api/auth/registrar',
         {
           nome: this.nome,
@@ -107,20 +144,35 @@ export default {
           this.validateHttpStatus(error.response.status);
           insertErrorToast("Usuário(a) já existe!");
         });
-      this.cancel();
+      this.cancelInsert();
+    },
+    watchRequiredInsertFields () {
+      this.nome && this.email && this.senha && this.role ?
+        setAttributeSalvarButton('salvar-novo-button', 'modal') :
+        setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
+    },
+    createInfoDB () {
+      clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salvar-novo-button');
+      clickSavecheckRequiredInsertField(this.email, 'insert-email-input', 'insert-email-label', 'salvar-novo-button');
+      clickSavecheckRequiredInsertField(this.senha, 'insert-senha-input', 'insert-senha-label', 'salvar-novo-button');
+      clickSavecheckRequiredInsertField(this.role, 'insert-tipo-perfil-select', 'insert-tipo-perfil-label', 'salvar-novo-button');
+
+      if (this.nome && this.email && this.senha && this.role) {
+        this.create();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de UPDATE - PUT: --------------------------------------------------\
     fillUpdateDeleteModal(cod, nome, email, senha, role) {
-      focusFirstModalInput('update-gmail-input');
+      focusFirstModalInput('update-email-input');
       this.codigo = cod;
       this.nome = nome;
       this.email = email;
       this.senha = senha;
       this.role = role;
     },
-    updateInfoDB () {
+    update () {
       axios.put('/api/usuario',
         {
           codigo: Number(this.codigo),
@@ -141,7 +193,19 @@ export default {
           this.validateHttpStatus(error.response.status);
           updateErrorToast(this.customToastNotification);
         });
-      this.cancel();
+      this.cancelUpdate();
+    },
+    watchRequiredUpdateFields () {
+      this.email ?
+        setAttributeSalvarButton('atualizar-button', 'modal') :
+        setAttributeSalvarButton('atualizar-button', 'no-closing-modal');
+    },
+    updateInfoDB () {
+      clickSavecheckRequiredInsertField(this.email, 'update-email-input', 'update-email-label', 'atualizar-button');
+
+      if (this.email) {
+        this.update();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -158,7 +222,7 @@ export default {
         }).then(res => {
           this.fetchInfoDB();
           this.setHttpStatusCode(res.status);
-          deleteSuccessToast(this.customToastNotification);
+          deleteSuccessToast(res.data);
         }).catch(error => {
           this.validateHttpStatus(error.response.status);
           deleteErrorToast('');
@@ -217,11 +281,11 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     focusFirstModalInput,
+    checkInputValue,
     ///////////////////////////////////////////////////////////////////////////////
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     this.addHGPKEnter();
@@ -287,7 +351,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Usuário</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -296,47 +360,55 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Nome:</label>
+              <label id="insert-name-label" for="insert-name-input" class="form-label bold red-asterisk">Nome:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-name-input"
                 placeholder="Nome do usuário"
                 v-model="nome"
-                maxlength="100">
+                maxlength="100"
+                @keyup="checkInputValue(nome, 'insert-name-input')"
+              >
             </div>
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="insert-email-input" class="form-label bold">Email:</label>
+              <label id="insert-email-label" for="insert-email-input" class="form-label bold red-asterisk">Email:</label>
               <input
                 type="text"
                 class="form-control"
                 id="insert-email-input"
                 placeholder="usuario@gmail.com"
                 v-model="email"
-                maxlength="70">
+                maxlength="70"
+                @keyup="checkInputValue(email, 'insert-email-input')"
+              >
             </div>
 
             <!-- Senha -->
             <div class="mb-3">
-              <label for="insert-senha-input" class="form-label bold">Senha:</label>
+              <label id="insert-senha-label" for="insert-senha-input" class="form-label bold red-asterisk">Senha:</label>
               <input
                 type="password"
                 class="form-control"
                 id="insert-senha-input"
                 placeholder="******"
                 v-model="senha"
-                maxlength="30">
+                maxlength="30"
+                @keyup="checkInputValue(senha, 'insert-senha-input')"
+              >
             </div>
 
             <!-- Perfil -->
             <div class="mb-3">
-              <label for="insert-tipo-perfil-select" class="bold">Perfil:</label>
+              <label id="insert-tipo-perfil-label" for="insert-tipo-perfil-select" class="bold red-asterisk">Perfil:</label>
               <select
                 class="form-select"
                 id="insert-tipo-perfil-select"
-                v-model="role">
+                v-model="role"
+                @click="checkInputValue(role, 'insert-tipo-perfil-select')"
+              >
                 <option value="ADMIN">Gestor</option>
                 <option value="USER">Operacional</option>
               </select>
@@ -350,13 +422,12 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
           <button
             id="salvar-novo-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createInfoDB"
           >Salvar</button>
         </div>
@@ -401,14 +472,16 @@ export default {
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="update-gmail-input" class="form-label bold">Email:</label>
+              <label id="update-email-label" for="update-email-input" class="form-label red-asterisk bold">Email:</label>
               <input
                 type="text"
                 class="form-control"
-                id="update-gmail-input"
+                id="update-email-input"
                 placeholder="usuario@gmail.com"
                 v-model="email"
-                maxlength="70">
+                maxlength="70"
+                @keyup="checkInputValue(email, 'update-email-input')"
+              >
             </div>
 
             <!-- Senha -->
@@ -448,7 +521,6 @@ export default {
             id="atualizar-button"  
             type="button"
             class="btn btn-success light-green"
-            data-bs-dismiss="modal"
             @click="updateInfoDB()"
           >Salvar</button>
         </div>
@@ -488,7 +560,7 @@ export default {
               data-bs-toggle="modal"
               data-bs-target="#updateModal"
               @click="fillUpdateDeleteModal(usuario.codigo, usuario.nome, usuario.email, usuario.senha, usuario.role)"
-            ><img src="../assets/imagens/editar.png" alt="lata de lixo"></button>
+            ><img src="../assets/imagens/editar.png" alt="editar"></button>
             <button
               type="button"
               class="btn btn-light btn-sm small"
@@ -511,12 +583,9 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -540,5 +609,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

@@ -126,11 +126,9 @@ export default {
       this.cancelInsert();
     },
     watchRequiredInsertFields () {
-      if (this.nomeLocalUsoObra === '') {
-        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
-      } else {
+      this.nomeLocalUsoObra === '' ?
+        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal') :
         setAttributeSalvarButton('salvarNovoButton', 'modal');
-      }
     },
     createInfoDB () {
       // Verifica a variável 'this.nomeLocalUsoObra' e aplica comportamentos nos campos dependendo da variável. 

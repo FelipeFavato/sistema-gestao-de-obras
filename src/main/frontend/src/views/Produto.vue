@@ -5,27 +5,47 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
 
 export default {
   data () {
     return {
-      // Arrays auxiliares
+      // Variáveis de autenticação/autorização: --\
+      useRouter: useRouter(),
+      localStorageToken: getLocalStorageToken(),
+      httpStatus: '',
+      /////////////////////////////////////////////
+      // Arrays auxiliares: ----------------------\
       info: [],
       marcasInfo: [],
-      // Variaveis auxiliares
-      useRouter: useRouter(),
-      httpStatus: '',
+      /////////////////////////////////////////////
+      // Variaveis auxiliares: -------------------\
       customToastNotification: 'Produto',
-      // Variaveis para requisição
-      localStorageToken: null,
+      /////////////////////////////////////////////
+      // Variaveis para requisição: --------------\
       codigo: '',
       nome: '',
       tipoProduto: '',
       marca: {},
       selectedMarcaCod: '',
       selectedMarcaNome: ''
+      /////////////////////////////////////////////
     };
+  },
+
+  watch: {
+    nome() {
+      this.watchRequiredInsertFields();
+    },
+    tipoProduto() {
+      this.watchRequiredInsertFields();
+    },
+    marca() {
+      this.watchRequiredInsertFields();
+    }
   },
 
   props: {
@@ -40,9 +60,6 @@ export default {
     // Validações de login: ------------------------------------------------------\
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     setHttpStatusCode (succesError) {
       this.httpStatus = succesError;
@@ -63,6 +80,17 @@ export default {
       this.marca = {};
       this.selectedMarcaNome = '';
       this.selectedMarcaCod = '';
+    },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-name-input', 'required-red-border');
+      removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-marca-empresa-select', 'required-red-border');
+      removeElementClass('insert-marca-empresa-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-tipo-produto-select', 'required-red-border');
+      removeElementClass('insert-tipo-produto-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salva-novo-produto-button', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +125,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de INSERT - POST: -------------------------------------------------\
-    createProdutoInfoDB () {
+    create () {
       axios.post('/api/produto',
         {
           nome: this.nome,
@@ -118,7 +146,21 @@ export default {
           this.validateHttpStatus(error.response.status);
           insertErrorToast(error.response.data.resposta);
         });
-      this.cancel();
+      this.cancelInsert();
+    },
+    watchRequiredInsertFields () {
+      this.nome && this.tipoProduto && this.marca ?
+        setAttributeSalvarButton('salva-novo-produto-button', 'modal') :
+        setAttributeSalvarButton('salva-novo-produto-button', 'no-closing-modal');
+    },
+    createProdutoInfoDB () {
+      clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salva-novo-produto-button');
+      clickSavecheckRequiredInsertField(this.selectedMarcaCod, 'insert-marca-empresa-select', 'insert-marca-empresa-label', 'salva-novo-produto-button');
+      clickSavecheckRequiredInsertField(this.tipoProduto, 'insert-tipo-produto-select', 'insert-tipo-produto-label', 'salva-novo-produto-button');
+      
+      if (this.nome && this.tipoProduto && this.marca) {
+        this.create();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -240,13 +282,13 @@ export default {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
     focusFirstModalInput,
+    checkInputValue,
     ///////////////////////////////////////////////////////////////////////////////
 
   },
 
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchInfoDB();
     this.fetchMarcasInfoDB();
@@ -311,7 +353,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Produto</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -320,7 +362,7 @@ export default {
 
             <!-- Nome -->
             <div class="mb-3">
-              <label for="insert-name-input" class="form-label bold">Nome:</label>
+              <label id="insert-name-label" for="insert-name-input" class="form-label bold red-asterisk">Nome:</label>
               <input
                 type="text"
                 class="form-control"
@@ -328,16 +370,19 @@ export default {
                 placeholder="Produto, mão de obra, etc..."
                 v-model="nome"
                 maxlength="100"
+                @keyup="checkInputValue(nome, 'insert-name-input')"
                 >
             </div>
 
             <!-- Marca -->
             <div class="mb-3">
-              <label for="insert-marca-empresa-select" class="bold">Marca/Empresa:</label>
+              <label id="insert-marca-empresa-label" for="insert-marca-empresa-select" class="bold red-asterisk">Marca/Empresa:</label>
               <select
                 class="form-select"
                 id="insert-marca-empresa-select"
-                v-model="selectedMarcaCod">
+                v-model="selectedMarcaCod"
+                @click="checkInputValue(selectedMarcaCod, 'insert-marca-empresa-select')"
+              >
                 <option
                   v-for="(marca, i) in marcasInfo" :key="i" :value="marca.codigo"
                   >{{ marca.nome }}</option>
@@ -346,11 +391,13 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="insert-tipo-produto-select" class="bold">Categoria:</label>
+              <label id="insert-tipo-produto-label" for="insert-tipo-produto-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="insert-tipo-produto-select"
-                v-model="tipoProduto">
+                v-model="tipoProduto"
+                @click="checkInputValue(tipo, 'insert-tipo-produto-select')"  
+              >
                 <option value="Material">Material</option>
                 <option value="Serviço">Serviço</option>
                 <option value="TaxasImpostos">Taxas/Impostos</option>
@@ -365,13 +412,13 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
+          <!-- data-bs-dismiss="modal" -->
           <button
             id="salva-novo-produto-button"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createProdutoInfoDB"
           >Salvar</button>
         </div>
@@ -417,7 +464,7 @@ export default {
 
             <!-- Marca -->
             <div class="mb-3">
-              <label for="update-marca-empresa-select" class="bold">Marca/Empresa:</label>
+              <label for="update-marca-empresa-select" class="bold red-asterisk">Marca/Empresa:</label>
               <select
                 class="form-select"
                 id="update-marca-empresa-select"
@@ -430,7 +477,7 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="update-tipo-produto-select" class="bold">Categoria:</label>
+              <label for="update-tipo-produto-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="update-tipo-produto-select"
@@ -517,12 +564,9 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -546,5 +590,29 @@ export default {
 
 .bold {
   font-weight: bold;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>

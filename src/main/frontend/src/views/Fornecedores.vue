@@ -1,15 +1,14 @@
 <script>
-import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import { getLocalStorageToken } from '../utils/userLoginValidations';
-import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
-import { checkInputValue, clickSavecheckRequiredInsertField, addElementClass,
+import { checkInputValue, clickSavecheckRequiredInsertField,
   removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
-// Campos obrigatorios: 'nome' e 'tipoFornecedor'.
 
 export default {
   data () {
@@ -78,11 +77,7 @@ export default {
       this.tipoFornecedor = '';
     },
     cancelInsert () {
-      this.nome = '';
-      this.telefone = '';
-      this.endereco = '';
-      this.email = '';
-      this.tipoFornecedor = '';
+      this.cancel();
 
       removeElementClass('insert-name-input', 'required-red-border');
       removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
@@ -133,11 +128,9 @@ export default {
       this.cancelInsert();
     },
     watchRequiredInsertFields () {
-      if (this.nome && this.tipoFornecedor) {
-        setAttributeSalvarButton('salvar-novo-button', 'modal');
-      } else {
+      this.nome && this.tipoFornecedor ?
+        setAttributeSalvarButton('salvar-novo-button', 'modal') :
         setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
-      }
     },
     createInfoDB () {
       clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salvar-novo-button');
@@ -278,10 +271,8 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-    // Esse método vem de '../utils/inputFocus'.
     focusFirstModalInput,
     checkInputValue,
-    setAttributeSalvarButton,
     ///////////////////////////////////////////////////////////////////////////////
 
   },
@@ -482,7 +473,7 @@ export default {
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="update-tipo-fornecedor-select" class="bold">Categoria:</label>
+              <label for="update-tipo-fornecedor-select" class="bold red-asterisk">Categoria:</label>
               <select
                 class="form-select"
                 id="update-tipo-fornecedor-select"
