@@ -149,11 +149,9 @@ export default {
       this.cancelInsert();
     },
     watchRequiredInsertFields () {
-      if (this.nome && this.tipoProduto && this.marca) {
-        setAttributeSalvarButton('salva-novo-produto-button', 'modal');
-      } else {
+      this.nome && this.tipoProduto && this.marca ?
+        setAttributeSalvarButton('salva-novo-produto-button', 'modal') :
         setAttributeSalvarButton('salva-novo-produto-button', 'no-closing-modal');
-      }
     },
     createProdutoInfoDB () {
       clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salva-novo-produto-button');

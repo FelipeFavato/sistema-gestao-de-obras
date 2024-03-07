@@ -1,11 +1,11 @@
 <script>
-import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import { getLocalStorageToken } from '../utils/userLoginValidations';
-import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
 import { checkInputValue, clickSavecheckRequiredInsertField,
   removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
@@ -129,11 +129,9 @@ export default {
       this.cancelInsert();
     },
     watchRequiredInsertFields () {
-      if (this.nome && this.tipoFornecedor) {
-        setAttributeSalvarButton('salvar-novo-button', 'modal');
-      } else {
+      this.nome && this.tipoFornecedor ?
+        setAttributeSalvarButton('salvar-novo-button', 'modal') :
         setAttributeSalvarButton('salvar-novo-button', 'no-closing-modal');
-      }
     },
     createInfoDB () {
       clickSavecheckRequiredInsertField(this.nome, 'insert-name-input', 'insert-name-label', 'salvar-novo-button');
