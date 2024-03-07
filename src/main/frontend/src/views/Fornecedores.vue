@@ -6,7 +6,7 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
 import { focusFirstModalInput } from '../utils/inputFocus';
 import { getLocalStorageToken } from '../utils/userLoginValidations';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
-import { checkInputValue, clickSavecheckRequiredInsertField, addElementClass,
+import { checkInputValue, clickSavecheckRequiredInsertField,
   removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
 // Campos obrigatorios: 'nome' e 'tipoFornecedor'.
@@ -78,11 +78,7 @@ export default {
       this.tipoFornecedor = '';
     },
     cancelInsert () {
-      this.nome = '';
-      this.telefone = '';
-      this.endereco = '';
-      this.email = '';
-      this.tipoFornecedor = '';
+      this.cancel();
 
       removeElementClass('insert-name-input', 'required-red-border');
       removeElementClass('insert-name-label', 'campo-obrigatorio-warning');
@@ -278,10 +274,8 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-    // Esse método vem de '../utils/inputFocus'.
     focusFirstModalInput,
     checkInputValue,
-    setAttributeSalvarButton,
     ///////////////////////////////////////////////////////////////////////////////
 
   },

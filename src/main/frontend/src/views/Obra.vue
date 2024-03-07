@@ -460,9 +460,9 @@ export default {
   </header>
 
   <!-- Botão 'Voltar' + botão '+ Atribuir sócio' -->
-  <div class="header middle-margin">
+  <div v-if="this.showSocios" class="header middle-margin">
     <!-- Botão 'Voltar' + botão '+ Novo Item' -->
-    <div v-show="this.showSocios" class="column">
+    <div class="column">
       <!-- Botão para voltar as compras -->
       <button
         type="button"
