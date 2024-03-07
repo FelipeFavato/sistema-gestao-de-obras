@@ -6,6 +6,10 @@ import { insertSuccessToast, updateSuccessToast, deleteSuccessToast,
   deleteErrorToast, insertErrorToast, updateErrorToast } from '../utils/toasts/index';
 import { focusFirstModalInput } from '../utils/inputFocus';
 import SkeletonTableAndHeader from '../components/skeletonLoading/SkeletonTableAndHeader.vue';
+import { getLocalStorageToken } from '../utils/userLoginValidations';
+import { checkInputValue, clickSavecheckRequiredInsertField,
+  removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
+
 
 export default {
   data () {
@@ -47,7 +51,7 @@ export default {
       compraCustomToast: 'Compra',
       itemCustomToast: 'Item',
       // Variáveis para requisição
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
       codigo: '',
       obra: {},
       fornecedor: {},
@@ -70,6 +74,27 @@ export default {
     }
   },
 
+  watch: {
+    selectedFornecedorCod() {
+      this.watchRequiredInsertFields();
+    },
+    selectedSocioCod() {
+      this.watchRequiredInsertFields();
+    },
+    valorOriginal() {
+      this.watchRequiredInsertFields();
+    },
+    selectedProdutoCod() {
+      this.watchRequiredInsertItemsFields();
+    },
+    selectedLocalUsoCod() {
+      this.watchRequiredInsertItemsFields();
+    },
+    selectedUnidadeMedidaCod() {
+      this.watchRequiredInsertItemsFields();
+    }
+  },
+
   props: {
     alturaMenu: Number,
   },
@@ -83,10 +108,6 @@ export default {
     // Redireciona para a página de login.
     redirectToLogin () {
       this.useRouter.push('/login');
-    },
-    // Recupera o token do localStorage e preencher 'this.localStorageToken'.
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
     },
     // Seta o 'this.httpStatus' com os casos de sucesso e erro.
     setHttpStatusCode (succesError) {
@@ -120,6 +141,17 @@ export default {
       this.valorDesconto = '';
       this.valorFinal = '';
     },
+    cancelInsert () {
+      this.cancel();
+
+      removeElementClass('insert-compra-fornecedor-select', 'required-red-border');
+      removeElementClass('insert-compra-fornecedor-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-compra-socio-pagador-select', 'required-red-border');
+      removeElementClass('insert-compra-socio-pagador-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-compra-valor-original-input', 'required-red-border');
+      removeElementClass( 'insert-compra-valor-original-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvaNovaCompra', 'no-closing-modal');
+    },
     cancelItem() {
       this.selectedProdutoNome = '';
       this.selectedProdutoCod = '';
@@ -134,6 +166,17 @@ export default {
       this.quantidade = '';
       this.valorUnitario = '';
       this.valorTotal = '';
+    },
+    cancelInsertItem() {
+      this.cancelItem();
+
+      removeElementClass('insert-item-produto-select', 'required-red-border');
+      removeElementClass('insert-item-produto-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-item-local-uso-select', 'required-red-border');
+      removeElementClass('insert-item-local-uso-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-item-unidade-medida-select', 'required-red-border');
+      removeElementClass( 'insert-item-unidade-medida-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvaNovoItem', 'no-closing-modal');
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -370,7 +413,7 @@ export default {
       });
     },
     // Chama o método 'createCompra()', repopula a lista correta e reseta os dados de requisição.
-    createCompraInfoDB () {
+    createC () {
       const self = this;
       this.createCompra(() => {
         self.fetchComprasInfoDB(() => {
@@ -379,6 +422,20 @@ export default {
         })
       });
       this.cancel();
+    },
+    watchRequiredInsertFields() {
+      this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal ?
+        setAttributeSalvarButton('salvaNovaCompra', 'modal') :
+        setAttributeSalvarButton('salvaNovaCompra', 'no-closing-modal');
+    },
+    createCompraInfoDB () {
+      clickSavecheckRequiredInsertField(this.selectedFornecedorCod, 'insert-compra-fornecedor-select', 'insert-compra-fornecedor-label', 'salvaNovaCompra');
+      clickSavecheckRequiredInsertField(this.selectedSocioCod, 'insert-compra-socio-pagador-select', 'insert-compra-socio-pagador-label', 'salvaNovaCompra');
+      clickSavecheckRequiredInsertField(this.valorOriginal, 'insert-compra-valor-original-input', 'insert-compra-valor-original-label', 'salvaNovaCompra');
+
+      if (this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal) {
+        this.createC();
+      }
     },
     // Item: ----------------------------------------------------------------------------|
     // Insere NOVO ITEM a uma compra.
@@ -406,7 +463,7 @@ export default {
         });
     },
     // Chama o método 'createItem()', repopula a lista correta e reseta os dados da requisição.
-    createItemInfoDB () {
+    createI () {
       const self = this;
       this.createItem(() => {
         self.fetchItensCompraInfoDB(() => {
@@ -416,6 +473,20 @@ export default {
         });
       });
       this.cancelItem();
+    },
+    watchRequiredInsertItemsFields () {
+      this.selectedProdutoCod, this.selectedLocalUsoCod, this.selectedUnidadeMedidaCod ?
+        setAttributeSalvarButton('salvaNovoItem', 'modal') :
+        setAttributeSalvarButton('salvaNovoItem', 'no-closing-modal');
+    },
+    createItemInfoDB () {
+      clickSavecheckRequiredInsertField(this.selectedProdutoCod, 'insert-item-produto-select', 'insert-item-produto-label', 'salvaNovoItem');
+      clickSavecheckRequiredInsertField(this.selectedLocalUsoCod, 'insert-item-local-uso-select', 'insert-item-local-uso-label', 'salvaNovoItem');
+      clickSavecheckRequiredInsertField(this.selectedUnidadeMedidaCod, 'insert-item-unidade-medida-select', 'insert-item-unidade-medida-label', 'salvaNovoItem');
+
+      if (this.selectedProdutoCod, this.selectedLocalUsoCod, this.selectedUnidadeMedidaCod) {
+        this.createI();
+      }
     },
     //////////////////////////////////////////////////////////////////////////////////////
 
@@ -653,6 +724,7 @@ export default {
     },
     // Verifica o tipo de fornecedor para renderizar as DATAS de acordo.
     checkTipoFornecedor () {
+      checkInputValue(this.selectedFornecedorCod, 'insert-compra-fornecedor-select');
       for (let forne of this.fornecedoresInfo) {
         if (forne.codigo === this.selectedFornecedorCod | forne.nome === this.selectedFornecedorNome) {
           this.fornecedor = forne;
@@ -804,12 +876,12 @@ export default {
       }
     },
     focusFirstModalInput,
+    checkInputValue,
     //////////////////////////////////////////////////////////////////////////////////////
 
   },
 
   mounted () {
-    this.getLocalStorageToken();
     this.validateLogin();
     this.fetchComprasInfoDB(() => {
       this.obrasDropDownActions(
@@ -973,7 +1045,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertModalLabel">Novo Custo</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -993,11 +1065,13 @@ export default {
 
             <!-- Sócio pagador -->
             <div class="mb-3">
-              <label for="insert-compra-socio-pagador-select" class="bold">Pagador:</label>
+              <label id="insert-compra-socio-pagador-label" for="insert-compra-socio-pagador-select" class="bold red-asterisk">Pagador:</label>
               <select
                 class="form-select"
                 id="insert-compra-socio-pagador-select"
-                v-model="selectedSocioCod">
+                v-model="selectedSocioCod"
+                @click="checkInputValue(selectedSocioCod, 'insert-compra-socio-pagador-select')"
+              >
                 <option
                   v-for="(socio, i) in selectedSociosInfo" :key="i" :value="socio.codigo"
                   >{{ socio.nome }}</option>
@@ -1006,7 +1080,7 @@ export default {
 
             <!-- Fornecedor -->
             <div class="mb-3">
-              <label for="insert-compra-fornecedor-select" class="bold">Fornecedor:</label>
+              <label id="insert-compra-fornecedor-label" for="insert-compra-fornecedor-select" class="bold red-asterisk">Fornecedor:</label>
               <select
                 class="form-select"
                 id="insert-compra-fornecedor-select"
@@ -1060,7 +1134,7 @@ export default {
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="insert-compra-valor-original-input" class="form-label bold">Valor original:</label>
+              <label id="insert-compra-valor-original-label" for="insert-compra-valor-original-input" class="form-label bold red-asterisk">Valor original:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1070,7 +1144,9 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
                 maxlength="30"
-                @change="calculaValorFinalCompra">
+                @change="calculaValorFinalCompra"
+                @keyup="checkInputValue(valorOriginal, 'insert-compra-valor-original-input')"
+              >
             </div>
 
             <!-- Valor Desconto -->
@@ -1110,13 +1186,12 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
           <button
             id="salvaNovaCompra"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createCompraInfoDB"
           >Salvar</button>
         </div>
@@ -1160,7 +1235,7 @@ export default {
 
             <!-- Sócio pagador -->
             <div class="mb-3">
-              <label for="update-compra-socio-pagador-select" class="bold">Pagador:</label>
+              <label for="update-compra-socio-pagador-select" class="bold red-asterisk">Pagador:</label>
               <select
                 class="form-select"
                 id="update-compra-socio-pagador-select"
@@ -1174,7 +1249,7 @@ export default {
 
             <!-- Fornecedor -->
             <div class="mb-3">
-              <label for="update-compra-fornecedor-select" class="bold">Fornecedor:</label>
+              <label for="update-compra-fornecedor-select" class="bold red-asterisk">Fornecedor:</label>
               <select
                 class="form-select"
                 id="update-compra-fornecedor-select"
@@ -1228,7 +1303,7 @@ export default {
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="update-compra-valor-original-input" class="form-label bold">Valor original:</label>
+              <label for="update-compra-valor-original-input" class="form-label bold red-asterisk">Valor original:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1319,7 +1394,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="insertItemModalLabel">Novo Item</h1>
-          <button @click="cancelItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsertItem" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -1339,11 +1414,12 @@ export default {
 
             <!-- Produto -->
             <div class="mb-3">
-              <label for="insert-item-produto-select" class="bold">Produto:</label>
+              <label id="insert-item-produto-label" for="insert-item-produto-select" class="bold red-asterisk">Produto:</label>
               <select
                 class="form-select"
                 id="insert-item-produto-select"
                 v-model="selectedProdutoCod"
+                @click="checkInputValue(selectedProdutoCod, 'insert-item-produto-select')"
               ><option
                 v-for="(produto, i) in produtosInfo" :key="i" :value="produto.codigo"
                 >{{ produto.nome }}</option>
@@ -1352,11 +1428,12 @@ export default {
 
             <!-- localUso -->
             <div class="mb-3">
-              <label for="insert-item-local-uso-select" class="bold">Local de uso:</label>
+              <label id="insert-item-local-uso-label" for="insert-item-local-uso-select" class="bold red-asterisk">Local de uso:</label>
               <select
                 class="form-select"
                 id="insert-item-local-uso-select"
                 v-model="selectedLocalUsoCod"
+                @click="checkInputValue(selectedLocalUsoCod , 'insert-item-local-uso-select')"
               ><option
                 v-for="(localUso, i) in localUsoInfo" :key="i" :value="localUso.codigoLocalUsoObra"
                 >{{ localUso.nomeLocalUsoObra }}</option>
@@ -1373,16 +1450,18 @@ export default {
                 placeholder="(inserir apenas números)"
                 v-model="quantidade"
                 maxlength="30"
-                @change="calculaValorItem">
+                @change="calculaValorItem"
+              >
             </div>
 
             <!-- Unidade de medida -->
             <div class="mb-3">
-              <label for="insert-item-unidade-medida-select" class="bold">Unidade de medida:</label>
+              <label id="insert-item-unidade-medida-label" for="insert-item-unidade-medida-select" class="bold  red-asterisk">Unidade de medida:</label>
               <select
                 class="form-select"
                 id="insert-item-unidade-medida-select"
                 v-model="selectedUnidadeMedidaCod"
+                @click="checkInputValue(selectedUnidadeMedidaCod, 'insert-item-unidade-medida-select')"
               ><option
                 v-for="(unidadeMedida, i) in unidadeMedidaInfo" :key="i" :value="unidadeMedida.codigo"
                 >{{ unidadeMedida.unidade }}</option>
@@ -1415,7 +1494,8 @@ export default {
                 id="insert-item-valor-total-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorTotal"
-                maxlength="30">
+                maxlength="30"
+              >
             </div>
 
           </form>
@@ -1426,13 +1506,12 @@ export default {
             type="button"
             class="btn btn-secondary dark-grey"
             data-bs-dismiss="modal"
-            @click="cancelItem"
+            @click="cancelInsertItem"
           >Fechar</button>
           <button
             id="salvaNovoItem"
             type="button"
             class="btn btn-success  light-green"
-            data-bs-dismiss="modal"
             @click="createItemInfoDB"
           >Salvar</button>
         </div>
@@ -1683,7 +1762,6 @@ export default {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
-  /* border-bottom: solid #212529 2px; */
 }
 
 .column {
@@ -1694,8 +1772,6 @@ export default {
 }
 
 .light-green {
-  /* background-color: #006400; */
-  /* background-color: #003300; */
   background-color: #3D8B37;
 }
 
@@ -1731,5 +1807,29 @@ export default {
 
 .grey-letter {
   color: #212529;
+}
+
+@keyframes piscar {
+  0%, 100% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #FF69B4;
+  }
+}
+
+.required-red-border {
+  border: 2px solid red;
+  animation: piscar 2s infinite;
+}
+
+.red-asterisk::after {
+  content: " *";
+  color: red;
+}
+
+.campo-obrigatorio-warning::after {
+  content: " * Campo obrigatório";
+  color: red;
 }
 </style>
