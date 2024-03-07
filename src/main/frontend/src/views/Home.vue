@@ -95,6 +95,17 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
+          <h5 class="card-title">Atualização 07.02.24</h5>
+          <p class="card-text">Todas as paginas</p>
+          <p>1. Campos obrigatórios implementados.</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
           <h5 class="card-title">Atualização 06.02.24</h5>
           <p class="card-text">Páginas de Fornecedores e Local de Uso</p>
           <p>1. Campos obrigatórios implementados.</p>
@@ -110,38 +121,6 @@ export default {
           <p class="card-text">Todas as páginas</p>
           <p>1. Back-end reestruturado para enviar respostas mais exatas de cada passo do usuário, podendo endereçar os problemas com precisão.</p>
           <p></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 27.02.24</h5>
-          <p class="card-text">Todas as páginas</p>
-          <p>1. Agora o primeiro editável é focado quando existe.</p>
-          <p></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 26.02.24</h5>
-          <p class="card-text">Todas as páginas</p>
-          <p>1. Usuário recebe uma resposta de sucesso ou falha em todas suas requisições.</p>
-          <p>2. Refinamentos com teclado finalizados.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 22.02.24</h5>
-          <p class="card-text">Página de Produtos/Local Uso/Obras/Compras/Login</p>
-          <p>1. Refinamentos de interação com o teclado finalizados</p>
         </div>
       </div>
     </div>
