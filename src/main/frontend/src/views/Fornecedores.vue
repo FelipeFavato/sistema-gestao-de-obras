@@ -9,7 +9,6 @@ import { getLocalStorageToken } from '../utils/userLoginValidations';
 import { checkInputValue, clickSavecheckRequiredInsertField,
   removeElementClass, setAttributeSalvarButton } from '../utils/inputValidations';
 
-// Campos obrigatorios: 'nome' e 'tipoFornecedor'.
 
 export default {
   data () {
