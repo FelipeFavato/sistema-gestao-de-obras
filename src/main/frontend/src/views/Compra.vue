@@ -81,8 +81,17 @@ export default {
     selectedSocioCod() {
       this.watchRequiredInsertFields();
     },
+    dataPagamento() {
+      this.watchRequiredInsertFields();
+      this.watchUpdateCompraRequiredFields();
+    },
     valorOriginal() {
       this.watchRequiredInsertFields();
+      this.watchUpdateCompraRequiredFields();
+    },
+    valorFinal() {
+      this.watchRequiredInsertFields();
+      this.watchUpdateCompraRequiredFields();
     },
     selectedProdutoCod() {
       this.watchRequiredInsertItemsFields();
@@ -91,6 +100,12 @@ export default {
       this.watchRequiredInsertItemsFields();
     },
     selectedUnidadeMedidaCod() {
+      this.watchRequiredInsertItemsFields();
+    },
+    valorUnitario() {
+      this.watchRequiredInsertItemsFields();
+    },
+    valorTotal() {
       this.watchRequiredInsertItemsFields();
     }
   },
@@ -150,6 +165,10 @@ export default {
       removeElementClass('insert-compra-socio-pagador-label', 'campo-obrigatorio-warning');
       removeElementClass('insert-compra-valor-original-input', 'required-red-border');
       removeElementClass( 'insert-compra-valor-original-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-compra-data-pagamento-input', 'required-red-border');
+      removeElementClass('insert-compra-data-pagamento-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-compra-valor-final-input', 'required-red-border');
+      removeElementClass('insert-compra-valor-final-label', 'campo-obrigatorio-warning');
       setAttributeSalvarButton('salvaNovaCompra', 'no-closing-modal');
     },
     cancelItem() {
@@ -175,7 +194,9 @@ export default {
       removeElementClass('insert-item-local-uso-select', 'required-red-border');
       removeElementClass('insert-item-local-uso-label', 'campo-obrigatorio-warning');
       removeElementClass('insert-item-unidade-medida-select', 'required-red-border');
-      removeElementClass( 'insert-item-unidade-medida-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-item-unidade-medida-label', 'campo-obrigatorio-warning');
+      removeElementClass('insert-item-valor-unitario-input', 'required-red-border');
+      removeElementClass('insert-item-valor-unitario-label', 'campo-obrigatorio-warning');
       setAttributeSalvarButton('salvaNovoItem', 'no-closing-modal');
     },
     //////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +445,7 @@ export default {
       this.cancel();
     },
     watchRequiredInsertFields() {
-      this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal ?
+      this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal && this.dataPagamento && this.valorFinal ?
         setAttributeSalvarButton('salvaNovaCompra', 'modal') :
         setAttributeSalvarButton('salvaNovaCompra', 'no-closing-modal');
     },
@@ -432,8 +453,10 @@ export default {
       clickSavecheckRequiredInsertField(this.selectedFornecedorCod, 'insert-compra-fornecedor-select', 'insert-compra-fornecedor-label', 'salvaNovaCompra');
       clickSavecheckRequiredInsertField(this.selectedSocioCod, 'insert-compra-socio-pagador-select', 'insert-compra-socio-pagador-label', 'salvaNovaCompra');
       clickSavecheckRequiredInsertField(this.valorOriginal, 'insert-compra-valor-original-input', 'insert-compra-valor-original-label', 'salvaNovaCompra');
+      clickSavecheckRequiredInsertField(this.dataPagamento, 'insert-compra-data-pagamento-input', 'insert-compra-data-pagamento-label', 'salvaNovaCompra');
+      clickSavecheckRequiredInsertField(this.valorFinal, 'insert-compra-valor-final-input', 'insert-compra-valor-final-label', 'salvaNovaCompra');
 
-      if (this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal) {
+      if (this.selectedFornecedorCod && this.selectedSocioCod && this.valorOriginal && this.dataPagamento && this.valorFinal) {
         this.createC();
       }
     },
@@ -475,7 +498,7 @@ export default {
       this.cancelItem();
     },
     watchRequiredInsertItemsFields () {
-      this.selectedProdutoCod, this.selectedLocalUsoCod, this.selectedUnidadeMedidaCod ?
+      this.selectedProdutoCod && this.selectedLocalUsoCod && this.selectedUnidadeMedidaCod && this.valorUnitario && this.valorTotal ?
         setAttributeSalvarButton('salvaNovoItem', 'modal') :
         setAttributeSalvarButton('salvaNovoItem', 'no-closing-modal');
     },
@@ -483,8 +506,10 @@ export default {
       clickSavecheckRequiredInsertField(this.selectedProdutoCod, 'insert-item-produto-select', 'insert-item-produto-label', 'salvaNovoItem');
       clickSavecheckRequiredInsertField(this.selectedLocalUsoCod, 'insert-item-local-uso-select', 'insert-item-local-uso-label', 'salvaNovoItem');
       clickSavecheckRequiredInsertField(this.selectedUnidadeMedidaCod, 'insert-item-unidade-medida-select', 'insert-item-unidade-medida-label', 'salvaNovoItem');
+      clickSavecheckRequiredInsertField(this.valorUnitario, 'insert-item-valor-unitario-input', 'insert-item-valor-unitario-label', 'salvaNovoItem');
+      clickSavecheckRequiredInsertField(this.valorTotal, 'insert-item-valor-total-input', 'insert-item-valor-total-label', 'salvaNovoItem');
 
-      if (this.selectedProdutoCod, this.selectedLocalUsoCod, this.selectedUnidadeMedidaCod) {
+      if (this.selectedProdutoCod && this.selectedLocalUsoCod && this.selectedUnidadeMedidaCod && this.valorUnitario && this.valorTotal) {
         this.createI();
       }
     },
@@ -553,7 +578,7 @@ export default {
       });
     },
     // Chama o método 'updateCompra', repopula a lista corretamente e reseta os dados da requisição.
-    updateCompraInfoDB () {
+    updateC () {
       this.getCodigoSocioForCompraUpdate();
       this.getCodigoFornecedorForCompraUpdate();
       const self = this;
@@ -564,6 +589,20 @@ export default {
         });
       });
       this.cancel();
+    },
+    watchUpdateCompraRequiredFields () {
+      this.dataPagamento && this.valorOriginal && this.valorFinal ?
+        setAttributeSalvarButton('atualizaCompra', 'modal') :
+        setAttributeSalvarButton('atualizaCompra', 'no-closing-modal');
+    },
+    updateCompraInfoDB () {
+      clickSavecheckRequiredInsertField(this.dataPagamento, 'update-compra-data-pagamento-input', 'update-compra-data-pagamento-label', 'atualizaCompra');
+      clickSavecheckRequiredInsertField(this.valorOriginal, 'update-compra-valor-original-input', 'update-compra-valor-original-label', 'atualizaCompra');
+      clickSavecheckRequiredInsertField(this.valorFinal, 'update-compra-valor-final-input', 'update-compra-valor-final-label', 'atualizaCompra');
+
+      if (this.dataPagamento && this.valorOriginal && this.valorFinal) {
+        this.updateC();
+      }
     },
     // Item: ----------------------------------------------------------------------------|
     // Preenche a modal UPDATE de ITEM.
@@ -860,10 +899,20 @@ export default {
       }
 
       this.valorFinal = this.valorOriginal - this.valorDesconto
+      checkInputValue(this.valorOriginal, 'insert-compra-valor-original-input');
+      checkInputValue(this.valorFinal, 'insert-compra-valor-final-input');
+      checkInputValue(this.valorOriginal, 'update-compra-valor-original-input');
+      checkInputValue(this.valorFinal, 'update-compra-valor-final-input');
     },
     // Calcula o valor final do item.
     calculaValorItem() {
       !this.valorUnitario ? '' : this.valorTotal = this.quantidade * this.valorUnitario;
+    },
+    calculaValorFinalItem () {
+      this.calculaValorItem();
+
+      checkInputValue(this.valorUnitario, 'insert-item-valor-unitario-input');
+      checkInputValue(this.valorUnitario, 'insert-item-valor-total-input');
     },
     // Verifica se a soma dos itens passa do total da compra.
     checkValueStatus () {
@@ -943,9 +992,9 @@ export default {
   </header>
 
   <!-- Botão 'Voltar' + informações + botão 'Novo Item' -->
-  <div class="header middle-margin">
+  <div v-if="this.showItems" class="header middle-margin">
     <!-- Botão 'Voltar' + botão '+ Novo Item' -->
-    <div v-show="this.showItems" class="column">
+    <div class="column">
       <!-- Botão para voltar as compras -->
       <button
         type="button"
@@ -1114,12 +1163,14 @@ export default {
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="insert-compra-data-pagamento-input" class="form-label bold">Data de pagamento:</label>
+              <label id="insert-compra-data-pagamento-label" for="insert-compra-data-pagamento-input" class="form-label bold red-asterisk">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
                 id="insert-compra-data-pagamento-input"
-                v-model="dataPagamento">
+                v-model="dataPagamento"
+                @change="checkInputValue(dataPagamento, 'insert-compra-data-pagamento-input')"
+              >
             </div>
 
             <!-- Data de Vencimento -->
@@ -1144,9 +1195,9 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
                 maxlength="30"
-                @change="calculaValorFinalCompra"
-                @keyup="checkInputValue(valorOriginal, 'insert-compra-valor-original-input')"
-              >
+                @keyup="calculaValorFinalCompra"
+                >
+                <!-- @keyup="checkInputValue(valorOriginal, 'insert-compra-valor-original-input')" -->
             </div>
 
             <!-- Valor Desconto -->
@@ -1161,12 +1212,12 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorDesconto"
                 maxlength="30"
-                @change="calculaValorFinalCompra">
+                @keyup="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="insert-compra-valor-final-input" class="form-label bold">Valor total:</label>
+              <label id="insert-compra-valor-final-label" for="insert-compra-valor-final-input" class="form-label bold red-asterisk">Valor total:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1175,7 +1226,9 @@ export default {
                 id="insert-compra-valor-final-input"
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorFinal"
-                maxlength="30">
+                maxlength="30"
+                @keyup="checkInputValue(valorFinal, 'insert-compra-valor-final-input')"
+              >
             </div>
 
           </form>
@@ -1205,7 +1258,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="updateModalLabel">Editar Custo</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelInsert" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -1283,12 +1336,14 @@ export default {
 
             <!-- Data de Pagamento -->
             <div class="mb-3">
-              <label for="update-compra-data-pagamento-input" class="form-label bold">Data de pagamento:</label>
+              <label id="update-compra-data-pagamento-label" for="update-compra-data-pagamento-input" class="form-label bold red-asterisk">Data de pagamento:</label>
               <input
                 type="date"
                 class="form-control"
                 id="update-compra-data-pagamento-input"
-                v-model="dataPagamento">
+                v-model="dataPagamento"
+                @change="checkInputValue(dataPagamento, 'update-compra-data-pagamento-input')"
+              >
             </div>
 
             <!-- Data de Vencimento -->
@@ -1303,7 +1358,7 @@ export default {
 
             <!-- Valor Original -->
             <div class="mb-3">
-              <label for="update-compra-valor-original-input" class="form-label bold red-asterisk">Valor original:</label>
+              <label id="update-compra-valor-original-label" for="update-compra-valor-original-input" class="form-label bold red-asterisk">Valor original:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1313,7 +1368,7 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorOriginal"
                 maxlength="30"
-                @change="calculaValorFinalCompra">
+                @keyup="calculaValorFinalCompra">
             </div>
 
             <!-- Valor Desconto -->
@@ -1333,7 +1388,7 @@ export default {
 
             <!-- Valor Final -->
             <div class="mb-3">
-              <label for="update-compra-valor-final-input" class="form-label bold">Valor total:</label>
+              <label id="update-compra-valor-final-label" for="update-compra-valor-final-input" class="form-label bold red-asterisk">Valor total:</label>
               <input
                 type="number"
                 class="form-control"
@@ -1348,7 +1403,7 @@ export default {
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelInsert"
           >Fechar</button>
 
           <button id="atualizaCompra" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
@@ -1450,7 +1505,7 @@ export default {
                 placeholder="(inserir apenas números)"
                 v-model="quantidade"
                 maxlength="30"
-                @change="calculaValorItem"
+                @keyup="calculaValorItem"
               >
             </div>
 
@@ -1470,7 +1525,7 @@ export default {
 
             <!-- Valor Unitario -->
             <div class="mb-3">
-              <label for="insert-item-valor-unitario-input" class="form-label bold">Valor unitário:</label>
+              <label id="insert-item-valor-unitario-label" for="insert-item-valor-unitario-input" class="form-label bold red-asterisk">Valor unitário:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1480,12 +1535,12 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorUnitario"
                 maxlength="30"
-                @change="calculaValorItem">
+                @keyup="calculaValorFinalItem">
             </div>
 
             <!-- Valor Total -->
             <div class="mb-3">
-              <label for="insert-item-valor-total-input" class="form-label bold">Valor total:</label>
+              <label id="insert-item-valor-total-label" for="insert-item-valor-total-input" class="form-label bold red-asterisk">Valor total:</label>
               <input
                 type="number"
                 step="0.01"
@@ -1495,6 +1550,7 @@ export default {
                 placeholder="R$... (inserir apenas números e ponto)"
                 v-model="valorTotal"
                 maxlength="30"
+                @keyup="checkInputValue(valorTotal, 'insert-item-valor-total-input')"
               >
             </div>
 
