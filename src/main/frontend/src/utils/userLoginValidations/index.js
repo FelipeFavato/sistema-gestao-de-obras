@@ -1,3 +1,5 @@
 import { getLocalStorageToken } from "./getLocalStorageToken";
 
-export { getLocalStorageToken }
+export {
+  getLocalStorageToken,
+}
