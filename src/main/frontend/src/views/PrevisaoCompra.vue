@@ -103,7 +103,7 @@ export default {
       this.valorTotalPrevisto = valorT;
       this.compraPrevistaRealizada = compraPR;
     },
-    updateCompraPrevistaRealizada (cod, descr, qnt, vu, vt, compraPR) {
+    updateCompraPrevistaRealizada(cod, descr, qnt, vu, vt, compraPR) {
       this.fillUpdateModal(cod, descr, qnt, vu, vt, compraPR);
       axios.put('/api/previsao-compra',
       {
