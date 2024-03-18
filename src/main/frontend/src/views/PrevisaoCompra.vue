@@ -142,7 +142,7 @@ export default {
       });
     },
     fetchObrasInfoDB (callback) {
-      axios.get("/api/obra",
+      axios.get('/api/obra',
       {
         headers: {
           Authorization: this.localStorageToken
@@ -415,7 +415,9 @@ export default {
 <template>
 
   <!-- Header com o DropDown 'Obras' -->
-  <header v-if="this.info != ''" class="header middle-margin">
+  <!-- v-if="this.info != ''" -->
+  <header
+    class="header middle-margin">
     <!-- DropDown 'Obras' -->
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -473,7 +475,9 @@ export default {
   </header>
 
   <!-- Header com o botão de +Novo -->
-  <header v-if="this.info != ''" class="middle-margin">
+  <!-- v-if="this.info != ''" -->
+  <header
+    class="middle-margin">
     <button
       id="nova-previsao-button"
       type="button"
@@ -484,7 +488,7 @@ export default {
     >+ Nova Previsão</button>
   </header>
 
-  <SkeletonTableAndHeader v-if="this.info == ''" />
+  <!-- <SkeletonTableAndHeader v-if="this.info == ''" /> -->
 
   <!-- DeleteModal -->
   <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -719,7 +723,9 @@ export default {
   </div>
 
   <!-- Tabela Previsões -->
-  <main v-if="this.info != ''" class="middle-margin table-responsive">
+  <!-- v-if="this.info != ''" -->
+  <main
+    class="middle-margin table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
