@@ -64,12 +64,15 @@ export default {
     },
     quantidade () {
       this.watchRequiredInsertFields();
+      this.watchUpdateRequiredFields();
     },
     valorUnitario () {
       this.watchRequiredInsertFields();
+      this.watchUpdateRequiredFields();
     },
     valorTotalPrevisto () {
       this.watchRequiredInsertFields();
+      this.watchUpdateRequiredFields();
     },
   },
 
@@ -109,6 +112,16 @@ export default {
       removeElementClass('insert-valor-unitario-label', 'campo-obrigatorio-warning');
       removeElementClass('insert-valor-total-previsto-input', 'required-red-border');
       removeElementClass('insert-valor-total-previsto-label', 'campo-obrigatorio-warning');
+      setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+    },
+    cancelUpdate () {
+      this.cancel();
+      removeElementClass('update-quantidade-input', 'required-red-border');
+      removeElementClass('update-quantidade-label', 'campo-obrigatorio-warning');
+      removeElementClass('update-valor-unitario-input', 'required-red-border');
+      removeElementClass('update-valor-unitario-label', 'campo-obrigatorio-warning');
+      removeElementClass('update-valor-total-previsto-input', 'required-red-border');
+      removeElementClass('update-valor-total-previsto-label', 'campo-obrigatorio-warning');
       setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
     },
     ///////////////////////////////////////////////////////////////////////////////
@@ -224,7 +237,7 @@ export default {
       );
       this.cancel();
     },
-    updateInfoDB () {
+    update () {
       axios.put('/api/previsao-compra',
       {
         codigo: this.codigo,
@@ -249,6 +262,20 @@ export default {
       }).catch(error => {
 
       })
+    },
+    watchUpdateRequiredFields () {
+      this.quantidade && this.valorUnitario && this.valorTotalPrevisto ?
+        setAttributeSalvarButton('salvarNovoButton', 'modal'):
+        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+    },
+    updateInfoDB () {
+      clickSavecheckRequiredInsertField(this.quantidade, 'update-quantidade-input', 'update-quantidade-label', 'atualizarButton');
+      clickSavecheckRequiredInsertField(this.valorUnitario, 'update-valor-unitario-input', 'update-valor-unitario-label', 'atualizarButton');
+      clickSavecheckRequiredInsertField(this.valorTotalPrevisto, 'update-valor-total-previsto-input', 'update-valor-total-previsto-label', 'atualizarButton');
+      
+      if (this.quantidade && this.valorUnitario && this.valorTotalPrevisto) {
+        this.update();
+      }
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -595,7 +622,7 @@ export default {
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="updateModalLabel">Editar Previsão de Custo</h1>
-          <button @click="cancel" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button @click="cancelUpdate" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -612,7 +639,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label for="update-descricao-input" class="form-label bold">Local:</label>
+              <label id="update-descricao-label" for="update-descricao-input" class="form-label bold">Local:</label>
               <input
                 type="text"
                 class="form-control"
@@ -676,10 +703,14 @@ export default {
 
         <div class="modal-footer">
           <button id="fecharUpdateButton" type="button" class="btn btn-secondary dark-grey" data-bs-dismiss="modal"
-            @click="cancel"
+            @click="cancelUpdate"
           >Fechar</button>
 
-          <button id="atualizarButton" type="button" class="btn btn-success  light-green" data-bs-dismiss="modal"
+          <!-- data-bs-dismiss="modal" -->
+          <button
+            id="atualizarButton"
+            type="button"
+            class="btn btn-success light-green"
             @click="updateInfoDB()"
           >Salvar</button>
         </div>
