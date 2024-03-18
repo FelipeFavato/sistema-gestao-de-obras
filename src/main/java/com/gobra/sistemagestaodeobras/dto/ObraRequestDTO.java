@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.gobra.sistemagestaodeobras.model.Compra;
+import com.gobra.sistemagestaodeobras.model.PrevisaoCompra;
 import com.gobra.sistemagestaodeobras.model.Socio;
 
 public record ObraRequestDTO (
@@ -27,7 +28,9 @@ public record ObraRequestDTO (
 
   List<Compra> compras,
 
-  Set<Socio> socios
+  Set<Socio> socios,
+
+  List<PrevisaoCompra> previsoes
 
   // List<ObraArquivo> arquivos
 

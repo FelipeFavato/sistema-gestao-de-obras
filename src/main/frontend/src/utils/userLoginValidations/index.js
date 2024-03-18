@@ -1,3 +1,9 @@
 import { getLocalStorageToken } from "./getLocalStorageToken";
+import { getCodObraLocalStorage } from "./getCodObraLocalStorage";
+import { getNomeObraLS } from "./getNomeObraLS";
 
-export { getLocalStorageToken }
+export {
+  getLocalStorageToken,
+  getCodObraLocalStorage,
+  getNomeObraLS,
+}

@@ -80,6 +80,7 @@ public class ObraController {
       obra.setCustoMaoDeObra(data.custoMaoDeObra());
       obra.setCustoPrevisto(data.custoPrevisto());
       obra.setCompras(data.compras());
+      // obra.setPrevisoes(data.previsoes());
       // obra.setSocios(data.socios());
       // obra.setArquivos(data.arquivos());
 

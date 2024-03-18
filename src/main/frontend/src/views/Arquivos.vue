@@ -423,7 +423,7 @@ export default {
     removeHGPKEnter () {
       window.removeEventListener('keydown', this.HGPKEnter);
     },
-    // Esse método vem de '../utils/inputFocus'.
+    // Esse método vem de  '../utils/inputFocus'.
     focusFirstModalInput,
     checkInputValue,
     //////////////////////////////////////////////////////////////////////////////////////

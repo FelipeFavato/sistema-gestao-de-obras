@@ -78,6 +78,11 @@ public class Obra {
   @OneToMany(mappedBy = "idObra")
   private List<ObraArquivo> arquivos;
 
+  // UMA Obra pode ter MUITAS previsões.
+  @JsonIgnore
+  @OneToMany(mappedBy = "codigoObra")
+  private List<PrevisaoCompra> previsoes;
+
   public Obra(ObraRequestDTO data) {
     this.nome = data.nome();
     this.endereco = data.endereco();
@@ -88,6 +93,7 @@ public class Obra {
     this.custoPrevisto = data.custoPrevisto();
     this.compras = data.compras();
     this.socios = data.socios();
+    this.previsoes = data.previsoes();
     // this.arquivos = data.arquivos();
   }
 }

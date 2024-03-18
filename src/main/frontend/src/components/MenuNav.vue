@@ -107,6 +107,10 @@ export default {
           </li>
 
           <li class="nav-item">
+            <a class="nav-link" href="#previsaocompra">Previsão</a>
+          </li>
+
+          <li class="nav-item">
             <a class="nav-link" href="#dashboard">Dashboard</a>
           </li>
 
