@@ -97,7 +97,7 @@ export default {
         <div>
           <h5 class="card-title">Atualização 18.02.24</h5>
           <p class="card-text">Página de Previsao de custos</p>
-          <p>1. Página finalizada</p>
+          <p>1. Página finalizada.</p>
           <p></p>
         </div>
       </div>
