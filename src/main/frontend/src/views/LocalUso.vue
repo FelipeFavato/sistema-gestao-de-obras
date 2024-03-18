@@ -76,9 +76,7 @@ export default {
       this.dataDesativacao = '';
     },
     cancelInsert () {
-      this.codigoLocalUsoObra = '';
-      this.nomeLocalUsoObra = '';
-      this.dataDesativacao = '';
+      this.cancel();
 
       removeElementClass('insert-name-input', 'required-red-border');
       removeElementClass('insert-nome-label', 'campo-obrigatorio-warning');

@@ -59,8 +59,10 @@ public class PrevisaoCompraService {
 
   // DELETE
   public ResponseEntity<?> deletaPrevisaoCompra (@RequestBody PrevisaoCompra data) {
+    PrevisaoCompra previsaoCompra = previsaoCompraRepository.getReferenceById(data.getCodigo());
+    String nomePrevisao = previsaoCompra.getDescricaoProdutoServico();
+
     previsaoCompraRepository.delete(data);
-    String nomePrevisao = data.getDescricaoProdutoServico();
 
     return new ResponseEntity<> ("Previsão de custo: '" + nomePrevisao + "' DELETADA com sucesso.", HttpStatus.OK);
   }
