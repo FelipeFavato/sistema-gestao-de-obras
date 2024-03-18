@@ -741,6 +741,7 @@ export default {
           <td>{{ brazilCurrency(previsaoCompra.valorTotalPrevisto) }}</td>
           <td>
             <input
+              class="estilizada"
               type="checkbox"
               :id="'compra-prevista-realizada-checkbox-input' + previsaoCompra.codigo"
               v-model="previsaoCompra.compraPrevistaRealizada"
