@@ -32,6 +32,7 @@ export default {
       // Variáveis de requisição/auxiliares: -----\
       obrasInfo: [],
       info: [],
+      mdoOrcamentoInfo: [],
       codigo: '',
       codigoObra: '',
       descricaoProdutoServico: '',
@@ -41,11 +42,11 @@ export default {
       compraPrevistaRealizada: false,
       /////////////////////////////////////////////
       // Variáveis de comportamento: -------------\
-      selectedObraID: '',
+      selectedObraID: getCodObraLocalStorage(),
       selectedObraNome: '',
       selectedPrevisoesByObra: [],
-      selectedFiltro: 'N/ Comprado',
-      customToastNotification: 'Previsão'
+      selectedFiltro: 'Não Comprado',
+      customToastNotification: 'Previsão',
       /////////////////////////////////////////////
     }
   },
@@ -154,6 +155,27 @@ export default {
       }).catch(error => {
         this.validateHttpStatus(error.response.status);
       });
+    },
+    fetchMDOOrcamentoInfo (callback) {
+      axios.get(`/api/dashboard/mdogastoorcamento?codigo=${this.selectedObraID}`,
+      {
+        headers: {
+          Authorization: this.localStorageToken
+        },
+      }).then(res => {
+        this.mdoOrcamentoInfo = res.data;
+        if (callback) callback();
+      }).catch(error => {
+        this.validateHttpStatus(error.response);
+      })
+    },
+        learning () {
+      const orcamento = this.mdoOrcamentoInfo[0];
+      const gasto = orcamento.custoMaoDeObra + orcamento.valorGastos;
+      const orc = orcamento.custoPrevisto - gasto;
+      console.log(orcamento);
+      console.log(gasto);
+      console.log(brazilCurrency(orc))
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -265,8 +287,8 @@ export default {
     },
     watchUpdateRequiredFields () {
       this.quantidade && this.valorUnitario && this.valorTotalPrevisto ?
-        setAttributeSalvarButton('salvarNovoButton', 'modal'):
-        setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
+        setAttributeSalvarButton('atualizarButton', 'modal'):
+        setAttributeSalvarButton('atualizarButton', 'no-closing-modal');
     },
     updateInfoDB () {
       clickSavecheckRequiredInsertField(this.quantidade, 'update-quantidade-input', 'update-quantidade-label', 'atualizarButton');
@@ -326,7 +348,7 @@ export default {
     filtroDropDownActions(selected) {
       this.selectedFiltro = selected;
 
-      if (selected === 'N/ Comprado') {
+      if (selected === 'Não Comprado') {
         this.selectPrevisoesByObra(Number(this.selectedObraID));
         this.selectedPrevisoesByObra = this.selectedPrevisoesByObra.filter(prev => prev.compraPrevistaRealizada === false);
       } else if (selected === 'Comprado') {
@@ -401,6 +423,9 @@ export default {
       this.obrasDropDownActions(getNomeObraLS(), getCodObraLocalStorage());
       this.filtroDropDownActions(this.selectedFiltro);
     });
+    this.fetchMDOOrcamentoInfo(() => {
+      this.learning();
+    })
     this.addHGPKEnter();
   },
 
@@ -445,15 +470,15 @@ export default {
     <!-- Filtro Previsão concluida ou não -->
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ this.selectedFiltro ? this.selectedFiltro : 'N/ Comprado' }}
+        {{ this.selectedFiltro ? this.selectedFiltro : 'Não Comprado' }}
       </button>
       <ul class="dropdown-menu">
         <li class="vermelho-transparente">
           <button
             class="dropdown-item"
             type="button"
-            @click="filtroDropDownActions('N/ Comprado')"
-            >N/ Comprado</button>
+            @click="filtroDropDownActions('Não Comprado')"
+            >Não Comprado</button>
         </li>
         <li class="verde-transparente">
           <button
@@ -643,7 +668,7 @@ export default {
             </div>
 
             <div class="mb-3">
-              <label id="update-descricao-label" for="update-descricao-input" class="form-label bold">Local:</label>
+              <label id="update-descricao-label" for="update-descricao-input" class="form-label bold">Descrição:</label>
               <input
                 type="text"
                 class="form-control"
@@ -745,9 +770,9 @@ export default {
           <td>{{ previsaoCompra.quantidade }}</td>
           <td>{{ brazilCurrency(previsaoCompra.valorUnitario) }}</td>
           <td>{{ brazilCurrency(previsaoCompra.valorTotalPrevisto) }}</td>
-          <td>
+          <td class="">
             <input
-              class="estilizada"
+              class="checkbox"
               type="checkbox"
               :id="'compra-prevista-realizada-checkbox-input' + previsaoCompra.codigo"
               v-model="previsaoCompra.compraPrevistaRealizada"
@@ -755,7 +780,8 @@ export default {
                 previsaoCompra.quantidade, previsaoCompra.valorUnitario, previsaoCompra.valorTotalPrevisto, previsaoCompra.compraPrevistaRealizada)"
             />
             <label
-              id=""
+              class="checkbox-label"
+              id="checkbox-label"
               :for="'compra-prevista-realizada-checkbox-input' + previsaoCompra.codigo"
             ></label>
           </td>
@@ -786,6 +812,48 @@ export default {
 </template>
 
 <style>
+
+.checkbox {
+  padding-left: 130px;
+}
+
+input[type="checkbox"] {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  background-color: #cfcfcf;
+  border-radius: .25rem;
+  appearance: none;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: limegreen;
+}
+
+input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 63px;
+  width: 9px;
+  height: 17px;
+  border: 4px solid transparent;
+  border-left: none;
+  border-top: none;
+  transform: rotate(45deg) scale(1.5);
+}
+
+input[type="checkbox"]:checked:before {
+  border-color: #fff;
+  animation: checkAnim 0.5s ease;
+}
+
+@keyframes checkAnim {
+  from {
+    transform: rotate(45deg) scale(0);
+  }
+}
 
 .verde-transparente {
   background-color: rgba(0, 255, 0, 0.2); /* Verde com 20% de opacidade */
