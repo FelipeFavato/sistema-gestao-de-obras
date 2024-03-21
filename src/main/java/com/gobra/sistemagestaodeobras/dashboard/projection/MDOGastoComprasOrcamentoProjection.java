@@ -12,4 +12,6 @@ public interface MDOGastoComprasOrcamentoProjection {
 
   double getValorGastos();
 
+  double getValorTotalPrevisto();
+
 }

@@ -15,18 +15,21 @@ public class MDOOrcamentoDTO {
 
   private double valorGastos;
 
+  private double valorTotalPrevisto;
+
 
   public MDOOrcamentoDTO() {
 
   }
 
   public MDOOrcamentoDTO(Integer custoMDO, Integer custoP, double pagoMDO,
-  double valorD, double valorG) {
+  double valorD, double valorG, double vTotalP) {
     this.custoMaoDeObra = custoMDO;
     this.custoPrevisto = custoP;
     this.pagoMaoDeObra = pagoMDO;
     this.valorDesconto = valorD;
     this.valorGastos = valorG;
+    this.valorTotalPrevisto = vTotalP;
   }
 
   public MDOOrcamentoDTO(MDOGastoComprasOrcamentoProjection projection) {
@@ -35,6 +38,7 @@ public class MDOOrcamentoDTO {
     pagoMaoDeObra = projection.getPagoMaoDeObra();
     valorDesconto = projection.getValorDesconto();
     valorGastos = projection.getValorGastos();
+    valorTotalPrevisto = projection.getValorTotalPrevisto();
   }
 
   public String toString() {
@@ -43,7 +47,8 @@ public class MDOOrcamentoDTO {
             "\n Gasto atual - Material/Serviço: " + FormatadorMoeda.formatarMoeda(valorGastos) +
             "\n Gasto atual - Mão de obra: " + FormatadorMoeda.formatarMoeda(pagoMaoDeObra) +
             "\n Total de descontos: " + FormatadorMoeda.formatarMoeda(valorDesconto) +
-            "\n Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos));
+            "\n Saldo para investimento: " + FormatadorMoeda.formatarMoeda(custoPrevisto - (custoMaoDeObra + valorGastos)) +
+            "\n Valor total de compras previstas: " + FormatadorMoeda.formatarMoeda(valorTotalPrevisto);
   }
 
   // Getters e Setters
@@ -85,6 +90,14 @@ public class MDOOrcamentoDTO {
 
   public void setValorGastos (double valorG) {
     this.valorGastos = valorG;
+  }
+
+  public double getValorTotalPrevisto () {
+    return valorTotalPrevisto;
+  }
+
+  public void setValorTotalPrevisto (double vTotalP) {
+    this.valorTotalPrevisto = vTotalP;
   }
 
 }

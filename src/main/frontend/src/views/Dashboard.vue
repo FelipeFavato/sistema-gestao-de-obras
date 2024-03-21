@@ -2,6 +2,8 @@
 
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { getLocalStorageToken, getCodObraLocalStorage, getNomeObraLS } from '../utils/userLoginValidations';
+
 
 export default {
   data () {
@@ -18,10 +20,10 @@ export default {
       // Variaveis auxiliares
       useRouter: useRouter(),
       httpStatus: '',
-      selectedObraNome: '',
-      selectedObraID: '',
+      selectedObraNome: getNomeObraLS(),
+      selectedObraID: getCodObraLocalStorage(),
       // Variaveis de requisição
-      localStorageToken: null,
+      localStorageToken: getLocalStorageToken(),
     }
   },
 
@@ -37,9 +39,9 @@ export default {
     setHttpStatusCode (successError) {
       this.httpStatus = successError
     },
-    getLocalStorageToken () {
-      this.localStorageToken = localStorage.getItem('token');
-    },
+    // getLocalStorageToken () {
+    //   this.localStorageToken = localStorage.getItem('token');
+    // },
     validateLogin () {
       !this.localStorageToken ? this.redirectToLogin() : null;
     },
@@ -383,6 +385,7 @@ export default {
       const valorG = dadosOrcamento.valorGastos;
       const comprometidoMDO = custoMDO - pagoMDO;
       const disponivel = custoP - (valorG + custoMDO);
+      const vTotalPrevisto = dadosOrcamento.valorTotalPrevisto;
 
       const trace1 = {
         x: ['Custo previsto'],
@@ -445,7 +448,19 @@ export default {
         }
       };
 
-      const data = [trace1, trace2, trace4, trace5];
+      const trace6 = {
+        x: ['Custo previsto'],
+        y: [vTotalPrevisto],
+        name: 'Valor total de compras previstas',
+        type: 'bar',
+        text: [this.fixCurrency(vTotalPrevisto)],
+        hoverinfo: "name+text",
+        // marker: {
+        //   color: '#2ca02c'
+        // }
+      }
+
+      const data = [trace1, trace2, trace4, trace5, trace6];
 
       const layout = {
         barmode: 'stack',
@@ -680,7 +695,7 @@ export default {
   },
 
   mounted () {
-    this.getLocalStorageToken();
+    this.ObraDropDownActions(this.selectedObraNome ? this.selectedObraNome : '');
     this.validateLogin();
     this.fetchObrasInfoDB();
   }

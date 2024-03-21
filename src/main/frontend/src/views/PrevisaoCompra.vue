@@ -47,6 +47,7 @@ export default {
       selectedPrevisoesByObra: [],
       selectedFiltro: 'Não Comprado',
       customToastNotification: 'Previsão',
+      valorTotalPrevisto: 0,
       /////////////////////////////////////////////
     }
   },
@@ -169,13 +170,9 @@ export default {
         this.validateHttpStatus(error.response);
       })
     },
-        learning () {
+    vTotalPrevistoSum () {
       const orcamento = this.mdoOrcamentoInfo[0];
-      const gasto = orcamento.custoMaoDeObra + orcamento.valorGastos;
-      const orc = orcamento.custoPrevisto - gasto;
-      console.log(orcamento);
-      console.log(gasto);
-      console.log(brazilCurrency(orc))
+      this.valorTotalPrevisto = orcamento.valorTotalPrevisto;
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -200,6 +197,9 @@ export default {
           this.fetchObrasInfoDB(() => {
             this.obrasDropDownActions(this.selectedObraNome, this.selectedObraID);
             this.filtroDropDownActions(this.selectedFiltro);
+          });
+          this.fetchMDOOrcamentoInfo(() => {
+            this.vTotalPrevistoSum();
           });
           this.setHttpStatusCode(res.status);
           insertSuccessToast(this.customToastNotification);
@@ -252,6 +252,9 @@ export default {
             Authorization: this.localStorageToken
           }
         }).then(res => {
+          this.fetchMDOOrcamentoInfo(() => {
+            this.vTotalPrevistoSum();
+          });
           updateSuccessToast(this.customToastNotification);
         }).catch(error => {
           updateErrorToast(this.customToastNotification);
@@ -279,6 +282,9 @@ export default {
             this.obrasDropDownActions(this.selectedObraNome, this.selectedObraID);
             this.filtroDropDownActions(this.selectedFiltro);
           });
+        this.fetchMDOOrcamentoInfo(() => {
+          this.vTotalPrevistoSum();
+        });
         this.setHttpStatusCode(res.status);
         updateSuccessToast(this.customToastNotification);
       }).catch(error => {
@@ -316,6 +322,9 @@ export default {
           this.fetchObrasInfoDB(() => {
             this.obrasDropDownActions(this.selectedObraNome, this.selectedObraID);
             this.filtroDropDownActions(this.selectedFiltro);
+          });
+          this.fetchMDOOrcamentoInfo(() => {
+            this.vTotalPrevistoSum();
           });
           this.setHttpStatusCode(res.status);
           deleteSuccessToast(res.data);
@@ -424,7 +433,7 @@ export default {
       this.filtroDropDownActions(this.selectedFiltro);
     });
     this.fetchMDOOrcamentoInfo(() => {
-      this.learning();
+      this.vTotalPrevistoSum();
     })
     this.addHGPKEnter();
   },
@@ -502,7 +511,7 @@ export default {
   <!-- Header com o botão de +Novo -->
   <!-- v-if="this.info != ''" -->
   <header
-    class="middle-margin">
+    class="display-flex middle-margin">
     <button
       id="nova-previsao-button"
       type="button"
@@ -511,6 +520,9 @@ export default {
       data-bs-target="#insertModal"
       @click="focusFirstModalInput('insert-descricao-input')"
     >+ Nova Previsão</button>
+    <div>
+      <strong>Valor total previsto: </strong>{{ brazilCurrency(this.valorTotalPrevisto) }}
+    </div>
   </header>
 
   <!-- <SkeletonTableAndHeader v-if="this.info == ''" /> -->
@@ -812,6 +824,11 @@ export default {
 </template>
 
 <style>
+
+.display-flex {
+  display: flex;
+  justify-content: space-between;
+}
 
 .checkbox {
   padding-left: 130px;
