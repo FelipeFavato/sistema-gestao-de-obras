@@ -95,7 +95,20 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
-          <h5 class="card-title">Atualização 18.02.24</h5>
+          <h5 class="card-title">Atualização 21.03.24</h5>
+          <p class="card-text">Página de Previsao de custos</p>
+          <p>1. Página finalizada e completamente integrada ao sistema.</p>
+          <p>1. gráficos ja trazem informações de previsões e algumas mudanças visuais para
+            melhor experiencia do usuario.</p>
+          <p></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card margin-10" style="width: 18rem;">
+      <div class="card-body column">
+        <div>
+          <h5 class="card-title">Atualização 18.03.24</h5>
           <p class="card-text">Página de Previsao de custos</p>
           <p>1. Página finalizada.</p>
           <p></p>
@@ -106,7 +119,7 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
-          <h5 class="card-title">Atualização 08.02.24</h5>
+          <h5 class="card-title">Atualização 08.03.24</h5>
           <p class="card-text">Página de Compras</p>
           <p>1. Campos obrigatórios ajustados.</p>
           <p></p>
@@ -117,7 +130,7 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
-          <h5 class="card-title">Atualização 07.02.24</h5>
+          <h5 class="card-title">Atualização 07.03.24</h5>
           <p class="card-text">Todas as paginas</p>
           <p>1. Campos obrigatórios implementados.</p>
           <p></p>
@@ -128,20 +141,9 @@ export default {
     <div class="card margin-10" style="width: 18rem;">
       <div class="card-body column">
         <div>
-          <h5 class="card-title">Atualização 06.02.24</h5>
+          <h5 class="card-title">Atualização 06.03.24</h5>
           <p class="card-text">Páginas de Fornecedores e Local de Uso</p>
           <p>1. Campos obrigatórios implementados.</p>
-          <p></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card margin-10" style="width: 18rem;">
-      <div class="card-body column">
-        <div>
-          <h5 class="card-title">Atualização 29.02.24</h5>
-          <p class="card-text">Todas as páginas</p>
-          <p>1. Back-end reestruturado para enviar respostas mais exatas de cada passo do usuário, podendo endereçar os problemas com precisão.</p>
           <p></p>
         </div>
       </div>
