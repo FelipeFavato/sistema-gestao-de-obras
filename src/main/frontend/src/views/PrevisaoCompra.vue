@@ -21,6 +21,8 @@ import { clickSavecheckRequiredInsertField, checkInputValue,
 //   "compraPrevistaRealizada": false
 // }
 
+// Retirar quantidade e valor unitario e mudar alguns nomes
+
 export default {
   data () {
     return {
