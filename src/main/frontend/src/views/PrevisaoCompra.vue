@@ -102,8 +102,8 @@ export default {
     // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.descricaoProdutoServico = '';
-      this.quantidade = '';
-      this.valorUnitario = '';
+      this.quantidade = 1;
+      this.valorUnitario = 1;
       this.valorTotalPrevisto = '';
       this.compraPrevistaRealizada = false;
     },
