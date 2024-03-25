@@ -21,6 +21,8 @@ import { clickSavecheckRequiredInsertField, checkInputValue,
 //   "compraPrevistaRealizada": false
 // }
 
+// Retirar quantidade e valor unitario e mudar alguns nomes
+
 export default {
   data () {
     return {
@@ -36,8 +38,8 @@ export default {
       codigo: '',
       codigoObra: '',
       descricaoProdutoServico: '',
-      quantidade: '',
-      valorUnitario: '',
+      quantidade: 1,
+      valorUnitario: 1,
       valorTotalPrevisto: '',
       compraPrevistaRealizada: false,
       /////////////////////////////////////////////
@@ -47,7 +49,9 @@ export default {
       selectedPrevisoesByObra: [],
       selectedFiltro: 'Não Comprado',
       customToastNotification: 'Previsão',
-      valorTotalPrevisto: 0,
+      valorTotalPrevistoInfo: 0,
+      saldoInvestimento: 0,
+      saldoCaixa: 0
       /////////////////////////////////////////////
     }
   },
@@ -98,8 +102,8 @@ export default {
     // Métodos para apagar os dados que foram preenchidos e enviados ou não: -----\
     cancel () {
       this.descricaoProdutoServico = '';
-      this.quantidade = '';
-      this.valorUnitario = '';
+      this.quantidade = 1;
+      this.valorUnitario = 1;
       this.valorTotalPrevisto = '';
       this.compraPrevistaRealizada = false;
     },
@@ -108,20 +112,20 @@ export default {
 
       removeElementClass('insert-descricao-input', 'required-red-border');
       removeElementClass('insert-descricao-label', 'campo-obrigatorio-warning');
-      removeElementClass('insert-quantidade-input', 'required-red-border');
-      removeElementClass('insert-quantidade-label', 'campo-obrigatorio-warning');
-      removeElementClass('insert-valor-unitario-input', 'required-red-border');
-      removeElementClass('insert-valor-unitario-label', 'campo-obrigatorio-warning');
+      // removeElementClass('insert-quantidade-input', 'required-red-border');
+      // removeElementClass('insert-quantidade-label', 'campo-obrigatorio-warning');
+      // removeElementClass('insert-valor-unitario-input', 'required-red-border');
+      // removeElementClass('insert-valor-unitario-label', 'campo-obrigatorio-warning');
       removeElementClass('insert-valor-total-previsto-input', 'required-red-border');
       removeElementClass('insert-valor-total-previsto-label', 'campo-obrigatorio-warning');
       setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
     },
     cancelUpdate () {
       this.cancel();
-      removeElementClass('update-quantidade-input', 'required-red-border');
-      removeElementClass('update-quantidade-label', 'campo-obrigatorio-warning');
-      removeElementClass('update-valor-unitario-input', 'required-red-border');
-      removeElementClass('update-valor-unitario-label', 'campo-obrigatorio-warning');
+      // removeElementClass('update-quantidade-input', 'required-red-border');
+      // removeElementClass('update-quantidade-label', 'campo-obrigatorio-warning');
+      // removeElementClass('update-valor-unitario-input', 'required-red-border');
+      // removeElementClass('update-valor-unitario-label', 'campo-obrigatorio-warning');
       removeElementClass('update-valor-total-previsto-input', 'required-red-border');
       removeElementClass('update-valor-total-previsto-label', 'campo-obrigatorio-warning');
       setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
@@ -172,7 +176,9 @@ export default {
     },
     vTotalPrevistoSum () {
       const orcamento = this.mdoOrcamentoInfo[0];
-      this.valorTotalPrevisto = orcamento.valorTotalPrevisto;
+      this.valorTotalPrevistoInfo = orcamento.valorTotalPrevisto;
+      this.saldoCaixa = orcamento.custoPrevisto - (orcamento.custoMaoDeObra + orcamento.valorGastos);
+      this.saldoInvestimento = orcamento.custoPrevisto - (orcamento.custoMaoDeObra + orcamento.valorGastos + orcamento.valorTotalPrevisto);
     },
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -210,14 +216,14 @@ export default {
       this.cancelInsert();
     },
     watchRequiredInsertFields () {
-      this.descricaoProdutoServico && this.quantidade && this.valorUnitario && this.valorTotalPrevisto ?
+      this.descricaoProdutoServico && this.valorTotalPrevisto ?
       setAttributeSalvarButton('salvarNovoButton', 'modal'):
       setAttributeSalvarButton('salvarNovoButton', 'no-closing-modal');
     },
     createInfoDB () {
       clickSavecheckRequiredInsertField(this.descricaoProdutoServico, 'insert-descricao-input', 'insert-descricao-label', 'salvarNovoButton');
-      clickSavecheckRequiredInsertField(this.quantidade, 'insert-quantidade-input', 'insert-quantidade-label', 'salvarNovoButton');
-      clickSavecheckRequiredInsertField(this.valorUnitario, 'insert-valor-unitario-input', 'insert-valor-unitario-label', 'salvarNovoButton');
+      // clickSavecheckRequiredInsertField(this.quantidade, 'insert-quantidade-input', 'insert-quantidade-label', 'salvarNovoButton');
+      // clickSavecheckRequiredInsertField(this.valorUnitario, 'insert-valor-unitario-input', 'insert-valor-unitario-label', 'salvarNovoButton');
       clickSavecheckRequiredInsertField(this.valorTotalPrevisto, 'insert-valor-total-previsto-input', 'insert-valor-total-previsto-label', 'salvarNovoButton');
 
       if (this.descricaoProdutoServico && this.quantidade && this.valorUnitario && this.valorTotalPrevisto) {
@@ -292,16 +298,16 @@ export default {
       })
     },
     watchUpdateRequiredFields () {
-      this.quantidade && this.valorUnitario && this.valorTotalPrevisto ?
+      this.valorTotalPrevisto ?
         setAttributeSalvarButton('atualizarButton', 'modal'):
         setAttributeSalvarButton('atualizarButton', 'no-closing-modal');
     },
     updateInfoDB () {
-      clickSavecheckRequiredInsertField(this.quantidade, 'update-quantidade-input', 'update-quantidade-label', 'atualizarButton');
-      clickSavecheckRequiredInsertField(this.valorUnitario, 'update-valor-unitario-input', 'update-valor-unitario-label', 'atualizarButton');
+      // clickSavecheckRequiredInsertField(this.quantidade, 'update-quantidade-input', 'update-quantidade-label', 'atualizarButton');
+      // clickSavecheckRequiredInsertField(this.valorUnitario, 'update-valor-unitario-input', 'update-valor-unitario-label', 'atualizarButton');
       clickSavecheckRequiredInsertField(this.valorTotalPrevisto, 'update-valor-total-previsto-input', 'update-valor-total-previsto-label', 'atualizarButton');
       
-      if (this.quantidade && this.valorUnitario && this.valorTotalPrevisto) {
+      if (this.valorTotalPrevisto) {
         this.update();
       }
     },
@@ -370,12 +376,11 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////
 
     // Métodos de refinamento: ---------------------------------------------------\
-    calculaValorTotalPrevisto(data, field) {
-      !this.valorUnitario ? this.valorTotalPrevisto = 0 : this.valorTotalPrevisto = this.quantidade * this.valorUnitario;
-      checkInputValue(data, field);
-      checkInputValue(this.valorTotalPrevisto, 'insert-valor-total-previsto-input');
-
-    },
+    // calculaValorTotalPrevisto(data, field) {
+    //   !this.valorUnitario ? this.valorTotalPrevisto = 0 : this.valorTotalPrevisto = this.quantidade * this.valorUnitario;
+    //   checkInputValue(data, field);
+    //   checkInputValue(this.valorTotalPrevisto, 'insert-valor-total-previsto-input');
+    // },
     focusFirstModalInput,
     checkInputValue,
     brazilCurrency,
@@ -453,27 +458,48 @@ export default {
   <header
     class="header middle-margin">
     <!-- DropDown 'Obras' -->
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ selectedObraNome ? selectedObraNome : 'Obras' }}
-      </button>
-      <ul class="dropdown-menu">
-        <li v-for="(obra, i) in obrasInfo" :key="i">
-          <button
-            class="dropdown-item"
-            type="button"
-            @click="obrasDropDownActions(obra.nome, obra.codigo)"
-            >{{ obra.nome }}</button>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-          <button
-            class="dropdown-item"
-            type="button"
-            @click="obrasDropDownActions('', '')"
-          >Limpar</button>
-        </li>
-      </ul>
+    <div class="">
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ selectedObraNome ? selectedObraNome : 'Obras' }}
+        </button>
+        <ul class="dropdown-menu">
+          <li v-for="(obra, i) in obrasInfo" :key="i">
+            <button
+              class="dropdown-item"
+              type="button"
+              @click="obrasDropDownActions(obra.nome, obra.codigo)"
+              >{{ obra.nome }}</button>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <button
+              class="dropdown-item"
+              type="button"
+              @click="obrasDropDownActions('', '')"
+            >Limpar</button>
+          </li>
+        </ul>
+      </div>
+      <button
+        id="nova-previsao-button"
+        type="button"
+        class="btn btn-success light-green mt-2"
+        data-bs-toggle="modal"
+        data-bs-target="#insertModal"
+        @click="focusFirstModalInput('insert-descricao-input')"
+      >+ Nova Previsão</button>
+    </div>
+
+    <!-- Informações da página -->
+    <div>
+      Saldo em caixa: <strong>{{ brazilCurrency(this.saldoCaixa) }}</strong>
+      <br>
+      Valor total previsto: <strong>{{ brazilCurrency(this.valorTotalPrevistoInfo) }}</strong>
+      <br>
+      Saldo para investimento: <strong>{{ brazilCurrency(this.saldoInvestimento) }}</strong>
+
+
     </div>
 
     <!-- Filtro Previsão concluida ou não -->
@@ -510,20 +536,10 @@ export default {
 
   <!-- Header com o botão de +Novo -->
   <!-- v-if="this.info != ''" -->
-  <header
+  <!-- <header
     class="display-flex middle-margin">
-    <button
-      id="nova-previsao-button"
-      type="button"
-      class="btn btn-success light-green"
-      data-bs-toggle="modal"
-      data-bs-target="#insertModal"
-      @click="focusFirstModalInput('insert-descricao-input')"
-    >+ Nova Previsão</button>
-    <div>
-      <strong>Valor total previsto: </strong>{{ brazilCurrency(this.valorTotalPrevisto) }}
-    </div>
-  </header>
+
+  </header> -->
 
   <!-- <SkeletonTableAndHeader v-if="this.info == ''" /> -->
 
@@ -584,10 +600,9 @@ export default {
             </div>
             
             <!-- Quantidade -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label id="insert-quantidade-label" for="insert-quantidade-input"
                 class="form-label bold red-asterisk">Quantidade:</label>
-                <!-- @change="calculaValorItem" -->
                 <input
                 type="number"
                 class="form-control"
@@ -597,13 +612,11 @@ export default {
                 maxlength="15"
                 @keyup="calculaValorTotalPrevisto(quantidade, 'insert-quantidade-input')"
               >
-            </div>
+            </div> -->
 
             <!-- Valor Unitário -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label id="insert-valor-unitario-label" for="insert-valor-unitario-input" class="form-label bold red-asterisk">Valor unitário:</label>
-              <!-- @change="calculaValorFinalCompra"
-              @keyup="checkInputValue(valorOriginal, 'insert-valor-unitario-input')" -->
               <input
                 type="number"
                 step="0.01"
@@ -615,7 +628,7 @@ export default {
                 maxlength="15"
                 @keyup="calculaValorTotalPrevisto(valorUnitario, 'insert-valor-unitario-input')"
               >
-            </div>
+            </div> -->
 
             <!-- Valor Total Previsto -->
             <div class="mb-3">
@@ -692,7 +705,7 @@ export default {
             </div>
 
             <!-- Quantidade -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label id="update-quantidade-label" for="update-quantidade-input"
                 class="form-label bold red-asterisk">Quantidade:</label>
                 <input
@@ -704,10 +717,10 @@ export default {
                 maxlength="15"
                 @keyup="calculaValorTotalPrevisto(quantidade, 'update-quantidade-input')"
               >
-            </div>
+            </div> -->
 
             <!-- Valor Unitário -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label id="update-valor-unitario-label" for="update-valor-unitario-input" class="form-label bold red-asterisk">Valor unitário:</label>
               <input
                 type="number"
@@ -720,7 +733,7 @@ export default {
                 maxlength="15"
                 @keyup="calculaValorTotalPrevisto(valorUnitario, 'update-valor-unitario-input')"
               >
-            </div>
+            </div> -->
 
             <!-- Valor Total Previsto -->
             <div class="mb-3">
@@ -768,8 +781,8 @@ export default {
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Descrição</th>
-          <th scope="col">Quantidade</th>
-          <th scope="col">Valor unitário</th>
+          <!-- <th scope="col">Quantidade</th> -->
+          <!-- <th scope="col">Valor unitário</th> -->
           <th scope="col">Valor total previsto</th>
           <th scope="col">Compra realizada</th>
           <th></th>
@@ -779,8 +792,8 @@ export default {
         <tr v-for="(previsaoCompra, i) in this.selectedPrevisoesByObra" :key="i">
           <th scope="row">{{ previsaoCompra.codigo }}</th>
           <td>{{ previsaoCompra.descricaoProdutoServico }}</td>
-          <td>{{ previsaoCompra.quantidade }}</td>
-          <td>{{ brazilCurrency(previsaoCompra.valorUnitario) }}</td>
+          <!-- <td>{{ previsaoCompra.quantidade }}</td> -->
+          <!-- <td>{{ brazilCurrency(previsaoCompra.valorUnitario) }}</td> -->
           <td>{{ brazilCurrency(previsaoCompra.valorTotalPrevisto) }}</td>
           <td class="">
             <input
@@ -821,6 +834,7 @@ export default {
       </tbody>
     </table>
   </main>
+
 </template>
 
 <style>
@@ -829,6 +843,7 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 
 .checkbox {
   padding-left: 130px;
