@@ -495,7 +495,7 @@ export default {
     <div>
       Saldo em caixa: <strong>{{ brazilCurrency(this.saldoCaixa) }}</strong>
       <br>
-      Valor total previsto: <strong>{{ brazilCurrency(this.valorTotalPrevistoInfo) }}</strong>
+      Previsão de gasto: <strong>{{ brazilCurrency(this.valorTotalPrevistoInfo) }}</strong>
       <br>
       Saldo para investimento: <strong>{{ brazilCurrency(this.saldoInvestimento) }}</strong>
 

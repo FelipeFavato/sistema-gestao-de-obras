@@ -2,11 +2,13 @@ package com.gobra.sistemagestaodeobras.relatorio.projection;
 
 public interface RelatorioProdutoProjection {
   
-  Integer getCodigo();
+  String getNomeLocalUso();
 
-  String getNome();
+  Integer getCodigoProduto();
 
-  String getCategoria();
+  String getNomeProduto();
 
-  String getMarca();
+  String getTipoProduto();
+
+  String getNomeMarca();
 }

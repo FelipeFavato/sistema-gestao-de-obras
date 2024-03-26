@@ -43,14 +43,14 @@ public class CSVReport {
   strategy.setType(RelatorioProdutoDTO.class);
 
   // Mapeia explicitamente as colunas na ordem desejada
-  String[] colunas = {"codigo", "nome", "categoria", "marca"};
+  String[] colunas = {"nomeLocalUso", "codigoProduto", "nomeProduto", "tipoProduto", "nomeMarca"};
   strategy.setColumnMapping(colunas);
 
   return strategy;
   }
 
   public void setHeadersProduto (HttpServletResponse response) throws Exception {
-    response.getWriter().write("CODIGO;NOME;CATEGORIA;MARCA\n");
+    response.getWriter().write("LOCAL DE USO;CODIGO;NOME;CATEGORIA;MARCA\n");
   }
   // --------------------------------------------------------------------------------------------------
 

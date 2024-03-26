@@ -4,69 +4,84 @@ import com.gobra.sistemagestaodeobras.relatorio.projection.RelatorioProdutoProje
 
 public class RelatorioProdutoDTO {
   
-  private Integer codigo;
+  private String nomeLocalUso;
+
+  private Integer codigoProduto;
   
-  private String nome;
+  private String nomeProduto;
 
-  private String categoria;
+  private String tipoProduto;
 
-  private String marca;
+  private String nomeMarca;
 
 
   public RelatorioProdutoDTO() {
 
   }
 
-  public RelatorioProdutoDTO(Integer codigo, String nome, String categoria, String marca) {
-    this.codigo = codigo;
-    this.nome = nome;
-    this.categoria = categoria;
-    this.marca = marca;
+  public RelatorioProdutoDTO(
+    String nomeLU, Integer codProd, String nomeProd,
+    String tipoProd, String nomeMarca
+  ) {
+    this.nomeLocalUso = nomeLU;
+    this.codigoProduto = codProd;
+    this.nomeProduto = nomeProd;
+    this.tipoProduto = tipoProd;
+    this.nomeMarca = nomeMarca;
   }
 
   public RelatorioProdutoDTO(RelatorioProdutoProjection projection) {
-    codigo = projection.getCodigo();
-    nome = projection.getNome();
-    categoria = projection.getCategoria();
-    marca = projection.getMarca();
+    nomeLocalUso = projection.getNomeLocalUso();
+    codigoProduto = projection.getCodigoProduto();
+    nomeProduto = projection.getNomeProduto();
+    tipoProduto = projection.getTipoProduto();
+    nomeMarca = projection.getNomeMarca();
   }
 
   public String toString () {
-    return codigo + nome + categoria + marca;
+    return nomeLocalUso + codigoProduto + nomeProduto + tipoProduto + nomeMarca;
   }
 
 
   // Getters e Setters
-  public Integer getCodigo () {
-    return codigo;
+  public String getNomeLocalUso () {
+    return nomeLocalUso;
   }
 
-  public void setCodigo (Integer codigo) {
-    this.codigo = codigo;
+  public void setNomeLocalUso (String nomeLU) {
+    this.nomeLocalUso = nomeLU;
   }
 
-  public String getNome () {
-    return nome;
+  public Integer getCodigoProduto () {
+    return codigoProduto;
   }
 
-  public void setNome (String nome) {
-    this.nome = nome;
+  public void setCodigoProduto (Integer codProd) {
+    this.codigoProduto = codProd;
   }
 
-  public String getCategoria () {
-    return categoria;
+  public String getNomeProduto () {
+    return nomeProduto;
   }
 
-  public void setCategoria (String categoria) {
-    this.categoria = categoria;
+  public void setNomeProduto (String nomeProduto) {
+    this.nomeProduto = nomeProduto;
   }
 
-  public String getMarca () {
-    return marca;
+  public String getTipoProduto () {
+    return tipoProduto;
   }
 
-  public void setMarca (String marca) {
-    this.marca = marca;
+  public void setTipoProduto (String tipoProd) {
+    this.tipoProduto = tipoProd;
+  }
+
+  public String getNomeMarca () {
+    return nomeMarca;
+  }
+
+  public void setNomeMarca (String NomeMarca) {
+    this.nomeMarca = NomeMarca;
   }
 
 }

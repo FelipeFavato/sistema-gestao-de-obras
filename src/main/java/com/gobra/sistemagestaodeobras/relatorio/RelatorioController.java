@@ -34,13 +34,13 @@ public class RelatorioController {
   private CSVReport csvReport;
 
   // Produto PDF/CSV --------------------------------------------------
-  @GetMapping("/produto/pdf/{categoria}/{marca}")
-  public byte[] generatePDFProdutoReport (@PathVariable String categoria, @PathVariable String marca) throws FileNotFoundException, JRException {
-    return relatorioService.exportPDFProdutoReport(categoria, marca);
+  @GetMapping("/produto/pdf/{codigo}/{categoria}/{marca}")
+  public byte[] generatePDFProdutoReport (@PathVariable Integer codigo, @PathVariable String categoria, @PathVariable String marca) throws FileNotFoundException, JRException {
+    return relatorioService.exportPDFProdutoReport(codigo, categoria, marca);
   }
 
-  @GetMapping("/produto/csv/{categoria}/{marca}")
-  public void generateCSVProdutoReport (HttpServletResponse response, @PathVariable String categoria, @PathVariable String marca) throws Exception {
+  @GetMapping("/produto/csv/{codigo}/{categoria}/{marca}")
+  public void generateCSVProdutoReport (HttpServletResponse response, @PathVariable Integer codigo, @PathVariable String categoria, @PathVariable String marca) throws Exception {
     // Define o nome, conteúdo e formato do arquivo.
     String nomeArquivo = "produtos.csv";
     csvReport.formatCSVReport(response, nomeArquivo);
@@ -52,8 +52,8 @@ public class RelatorioController {
     csvReport.setHeadersProduto(response);
 
     // Gera a lista de produtos a ser gravada.
-    List<RelatorioProdutoDTO> listaProdutos = produtoRepository.obterRelatorioProduto(categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
-    
+    List<RelatorioProdutoDTO> listaProdutos = produtoRepository.obterRelatorioProduto(codigo, categoria, marca).stream().map(RelatorioProdutoDTO::new).toList();
+
     // Escreve os dados no arquivo.
     writer.write(listaProdutos);
 

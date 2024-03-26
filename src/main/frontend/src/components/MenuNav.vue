@@ -107,7 +107,7 @@ export default {
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="#previsaocompra">Previsão</a>
+            <a class="nav-link" href="#previsaocompra">Previsão de gasto</a>
           </li>
 
           <li class="nav-item">
